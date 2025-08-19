@@ -139,10 +139,26 @@ const Hero = () => {
           style={{ animationDelay: "2s" }}
         />
 
+        <div className="absolute top-1/3 right-1/3 w-48 h-48 bg-primary/3 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/3 left-1/3 w-56 h-56 bg-secondary/3 rounded-full blur-3xl" />
+        <div className="absolute top-2/3 left-1/6 w-40 h-40 bg-accent/4 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/6 right-1/6 w-36 h-36 bg-primary/4 rounded-full blur-3xl" />
+
+        <div className="absolute top-0 left-0 w-72 h-72 bg-primary/15 rounded-full blur-3xl" />
+        <div className="absolute top-1/6 left-1/8 w-64 h-64 bg-secondary/3 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-0 w-48 h-48 bg-accent/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-56 h-56 bg-primary/3 rounded-full blur-3xl" />
+
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-secondary/5 to-transparent" />
         <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-accent/5 to-transparent" />
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-primary/5 to-transparent" />
+
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/2 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-secondary/2 to-transparent" />
+
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-gradient-radial from-primary/8 via-transparent to-transparent blur-3xl" />
+        <div className="absolute bottom-0 right-1/2 transform translate-x-1/2 w-96 h-96 bg-gradient-radial from-secondary/8 via-transparent to-transparent blur-3xl" />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
@@ -198,7 +214,7 @@ const Hero = () => {
                 variant="outline"
                 size="lg"
                 onClick={() => setIsDemoOpen(true)}
-                className="h-14 px-8 text-sm font-medium border border-primary hover:border-primary/60 cursor-pointer"
+                className="h-14 px-8 text-sm font-medium border border-primary transform hover:bg-white hover:text-black hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25  cursor-pointer"
               >
                 <Play className="mr-3 w-5 h-5" strokeWidth={1.5} />
                 Watch demo video
