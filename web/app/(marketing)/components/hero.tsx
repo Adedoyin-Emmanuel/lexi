@@ -1,42 +1,25 @@
 "use client";
 
-import {
-  Play,
-  Clock,
-  Shield,
-  ArrowRight,
-  CheckCircle,
-  AlertTriangle,
-} from "lucide-react";
+import { Play, Shield, ArrowRight } from "lucide-react";
 import { gsap } from "gsap";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import DemoDialog from "./demo-dialog";
 
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [isDemoOpen, setIsDemoOpen] = useState(false);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.set(
-        [
-          titleRef.current,
-          subtitleRef.current,
-          buttonsRef.current,
-          featuresRef.current,
-        ],
-        {
-          opacity: 0,
-          y: 30,
-        }
-      );
+      gsap.set([titleRef.current, subtitleRef.current, buttonsRef.current], {
+        opacity: 0,
+        y: 30,
+      });
 
       gsap
         .timeline()
@@ -58,16 +41,6 @@ const Hero = () => {
         )
         .to(
           buttonsRef.current,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-          },
-          "-=0.4"
-        )
-        .to(
-          featuresRef.current,
           {
             opacity: 1,
             y: 0,
@@ -219,47 +192,6 @@ const Hero = () => {
                 <Play className="mr-3 w-5 h-5" strokeWidth={1.5} />
                 Watch demo video
               </Button>
-            </div>
-
-            <div
-              ref={featuresRef}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto"
-            >
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/70 transition-all duration-300 hover:shadow-lg">
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Clock className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold mb-2">Instant Analysis</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Get comprehensive contract insights in seconds, not hours
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/70 transition-all duration-300 hover:shadow-lg">
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <AlertTriangle className="w-6 h-6 text-secondary" />
-                  </div>
-                  <h3 className="font-semibold mb-2">Risk Detection</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Identify potential risks and hidden terms automatically
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/70 transition-all duration-300 hover:shadow-lg">
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-6 h-6 text-accent" />
-                  </div>
-                  <h3 className="font-semibold mb-2">Clear Summaries</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Understand complex legal language in plain English
-                  </p>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
