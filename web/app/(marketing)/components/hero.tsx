@@ -11,14 +11,9 @@ import {
 import { gsap } from "gsap";
 import React, { useEffect, useRef, useState } from "react";
 
-import {
-  Dialog,
-  DialogTitle,
-  DialogHeader,
-  DialogContent,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import DemoDialog from "./demo-dialog";
 
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -134,6 +129,21 @@ const Hero = () => {
         <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl" />
         <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/10 rounded-full blur-xl" />
 
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse" />
+        <div
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-secondary/5 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/3 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        />
+
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-primary/5 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-secondary/5 to-transparent" />
+        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-accent/5 to-transparent" />
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-primary/5 to-transparent" />
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <div className="mb-8 flex justify-center">
@@ -175,7 +185,7 @@ const Hero = () => {
             >
               <Button
                 size="lg"
-                className="group h-14 text-[17px] px-8 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300  hover:shadow-sm"
+                className="group h-14 text-[17px] px-8 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 cursor-pointer"
               >
                 Get started for free
                 <ArrowRight
@@ -183,18 +193,16 @@ const Hero = () => {
                   strokeWidth={1.5}
                 />
               </Button>
-              <div className="relative group">
-                <div className="absolute inset-0 animate-snake-border rounded-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => setIsDemoOpen(true)}
-                  className="relative h-14 px-8 text-sm font-medium hover:bg-muted/50 transform hover:scale-105 transition-all duration-300 bg-background border border-transparent hover:border-primary/20"
-                >
-                  <Play className="mr-3 w-5 h-5" />
-                  Watch Demo
-                </Button>
-              </div>
+
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setIsDemoOpen(true)}
+                className="h-14 px-8 text-sm font-medium border border-primary hover:border-primary/60 cursor-pointer"
+              >
+                <Play className="mr-3 w-5 h-5" strokeWidth={1.5} />
+                Watch demo video
+              </Button>
             </div>
 
             <div
@@ -241,26 +249,7 @@ const Hero = () => {
         </div>
       </section>
 
-      <Dialog open={isDemoOpen} onOpenChange={setIsDemoOpen}>
-        <DialogContent className="sm:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span>Watch Lexi Demo</span>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <Play className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                Demo video will be embedded here
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Replace this with your YouTube embed code
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DemoDialog isOpen={isDemoOpen} onOpenChange={setIsDemoOpen} />
     </>
   );
 };
