@@ -16,8 +16,8 @@ const Footer = () => {
             </div>
             <p className="text-muted-foreground max-w-md">
               AI-powered contract assistant for freelancers and creators. Decode
-              contracts, track obligations, and never miss important deadlines
-              again.
+              contracts, get negotiation suggestions, know what you need to
+              track and when.
             </p>
           </div>
 

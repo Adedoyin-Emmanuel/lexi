@@ -1,20 +1,18 @@
-"use client";
-
 import {
+  Eye,
+  Brain,
   Shield,
   Target,
   Calendar,
-  Eye,
   Link as LinkIcon,
-  Brain,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface FeatureCardProps {
-  icon: React.ReactNode;
   title: string;
-  description: string;
   color: string;
+  description: string;
+  icon: React.ReactNode;
 }
 
 const FeatureCard = ({ icon, title, description, color }: FeatureCardProps) => {
@@ -22,7 +20,7 @@ const FeatureCard = ({ icon, title, description, color }: FeatureCardProps) => {
     <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/70 transition-all duration-300 hover:shadow-lg group">
       <CardContent className="p-6 text-center">
         <div
-          className={`w-12 h-12 ${color} rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}
+          className={`w-12 h-12 ${color} !rounded-[6px] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}
         >
           {icon}
         </div>
@@ -48,7 +46,7 @@ const Features = () => {
       icon: <LinkIcon className="w-6 h-6 text-secondary" />,
       title: "Span-Linked Highlights",
       description:
-        "Every explanation is directly linked to the contract text with confidence scores and flags for uncertainty. Trust what you&apos;re reading.",
+        "Every explanation is directly linked to the contract text with confidence scores and flags for uncertainty. Trust what you're reading.",
       color: "bg-secondary/10",
     },
     {
@@ -69,7 +67,7 @@ const Features = () => {
       icon: <Eye className="w-6 h-6 text-secondary" />,
       title: "Privacy First",
       description:
-        "We don&apos;t store your contracts. Your sensitive legal documents stay private and secure. Process locally or with enterprise-grade encryption.",
+        "We don't store your contracts. Your sensitive legal documents stay private and secure. Process locally or with enterprise-grade encryption.",
       color: "bg-secondary/10",
     },
     {
@@ -83,7 +81,6 @@ const Features = () => {
 
   return (
     <section className="py-12 bg-background relative overflow-hidden">
-      {/* Background decorations */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-muted/10" />
       <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl" />
       <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/10 rounded-full blur-xl" />
