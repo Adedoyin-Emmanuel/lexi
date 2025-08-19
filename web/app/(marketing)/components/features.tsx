@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  Clock,
-  AlertTriangle,
-  CheckCircle,
   Shield,
-  Zap,
-  MessageSquare,
+  Target,
+  Calendar,
+  Eye,
+  Link as LinkIcon,
+  Brain,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -38,45 +38,45 @@ const FeatureCard = ({ icon, title, description, color }: FeatureCardProps) => {
 const Features = () => {
   const features = [
     {
-      icon: <Clock className="w-6 h-6 text-primary" />,
-      title: "30-Second Risk Analysis",
+      icon: <Target className="w-6 h-6 text-primary" />,
+      title: "Smart Contract Detection",
       description:
-        "Upload any contract and get instant risk assessment with severity scoring (1-5). GPT-5 identifies 94% of known contract risks.",
+        "Automatically detects contract types (NDA, Independent Contractor Agreement, License Agreement) and provides specialized analysis for each type.",
       color: "bg-primary/10",
     },
     {
-      icon: <AlertTriangle className="w-6 h-6 text-secondary" />,
-      title: "Hidden Legal Traps",
+      icon: <LinkIcon className="w-6 h-6 text-secondary" />,
+      title: "Span-Linked Highlights",
       description:
-        "AI spots dangerous clauses, hidden fees, and legal traps that human reviewers miss 80% of the time. Everyone has signed contracts they didn't fully understand.",
+        "Every explanation is directly linked to the contract text with confidence scores and flags for uncertainty. Trust what you&apos;re reading.",
       color: "bg-secondary/10",
     },
     {
-      icon: <CheckCircle className="w-6 h-6 text-accent" />,
-      title: "Professional Reports",
+      icon: <Calendar className="w-6 h-6 text-accent" />,
+      title: "Actionable Timeline",
       description:
-        "Executive summary, clause-by-clause breakdown, and risk mitigation recommendations. Downloadable PDF reports ready for legal review.",
+        "Obligations turn into actionable events with reminders for payments, deadlines, and rights expirations. Never miss important dates again.",
       color: "bg-accent/10",
     },
     {
-      icon: <Shield className="w-6 h-6 text-primary" />,
-      title: "GPT-5 Legal Reasoning",
+      icon: <Brain className="w-6 h-6 text-primary" />,
+      title: "Mini Negotiation Playbook",
       description:
-        "GPT-5's deep reasoning handles complex legal language and multi-clause interactions that smaller models miss. Superior to traditional legal analysis.",
+        "Get AI-powered redlines and negotiation suggestions. Replace problematic clauses with industry-standard alternatives that protect your interests.",
       color: "bg-primary/10",
     },
     {
-      icon: <Zap className="w-6 h-6 text-secondary" />,
-      title: "Enterprise Ready",
+      icon: <Eye className="w-6 h-6 text-secondary" />,
+      title: "Privacy First",
       description:
-        "Targeting $10B+ legal tech market. Ready for enterprise deployment with SOC 2 compliance and on-premise options.",
+        "We don&apos;t store your contracts. Your sensitive legal documents stay private and secure. Process locally or with enterprise-grade encryption.",
       color: "bg-secondary/10",
     },
     {
-      icon: <MessageSquare className="w-6 h-6 text-accent" />,
-      title: "Smart Clause Suggestions",
+      icon: <Shield className="w-6 h-6 text-accent" />,
+      title: "Confidence Scoring",
       description:
-        "Get AI-powered recommendations for better contract terms. Replace problematic clauses with industry-standard alternatives that protect your interests.",
+        "Every analysis comes with confidence scores and abstain logic. Know when the AI is certain vs. when you should seek legal counsel.",
       color: "bg-accent/10",
     },
   ];
@@ -91,13 +91,13 @@ const Features = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
-            Everything You Need to
-            <span className="block text-primary">Master Your Contracts</span>
+            Built for Freelancers &{" "}
+            <span className="block text-primary">Creators</span>
           </h2>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Stop struggling with complex legal tools designed for law firms.
-            Lexi brings enterprise-grade contract analysis to everyone with an
-            intuitive interface that actually makes sense.
+            Stop struggling with complex legal jargon. Lexi brings
+            enterprise-grade contract analysis to freelancers and creators with
+            an intuitive interface that actually makes sense.
           </p>
         </div>
 

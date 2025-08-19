@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Github, Twitter, Youtube } from "lucide-react";
+import { Twitter, Youtube } from "lucide-react";
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -15,8 +15,9 @@ const Footer = () => {
               <span className="text-xl font-bold text-foreground">Lexi</span>
             </div>
             <p className="text-muted-foreground max-w-md">
-              Making contracts transparent and understandable with AI-powered
-              analysis. Get insights in seconds, not hours.
+              AI-powered contract assistant for freelancers and creators. Decode
+              contracts, track obligations, and never miss important deadlines
+              again.
             </p>
           </div>
 
@@ -32,12 +33,20 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a
-                  href="#demo"
+                <Link
+                  href="#how-it-works"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Demo
-                </a>
+                  How it works
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#pricing"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Pricing
+                </Link>
               </li>
             </ul>
           </div>
@@ -55,7 +64,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="mailto:adedoyine535@gmail.com"
+                  href="mailto:hello@lexi.ai"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Contact
@@ -75,7 +84,7 @@ const Footer = () => {
 
         <div className="mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            All rights reserved &copy; {year}
+            All rights reserved &copy; {year} Lexi
           </p>
           <div className="flex space-x-4 mt-4 sm:mt-0">
             <Link
@@ -89,12 +98,6 @@ const Footer = () => {
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <Youtube className="w-5 h-5" strokeWidth={1.5} />
-            </Link>
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Github className="w-5 h-5" strokeWidth={1.5} />
             </Link>
           </div>
         </div>

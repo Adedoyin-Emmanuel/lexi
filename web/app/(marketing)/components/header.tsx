@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { Menu, X, Github } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -34,12 +34,10 @@ const Header = () => {
               How it works
             </Link>
             <Link
-              href="https://github.com/Adedoyin-Emmanuel/lexi"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center space-x-1"
+              href="#pricing"
+              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              <span>Github</span>
+              Pricing
             </Link>
             <Button size="sm" className="font-semibold">
               Get Started
@@ -74,13 +72,10 @@ const Header = () => {
                 How it works
               </Link>
               <Link
-                href="https://github.com/Adedoyin-Emmanuel/lexi"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center space-x-2"
+                href="#pricing"
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
-                <Github className="w-4 h-4" />
-                <span>Source Code</span>
+                Pricing
               </Link>
               <div className="pt-4">
                 <Button size="sm" className="w-full font-semibold">
