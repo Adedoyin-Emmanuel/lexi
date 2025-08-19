@@ -55,7 +55,7 @@ const Features = () => {
       icon: <Calendar className="w-6 h-6 text-accent" />,
       title: "Actionable Timeline",
       description:
-        "Obligations turn into actionable events with reminders for payments, deadlines, and rights expirations. Never miss important dates again.",
+        "Obligations turn into actionable events with clear deadlines and important dates. Know what you need to track and when.",
       color: "bg-accent/10",
     },
     {

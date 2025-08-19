@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Play,
-  Shield,
-  ArrowRight,
-  Calendar,
-  FileText,
-  Target,
-} from "lucide-react";
+import { Play, Shield, ArrowRight } from "lucide-react";
 import { gsap } from "gsap";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -162,35 +155,18 @@ const Hero = () => {
               ref={titleRef}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6"
             >
-              Your Contracts,{" "}
-              <span className="text-primary">Decoded & Actionable</span>
+              Understand Your Contracts
+              <span className="block text-primary">In Plain English</span>
             </h1>
 
             <p
               ref={subtitleRef}
               className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed"
             >
-              Lexi doesn&apos;t just summarize legal jargon—it detects contract
-              types, highlights critical clauses with confidence scores, and
-              turns obligations into actionable timelines with reminders for
-              payments, deadlines, and expirations.
+              Lexi detects contract types, highlights critical clauses with
+              confidence scores, and explains what you need to know about
+              deadlines and obligations.
             </p>
-
-            {/* Contract types preview */}
-            <div className="mb-12 flex flex-wrap justify-center gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full border border-primary/20">
-                <FileText className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-primary">NDA</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-secondary/10 rounded-full border border-secondary/20">
-                <Target className="w-4 h-4 text-secondary" />
-                <span className="text-sm font-medium text-secondary">ICA</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full border border-accent/20">
-                <Calendar className="w-4 h-4 text-accent" />
-                <span className="text-sm font-medium text-accent">License</span>
-              </div>
-            </div>
 
             <div
               ref={buttonsRef}
