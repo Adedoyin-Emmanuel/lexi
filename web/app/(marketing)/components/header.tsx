@@ -33,15 +33,10 @@ const Header = () => {
             >
               How it works
             </Link>
-            <Link
-              href="#pricing"
-              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
-            >
-              Pricing
+
+            <Link href="/auth/login">
+              <Button className="cursor-pointer">Get Started</Button>
             </Link>
-            <Button size="sm" className="font-semibold">
-              Get Started
-            </Button>
           </nav>
 
           <button
