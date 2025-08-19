@@ -1,36 +1,35 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  FileText,
-  Shield,
-  Clock,
-  AlertTriangle,
   Play,
+  Clock,
+  Shield,
   ArrowRight,
   CheckCircle,
-  X,
+  AlertTriangle,
 } from "lucide-react";
 import { gsap } from "gsap";
+import React, { useEffect, useRef, useState } from "react";
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogHeader,
+  DialogContent,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Hero = () => {
-  const [isDemoOpen, setIsDemoOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Initial state
       gsap.set(
         [
           titleRef.current,
@@ -44,7 +43,6 @@ const Hero = () => {
         }
       );
 
-      // Animate in sequence
       gsap
         .timeline()
         .to(titleRef.current, {
@@ -84,7 +82,6 @@ const Hero = () => {
           "-=0.4"
         );
 
-      // Floating animation for the main icon
       gsap.to(".floating-icon", {
         y: -10,
         duration: 2,
@@ -103,7 +100,6 @@ const Hero = () => {
         ref={heroRef}
         className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden"
       >
-        {/* Background pattern */}
         <div className="absolute inset-0 bg-background">
           <div className="absolute inset-0 opacity-[0.015]">
             <svg
@@ -133,28 +129,29 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-muted/10" />
 
-        {/* Floating elements */}
         <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl" />
         <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/10 rounded-full blur-xl" />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            {/* Main Icon */}
             <div className="mb-8 flex justify-center">
               <div className="relative">
-                <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center shadow-lg floating-icon">
-                  <FileText className="w-10 h-10 text-primary-foreground" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-secondary-foreground" />
+                <div className="px-6 py-3 rounded-full border border-primary/20 backdrop-blur-sm floating-icon">
+                  <div className="flex items-center gap-2">
+                    <Shield
+                      className="w-5 h-5 text-primary"
+                      strokeWidth={1.5}
+                    />
+                    <span className="text-sm font-medium text-primary">
+                      Your final stop for contract clarity
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Main Title */}
             <h1
               ref={titleRef}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6"
@@ -163,7 +160,6 @@ const Hero = () => {
               <span className="block text-primary">In Seconds, Not Hours</span>
             </h1>
 
-            {/* Subtitle */}
             <p
               ref={subtitleRef}
               className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
@@ -173,30 +169,34 @@ const Hero = () => {
               legal document before you sign.
             </p>
 
-            {/* CTA Buttons */}
             <div
               ref={buttonsRef}
               className="flex flex-col sm:flex-row gap-6 justify-center mb-16"
             >
               <Button
                 size="lg"
-                className="group h-14 px-8 text-lg font-semibold bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="group h-14 text-[17px] px-8 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300  hover:shadow-sm"
               >
-                Get Started Free
-                <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                Get started for free
+                <ArrowRight
+                  className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                  strokeWidth={1.5}
+                />
               </Button>
-              <Button
-                variant="ghost"
-                size="lg"
-                onClick={() => setIsDemoOpen(true)}
-                className="group h-14 px-8 text-sm font-medium hover:bg-muted/50 transform hover:scale-105 transition-all duration-300"
-              >
-                <Play className="mr-3 w-5 h-5" />
-                Watch Demo
-              </Button>
+              <div className="relative group">
+                <div className="absolute inset-0 animate-snake-border rounded-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => setIsDemoOpen(true)}
+                  className="relative h-14 px-8 text-sm font-medium hover:bg-muted/50 transform hover:scale-105 transition-all duration-300 bg-background border border-transparent hover:border-primary/20"
+                >
+                  <Play className="mr-3 w-5 h-5" />
+                  Watch Demo
+                </Button>
+              </div>
             </div>
 
-            {/* Features Grid */}
             <div
               ref={featuresRef}
               className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto"
@@ -241,20 +241,11 @@ const Hero = () => {
         </div>
       </section>
 
-      {/* Demo Dialog */}
       <Dialog open={isDemoOpen} onOpenChange={setIsDemoOpen}>
         <DialogContent className="sm:max-w-4xl">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>Watch Lexi Demo</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsDemoOpen(false)}
-                className="h-8 w-8 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </DialogTitle>
           </DialogHeader>
           <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">

@@ -102,14 +102,18 @@
 
   --radius: 0px;
 
-    --shadow-2xs: 4px 4px 0px -6px oklch(0.00 0 0 / 0.50);
-  --shadow-xs: 4px 4px 0px -6px oklch(0.00 0 0 / 0.50);
-  --shadow-sm: 4px 4px 0px -6px oklch(0.00 0 0 / 1.00), 4px 1px 2px -7px oklch(0.00 0 0 / 1.00);
-  --shadow: 4px 4px 0px -6px oklch(0.00 0 0 / 1.00), 4px 1px 2px -7px oklch(0.00 0 0 / 1.00);
-  --shadow-md: 4px 4px 0px -6px oklch(0.00 0 0 / 1.00), 4px 2px 4px -7px oklch(0.00 0 0 / 1.00);
-  --shadow-lg: 4px 4px 0px -6px oklch(0.00 0 0 / 1.00), 4px 4px 6px -7px oklch(0.00 0 0 / 1.00);
-  --shadow-xl: 4px 4px 0px -6px oklch(0.00 0 0 / 1.00), 4px 8px 10px -7px oklch(0.00 0 0 / 1.00);
-  --shadow-2xl: 4px 4px 0px -6px oklch(0.00 0 0 / 2.50);
+  --shadow-2xs: 4px 4px 0px -6px oklch(0 0 0 / 0.5);
+  --shadow-xs: 4px 4px 0px -6px oklch(0 0 0 / 0.5);
+  --shadow-sm: 4px 4px 0px -6px oklch(0 0 0 / 1),
+    4px 1px 2px -7px oklch(0 0 0 / 1);
+  --shadow: 4px 4px 0px -6px oklch(0 0 0 / 1), 4px 1px 2px -7px oklch(0 0 0 / 1);
+  --shadow-md: 4px 4px 0px -6px oklch(0 0 0 / 1),
+    4px 2px 4px -7px oklch(0 0 0 / 1);
+  --shadow-lg: 4px 4px 0px -6px oklch(0 0 0 / 1),
+    4px 4px 6px -7px oklch(0 0 0 / 1);
+  --shadow-xl: 4px 4px 0px -6px oklch(0 0 0 / 1),
+    4px 8px 10px -7px oklch(0 0 0 / 1);
+  --shadow-2xl: 4px 4px 0px -6px oklch(0 0 0 / 2.5);
 
   --spacing: 0.26rem;
 }
@@ -147,15 +151,18 @@
   --sidebar-border: oklch(1 0 0);
   --sidebar-ring: oklch(0.7 0.19 23.04);
 
-   
-  --shadow-2xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
-  --shadow-xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
-  --shadow-sm: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 1px 2px -1px oklch(0.00 0 0 / 0.10);
-  --shadow: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 1px 2px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-md: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 2px 4px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-lg: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 4px 6px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-xl: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 8px 10px -1px oklch(0.00 0 0 / 0.10);
-  --shadow-2xl: 0 1px 3px 0px oklch(0.00 0 0 / 0.25);
+  --shadow-2xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
+  --shadow-xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0px oklch(0 0 0 / 0.1),
+    0 1px 2px -1px oklch(0 0 0 / 0.1);
+  --shadow: 0 1px 3px 0px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1);
+  --shadow-md: 0 1px 3px 0px oklch(0 0 0 / 0.1),
+    0 2px 4px -1px oklch(0 0 0 / 0.1);
+  --shadow-lg: 0 1px 3px 0px oklch(0 0 0 / 0.1),
+    0 4px 6px -1px oklch(0 0 0 / 0.1);
+  --shadow-xl: 0 1px 3px 0px oklch(0 0 0 / 0.1),
+    0 8px 10px -1px oklch(0 0 0 / 0.1);
+  --shadow-2xl: 0 1px 3px 0px oklch(0 0 0 / 0.25);
 }
 
 @layer base {
@@ -164,5 +171,44 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-dmsans), ui-sans-serif, system-ui, sans-serif;
   }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes snake-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+.animate-snake-border {
+  background: linear-gradient(
+    90deg,
+    var(--primary) 0%,
+    var(--secondary) 25%,
+    var(--accent) 50%,
+    var(--secondary) 75%,
+    var(--primary) 100%
+  );
+  background-size: 200% 100%;
+  animation: snake-border 2s ease-in-out infinite;
 }
