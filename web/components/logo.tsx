@@ -3,8 +3,8 @@ import Image from "next/image";
 
 const Logo = ({
   className,
-  width = 100,
-  height = 100,
+  width = 40,
+  height = 40,
   ...props
 }: {
   className?: string;

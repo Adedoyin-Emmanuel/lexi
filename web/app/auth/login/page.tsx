@@ -5,31 +5,27 @@ import { Button } from "@/components/ui/button";
 
 const Login = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8">
-        <div className="text-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-sm space-y-8 text-center">
+        <div className="flex justify-center">
           <Logo />
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
-            Welcome back
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your account to continue
+        </div>
+
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold text-gray-900">Welcome to Lexi</h1>
+          <p className="text-gray-600">
+            Please sign in to access all of Lexi&apos;s services
           </p>
         </div>
 
-        <div className="mt-8 space-y-6">
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-center gap-3 py-3"
-            onClick={() => {
-              // TODO: Implement Google OAuth
-              console.log("Google login clicked");
-            }}
-          >
-            <Google />
-            Continue with Google
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="lg"
+          className="w-full bg-white border-gray-200 hover:bg-transparent hover:text-black text-black font-medium cursor-pointer"
+        >
+          <Google />
+          Continue with Google
+        </Button>
       </div>
     </div>
   );
