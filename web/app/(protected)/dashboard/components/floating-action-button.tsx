@@ -23,15 +23,27 @@ export const FloatingActionButton = ({
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const isNearBottom =
+        currentScrollY + windowHeight >= documentHeight - 100; // 100px from bottom
 
       // Hide button when scrolling down
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
       }
 
-      // Show button when scrolling up or at top
-      if (currentScrollY < lastScrollY || currentScrollY <= 100) {
+      // Show button when scrolling up or at top, but not near bottom
+      if (
+        (currentScrollY < lastScrollY || currentScrollY <= 100) &&
+        !isNearBottom
+      ) {
         setIsVisible(true);
+      }
+
+      // Hide button when near bottom of page
+      if (isNearBottom) {
+        setIsVisible(false);
       }
 
       setLastScrollY(currentScrollY);
@@ -41,9 +53,11 @@ export const FloatingActionButton = ({
         clearTimeout(timeoutId);
       }
 
-      // Show button after scrolling stops (2 seconds delay)
+      // Show button after scrolling stops (2 seconds delay), but not if near bottom
       timeoutId = setTimeout(() => {
-        setIsVisible(true);
+        if (!isNearBottom) {
+          setIsVisible(true);
+        }
       }, 2000);
     };
 

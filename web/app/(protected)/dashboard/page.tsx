@@ -134,7 +134,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold">
               Recently Uploaded Contracts
             </h2>
-            <Link href="/contracts">
+            <Link href="/contracts" className="hidden md:block">
               <Button
                 variant="outline"
                 size="sm"
@@ -160,7 +160,16 @@ export default function Dashboard() {
             ))}
           </div>
         </motion.div>
+
+        <Link href="/contracts" className="block md:hidden w-full">
+          <Button className="w-full">
+            <Upload className="h-4 w-4" />
+            View All
+          </Button>
+        </Link>
       </div>
+
+      <br />
 
       <FloatingActionButton
         className="block md:hidden"
