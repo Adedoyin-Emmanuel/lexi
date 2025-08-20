@@ -8,6 +8,7 @@ import {
   CheckCircle,
   AlertTriangle,
 } from "lucide-react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -133,10 +134,16 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold">
               Recently Uploaded Contracts
             </h2>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Upload className="h-4 w-4" />
-              View All
-            </Button>
+            <Link href="/contracts">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 hover:bg-primary border border-gray-200 hover:text-white cursor-pointer"
+              >
+                <Upload className="h-4 w-4" />
+                View All
+              </Button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
