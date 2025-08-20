@@ -15,8 +15,9 @@ export default async function ProtectedLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <main className="w-full">
+      <main className="w-full p-5 ">
         <AppSidebarHeader />
+        <br />
         {children}
       </main>
     </SidebarProvider>

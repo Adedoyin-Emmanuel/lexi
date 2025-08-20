@@ -93,23 +93,18 @@ const recentContracts = [
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen w-full">
+      <div className="w-full space-y-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="flex items-center justify-between"
         >
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground">
-              Monitor your contract analysis and insights
-            </p>
-          </div>
+          <div></div>
 
-          <Button size="lg" className="gap-2 hidden md:flex">
-            <Plus className="h-4 w-4" />
+          <Button size="lg" className="gap-2 hidden md:flex cursor-pointer">
+            <Plus className="h-4 w-4" strokeWidth={1.5} />
             Analyze New Contract
           </Button>
         </motion.div>
