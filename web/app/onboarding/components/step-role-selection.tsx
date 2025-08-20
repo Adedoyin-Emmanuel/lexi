@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
+import { Briefcase, User, ArrowLeft, ArrowRight } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { useOnboardingStore } from "@/app/store/onboarding";
-import { Briefcase, User, ArrowLeft, ArrowRight } from "lucide-react";
 
 export function StepRoleSelection() {
   const { data, updateData, nextStep, prevStep } = useOnboardingStore();
@@ -21,7 +22,6 @@ export function StepRoleSelection() {
 
   return (
     <div className="w-full max-w-2xl mx-auto text-center space-y-8">
-      {/* Header */}
       <div className="space-y-4">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
           What do you do?
@@ -31,7 +31,6 @@ export function StepRoleSelection() {
         </p>
       </div>
 
-      {/* Role Options */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg mx-auto">
         <div
           className={`relative p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer group ${
@@ -88,7 +87,6 @@ export function StepRoleSelection() {
         </div>
       </div>
 
-      {/* Navigation */}
       <div className="flex justify-between items-center pt-8">
         <Button
           variant="ghost"
