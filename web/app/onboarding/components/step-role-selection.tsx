@@ -21,19 +21,19 @@ export function StepRoleSelection() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto text-center space-y-8">
+    <div className="w-full max-w-2xl mx-auto text-center space-y-6 md:space-y-8 px-4 md:px-0">
       <div className="space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
           What do you do?
         </h1>
-        <p className="text-muted-foreground text-lg">
+        <p className="text-muted-foreground text-base md:text-lg">
           Choose the option that best describes your work
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-lg mx-auto">
         <div
-          className={`relative p-8 rounded-2xl border border-neutral-300 transition-all duration-300 cursor-pointer group ${
+          className={`relative p-6 md:p-8 rounded-2xl border border-neutral-300 transition-all duration-300 cursor-pointer group ${
             role === "freelancer"
               ? "border-primary bg-primary/5 shadow-lg"
               : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -52,7 +52,7 @@ export function StepRoleSelection() {
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2">Freelancer</h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-sm md:text-base">
                 I provide services to clients and work on projects
               </p>
             </div>
@@ -60,7 +60,7 @@ export function StepRoleSelection() {
         </div>
 
         <div
-          className={`relative p-8 rounded-2xl border border-neutral-300 transition-all duration-300 cursor-pointer group ${
+          className={`relative p-6 md:p-8 rounded-2xl border border-neutral-300 transition-all duration-300 cursor-pointer group ${
             role === "creator"
               ? "border-primary bg-primary/5 shadow-lg"
               : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -79,7 +79,7 @@ export function StepRoleSelection() {
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2">Creator</h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-sm md:text-base">
                 I create content and build an audience
               </p>
             </div>
@@ -87,7 +87,7 @@ export function StepRoleSelection() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-8">
+      <div className="flex justify-between items-center pt-6 md:pt-8">
         <Button
           variant="ghost"
           onClick={prevStep}

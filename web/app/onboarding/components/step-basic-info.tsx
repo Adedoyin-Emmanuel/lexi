@@ -21,7 +21,7 @@ export function StepBasicInfo() {
   const isFormValid = name.trim();
 
   return (
-    <div className="w-full max-w-md mx-auto text-center space-y-8">
+    <div className="w-full max-w-md mx-auto text-center space-y-6 md:space-y-8 px-4 md:px-0">
       <div className="space-y-4">
         <div className="flex justify-center">
           <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center">
@@ -32,10 +32,10 @@ export function StepBasicInfo() {
           </div>
         </div>
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             What should we call you?
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 text-sm md:text-base">
             Your name will be displayed on your profile
           </p>
         </div>
@@ -51,7 +51,7 @@ export function StepBasicInfo() {
             placeholder="Enter your name"
             value={name}
             onChange={(e) => updateData({ name: e.target.value })}
-            className="pl-10 h-12 text-lg text-center font-medium "
+            className="pl-10 h-12 md:text-lg text-center font-medium "
             autoFocus
           />
         </div>

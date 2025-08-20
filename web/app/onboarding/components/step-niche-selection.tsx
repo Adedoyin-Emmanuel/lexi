@@ -51,7 +51,7 @@ export function StepNicheSelection() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto text-center space-y-8">
+    <div className="w-full max-w-4xl mx-auto text-center space-y-6 md:space-y-8 px-4 md:px-0">
       <div className="space-y-4">
         <div className="flex justify-center">
           <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center">
@@ -59,23 +59,23 @@ export function StepNicheSelection() {
           </div>
         </div>
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             What are your specialties?
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-base md:text-lg">
             Select all the areas that apply to your work
           </p>
         </div>
       </div>
 
       <div className="space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-3xl mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3 max-w-3xl mx-auto">
           {nicheOptions.map((option) => (
             <Button
               key={option}
               variant={niche.includes(option) ? "default" : "outline"}
               size="sm"
-              className={`h-auto py-4 px-4 text-sm font-medium transition-all duration-200 ${
+              className={`h-auto py-3 md:py-4 px-3 md:px-4 text-xs md:text-sm font-medium transition-all duration-200 ${
                 niche.includes(option)
                   ? "bg-primary text-primary-foreground shadow-lg scale-105"
                   : niche.length >= 5 && !niche.includes(option)
@@ -111,7 +111,7 @@ export function StepNicheSelection() {
         )}
       </div>
 
-      <div className="flex justify-between items-center pt-8">
+      <div className="flex justify-between items-center pt-6 md:pt-8">
         <Button
           variant="ghost"
           onClick={prevStep}
