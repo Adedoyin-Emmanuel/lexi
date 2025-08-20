@@ -36,7 +36,7 @@ export const AppSidebarHeader = () => {
   };
 
   return (
-    <header className="flex items-center justify-between py-3 border-b border-gray-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="flex items-center justify-between py-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center gap-3">
         {isMobile ? (
           <>

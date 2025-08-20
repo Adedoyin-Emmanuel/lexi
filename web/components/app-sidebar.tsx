@@ -72,7 +72,7 @@ export const AppSidebar = () => {
           <br />
 
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2">
+            <SidebarMenu className="space-y-3 mt-4">
               {items.map((item) => {
                 const isActive = pathname === item.url;
                 return (

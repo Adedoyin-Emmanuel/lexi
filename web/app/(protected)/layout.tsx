@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 
+import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebarHeader } from "@/components/app-sidebar-header";
@@ -15,10 +16,12 @@ export default async function ProtectedLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <main className="w-full p-5 ">
-        <AppSidebarHeader />
-        <br />
-        {children}
+      <main className="w-full">
+        <div className="p-2">
+          <AppSidebarHeader />
+        </div>
+        <Separator orientation="horizontal" className="h-4" />
+        <div className="p-2">{children}</div>
       </main>
     </SidebarProvider>
   );
