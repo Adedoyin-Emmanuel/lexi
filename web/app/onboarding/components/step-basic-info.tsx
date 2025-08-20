@@ -25,7 +25,10 @@ export function StepBasicInfo() {
       <div className="space-y-4">
         <div className="flex justify-center">
           <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center">
-            <Sparkles className="h-8 w-8 text-primary-foreground" />
+            <Sparkles
+              className="h-8 w-8 text-primary-foreground"
+              strokeWidth={1}
+            />
           </div>
         </div>
         <div>
@@ -41,14 +44,14 @@ export function StepBasicInfo() {
       <div className="space-y-6">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <User className="h-5 w-5 text-muted-foreground" />
+            <User className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} />
           </div>
           <Input
             type="text"
             placeholder="Enter your name"
             value={name}
             onChange={(e) => updateData({ name: e.target.value })}
-            className="pl-10 h-12 text-lg text-center font-medium border-2 focus:border-primary"
+            className="pl-10 h-12 text-lg text-center font-medium "
             autoFocus
           />
         </div>
@@ -56,7 +59,7 @@ export function StepBasicInfo() {
         <Button
           onClick={handleSubmit}
           disabled={!isFormValid}
-          className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+          className="w-full h-12 text-lg font-medium bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 cursor-pointer"
         >
           Continue
         </Button>
