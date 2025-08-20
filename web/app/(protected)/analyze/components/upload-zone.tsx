@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { useDropzone, FileRejection } from "react-dropzone";
 import { Upload, FileText, AlertCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -14,7 +15,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
   const [error, setError] = useState<string | null>(null);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles: any[]) => {
+    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       setError(null);
 
       if (rejectedFiles.length > 0) {
@@ -55,77 +56,57 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-2xl">
       <Card
-        className={`border-2 border-dashed transition-colors ${
+        className={`border-2 border-dashed transition-all duration-200 ${
           isDragActive
-            ? "border-blue-500 bg-blue-50"
-            : "border-slate-300 bg-white"
+            ? "border-primary bg-primary/5"
+            : "border-muted-foreground/25 bg-background"
         }`}
       >
-        <CardContent className="p-12">
+        <CardContent className="p-8 sm:p-12">
           <div {...getRootProps()} className="text-center cursor-pointer">
             <input {...getInputProps()} />
 
-            <div className="mb-6">
-              <div className="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+            <div className="flex flex-col items-center space-y-6">
+              <div className="w-16 h-16 border border-dashed border-gray-200 rounded-full flex items-center justify-center">
                 {isDragActive ? (
-                  <Upload className="w-8 h-8 text-blue-600" />
+                  <Upload className="w-8 h-8 text-primary" strokeWidth={1.5} />
                 ) : (
-                  <FileText className="w-8 h-8 text-slate-600" />
+                  <FileText
+                    className="w-8 h-8 text-muted-foreground"
+                    strokeWidth={1.5}
+                  />
                 )}
               </div>
 
-              <h2 className="text-2xl font-semibold text-slate-900 mb-2">
-                {isDragActive
-                  ? "Drop your contract here"
-                  : "Upload your contract"}
-              </h2>
+              <div className="space-y-1">
+                <h3 className="text-xl font-medium text-foreground capitalize">
+                  {isDragActive
+                    ? "Drop your contract here"
+                    : "Upload your contract"}
+                </h3>
 
-              <p className="text-slate-600 mb-6">
-                Drag and drop your contract file here, or click to browse
-              </p>
+                <p className="text-xs text-muted-foreground">
+                  Drag and drop or click to browse (pdf, docx, txt)
+                </p>
+              </div>
 
-              <Button variant="outline" className="mb-4">
+              <Button
+                variant="outline"
+                className="w-4/6 hover:bg-primary cursor-pointer border border-gray-300"
+              >
                 Choose File
               </Button>
-
-              <div className="text-sm text-slate-500">
-                Supports PDF, Word documents, and text files
-              </div>
             </div>
           </div>
 
           {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-500" />
-              <span className="text-red-700">{error}</span>
+            <div className="mt-4 p-1 bg-destructive/10 border border-destructive/20 rounded-md flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
+              <span className="text-sm text-destructive">{error}</span>
             </div>
           )}
-
-          <div className="mt-8 pt-8 border-t border-slate-200">
-            <h3 className="text-lg font-medium text-slate-900 mb-4">
-              What Lexi will analyze:
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                Key contract clauses and terms
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                Potential risks and red flags
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                Your obligations and deadlines
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                Negotiation suggestions
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

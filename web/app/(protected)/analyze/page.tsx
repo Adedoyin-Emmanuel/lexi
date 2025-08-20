@@ -1,38 +1,37 @@
 "use client";
 
 import React, { useState } from "react";
-import { AnalyzeToolbar } from "./components/analyze-toolbar";
-import { DocumentPreview } from "./components/document-preview";
-import { InsightsPanel } from "./components/insights-panel";
-import { UploadZone } from "./components/upload-zone";
 import {
-  ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
+  ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { UploadZone } from "./components/upload-zone";
+import { InsightsPanel } from "./components/insights-panel";
+import { AnalyzeToolbar } from "./components/analyze-toolbar";
+import { DocumentPreview } from "./components/document-preview";
 
 export interface ContractDocument {
   id: string;
   name: string;
   content: string;
-  type: "pdf" | "text";
   uploadedAt: Date;
+  type: "pdf" | "text";
 }
 
 export interface AnalysisResult {
-  summary: string;
-  keyClauses: Clause[];
   risks: Risk[];
+  summary: string;
+  confidence: number;
+  keyClauses: Clause[];
   obligations: Obligation[];
   negotiationSuggestions: NegotiationSuggestion[];
-  confidence: number;
 }
 
 export interface Clause {
   id: string;
   title: string;
   content: string;
-  importance: "high" | "medium" | "low";
   category:
     | "termination"
     | "liability"
@@ -40,51 +39,52 @@ export interface Clause {
     | "payment"
     | "confidentiality"
     | "other";
-  position: { start: number; end: number };
   confidence: number;
+  importance: "high" | "medium" | "low";
+  position: { start: number; end: number };
 }
 
 export interface Risk {
   id: string;
   title: string;
-  description: string;
-  severity: "low" | "medium" | "high";
   clauseId: string;
+  description: string;
   confidence: number;
+  severity: "low" | "medium" | "high";
 }
 
 export interface Obligation {
   id: string;
   title: string;
-  description: string;
   deadline?: Date;
   clauseId: string;
   confidence: number;
+  description: string;
 }
 
 export interface NegotiationSuggestion {
   id: string;
   title: string;
+  clauseId: string;
+  reasoning: string;
+  confidence: number;
   currentText: string;
   suggestedText: string;
-  reasoning: string;
-  clauseId: string;
-  confidence: number;
 }
 
 const Analyze = () => {
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [document, setDocument] = useState<ContractDocument | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedClauseId, setSelectedClauseId] = useState<string | null>(null);
 
   const handleDocumentUpload = async (file: File) => {
     const newDocument: ContractDocument = {
-      id: Date.now().toString(),
       name: file.name,
+      uploadedAt: new Date(),
+      id: Date.now().toString(),
       content: await file.text(),
       type: file.type === "application/pdf" ? "pdf" : "text",
-      uploadedAt: new Date(),
     };
 
     setDocument(newDocument);
@@ -209,30 +209,28 @@ const Analyze = () => {
 
   if (!document) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col overflow-hidden">
-        <div className="flex-1 flex items-center justify-start p-8">
-          <div className="w-full max-w-4xl">
-            <UploadZone onUpload={handleDocumentUpload} />
-          </div>
+      <div className="w-full flex flex-col overflow-hidden">
+        <div className="w-full max-w-4xl">
+          <UploadZone onUpload={handleDocumentUpload} />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col overflow-hidden">
+    <div className="w-full flex flex-col overflow-hidden">
       <AnalyzeToolbar
         document={document}
-        onReanalyze={handleReanalyze}
-        onExport={handleExport}
         onShare={handleShare}
+        onExport={handleExport}
         isAnalyzing={isAnalyzing}
+        onReanalyze={handleReanalyze}
       />
 
-      <div className="flex-1 h-[calc(100vh-80px)] overflow-hidden">
+      <div className="w-full overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={60} minSize={30}>
-            <div className="h-full p-6 overflow-hidden">
+            <div className="h-full overflow-hidden">
               <DocumentPreview
                 document={document}
                 selectedClauseId={selectedClauseId}
