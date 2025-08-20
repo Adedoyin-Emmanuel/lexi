@@ -51,7 +51,7 @@ export const ContractCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
     >
-      <Card className="h-36 relative" id={id}>
+      <Card className="h-24 relative" id={id}>
         <CardContent className="p-4 h-full flex items-center justify-between">
           <div className="flex-1 min-w-0 pr-3">
             <div className="flex items-center gap-2 mb-1">
@@ -66,26 +66,32 @@ export const ContractCard = ({
             </div>
             <p className="text-xs text-muted-foreground">{uploadedAt}</p>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center mt-3">
             <div className="ml-auto mr-2">
               <CircularConfidence score={confidenceScore} />
             </div>
           </div>
         </CardContent>
+
         <div className="absolute top-2 right-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                aria-label="More options"
+                className="h-6 w-6 p-0 hover:bg-white cursor-pointer hover:text-black"
+              >
                 <MoreVertical className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Eye className="mr-2 h-4 w-4" />
+              <DropdownMenuItem className="cursor-pointer">
+                <Eye className="mr-2 h-4 w-4 hover:text-white" />
                 View
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Download className="mr-2 h-4 w-4" />
+              <DropdownMenuItem className="cursor-pointer">
+                <Download className="mr-2 h-4 w-4 hover:text-white" />
                 Download
               </DropdownMenuItem>
             </DropdownMenuContent>
