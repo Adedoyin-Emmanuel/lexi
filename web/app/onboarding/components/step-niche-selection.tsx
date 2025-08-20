@@ -1,32 +1,33 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useOnboarding } from "./onboarding-context";
 import { ArrowLeft, ArrowRight, Target } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useOnboarding } from "./onboarding-context";
+
 const nicheOptions = [
-  "Technology",
-  "Design",
-  "Marketing",
-  "Writing",
-  "Photography",
-  "Video Production",
+  "Art",
   "Music",
+  "Design",
   "Fitness",
-  "Education",
-  "Consulting",
-  "E-commerce",
-  "Healthcare",
+  "Writing",
   "Finance",
-  "Real Estate",
-  "Food & Beverage",
   "Travel",
   "Fashion",
   "Gaming",
   "Sports",
-  "Art",
+  "Technology",
+  "Marketing",
+  "Education",
+  "Consulting",
+  "E-commerce",
+  "Healthcare",
+  "Photography",
+  "Real Estate",
+  "Food & Beverage",
+  "Video Production",
 ];
 
 export function StepNicheSelection() {
@@ -49,7 +50,6 @@ export function StepNicheSelection() {
 
   return (
     <div className="w-full max-w-4xl mx-auto text-center space-y-8">
-      {/* Header */}
       <div className="space-y-4">
         <div className="flex justify-center">
           <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center">
@@ -66,7 +66,6 @@ export function StepNicheSelection() {
         </div>
       </div>
 
-      {/* Niche Selection */}
       <div className="space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-3xl mx-auto">
           {nicheOptions.map((option) => (
@@ -86,7 +85,6 @@ export function StepNicheSelection() {
           ))}
         </div>
 
-        {/* Selected Niches Display */}
         {niche.length > 0 && (
           <div className="space-y-3 max-w-2xl mx-auto">
             <p className="text-sm font-medium text-muted-foreground">
@@ -108,7 +106,6 @@ export function StepNicheSelection() {
         )}
       </div>
 
-      {/* Navigation */}
       <div className="flex justify-between items-center pt-8">
         <Button
           variant="ghost"

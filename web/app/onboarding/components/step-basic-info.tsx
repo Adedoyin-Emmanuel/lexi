@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
+import { Sparkles, User } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useOnboarding } from "./onboarding-context";
-import { Sparkles, User } from "lucide-react";
 
 export function StepBasicInfo() {
   const { state, updateData, nextStep } = useOnboarding();
@@ -21,7 +22,6 @@ export function StepBasicInfo() {
 
   return (
     <div className="w-full max-w-md mx-auto text-center space-y-8">
-      {/* Header */}
       <div className="space-y-4">
         <div className="flex justify-center">
           <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center">
@@ -38,7 +38,6 @@ export function StepBasicInfo() {
         </div>
       </div>
 
-      {/* Name Input */}
       <div className="space-y-6">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

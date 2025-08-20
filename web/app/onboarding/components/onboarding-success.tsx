@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { useOnboarding } from "./onboarding-context";
 
 export function OnboardingSuccess() {
@@ -10,9 +11,7 @@ export function OnboardingSuccess() {
   const { data } = state;
 
   const handleGoToDashboard = () => {
-    // Here you would typically redirect to the dashboard
     console.log("Redirecting to dashboard...");
-    // You could use Next.js router here: router.push('/dashboard')
   };
 
   const handleStartOver = () => {
@@ -22,14 +21,13 @@ export function OnboardingSuccess() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md mx-auto text-center space-y-8">
-        {/* Success Icon */}
         <div className="space-y-4">
           <div className="mx-auto w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-lg">
             <CheckCircle className="h-10 w-10 text-white" />
           </div>
           <div className="space-y-2">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              You're all set!
+              You&apos;re all set!
             </h1>
             <p className="text-muted-foreground text-lg">
               Welcome to the community, {data.name}! 🎉
@@ -37,7 +35,6 @@ export function OnboardingSuccess() {
           </div>
         </div>
 
-        {/* Profile Summary */}
         <div className="bg-muted/50 rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 justify-center">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -55,7 +52,7 @@ export function OnboardingSuccess() {
             <div className="flex justify-between items-start">
               <span className="text-muted-foreground">Specialties:</span>
               <div className="text-right">
-                {data.niche.map((niche, index) => (
+                {data.niche.map((niche) => (
                   <div key={niche} className="text-sm font-medium">
                     {niche}
                   </div>
@@ -65,7 +62,6 @@ export function OnboardingSuccess() {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-3">
           <Button
             variant="outline"

@@ -1,13 +1,14 @@
 "use client";
 
+import { gsap } from "gsap";
 import React, { useEffect, useRef } from "react";
-import { OnboardingProvider, useOnboarding } from "./onboarding-context";
-import { OnboardingProgressBar } from "./progress-bar";
+
 import { StepBasicInfo } from "./step-basic-info";
+import { OnboardingProgressBar } from "./progress-bar";
+import { OnboardingSuccess } from "./onboarding-success";
 import { StepRoleSelection } from "./step-role-selection";
 import { StepNicheSelection } from "./step-niche-selection";
-import { OnboardingSuccess } from "./onboarding-success";
-import { gsap } from "gsap";
+import { OnboardingProvider, useOnboarding } from "./onboarding-context";
 
 const stepComponents = [StepBasicInfo, StepRoleSelection, StepNicheSelection];
 
@@ -18,7 +19,6 @@ function OnboardingContent() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initialize step refs array
     if (stepRefs.current.length !== stepComponents.length) {
       stepRefs.current = new Array(stepComponents.length).fill(null);
     }
@@ -31,7 +31,6 @@ function OnboardingContent() {
 
     if (!currentStepElement || !container) return;
 
-    // Animate the current step in
     gsap.fromTo(
       currentStepElement,
       {
@@ -48,7 +47,6 @@ function OnboardingContent() {
       }
     );
 
-    // Animate progress bar
     gsap.to(".progress-bar", {
       scaleX: currentStep / stepComponents.length,
       duration: 0.6,
@@ -56,9 +54,6 @@ function OnboardingContent() {
     });
   }, [currentStep]);
 
-  const CurrentStepComponent = stepComponents[currentStep - 1];
-
-  // Show success screen if onboarding is complete
   if (isComplete) {
     return <OnboardingSuccess />;
   }
@@ -66,10 +61,8 @@ function OnboardingContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       <div className="container mx-auto px-4 py-4 md:py-8">
-        {/* Progress Bar */}
         <OnboardingProgressBar />
 
-        {/* Step Content */}
         <div
           ref={containerRef}
           className="flex justify-center items-start min-h-[60vh] py-8 md:py-12"
@@ -80,7 +73,9 @@ function OnboardingContent() {
               return (
                 <div
                   key={stepNumber}
-                  ref={(el) => (stepRefs.current[index] = el)}
+                  ref={(el) => {
+                    stepRefs.current[index] = el;
+                  }}
                   className={`${
                     stepNumber === currentStep ? "block" : "hidden"
                   }`}

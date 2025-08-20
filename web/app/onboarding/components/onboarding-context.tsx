@@ -3,14 +3,9 @@
 import React, { createContext, useContext, useReducer, ReactNode } from "react";
 
 export interface OnboardingData {
-  // Step 1: Name
   name: string;
-
-  // Step 2: Role selection
-  role: "freelancer" | "creator" | "";
-
-  // Step 3: Niche/industry
   niche: string[];
+  role: "freelancer" | "creator" | "";
 }
 
 interface OnboardingState {

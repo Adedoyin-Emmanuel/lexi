@@ -19,12 +19,10 @@ export function OnboardingProgressBar() {
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-6">
       <div className="space-y-4">
-        {/* Progress Bar */}
         <div className="relative">
           <Progress value={progressPercentage} className="h-2" />
         </div>
 
-        {/* Step Indicator */}
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
             Step {currentStep} of {steps.length}
