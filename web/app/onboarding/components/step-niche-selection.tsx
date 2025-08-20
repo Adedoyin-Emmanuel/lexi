@@ -5,29 +5,39 @@ import { ArrowLeft, ArrowRight, Target } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useOnboardingStore } from "@/app/store/onboarding";
 
 const nicheOptions = [
-  "Art",
-  "Design",
-  "Music",
-  "Fitness",
-  "Finance",
-  "Fashion",
-  "Travel",
-  "Gaming",
-  "Sports",
-  "Writing",
-  "Marketing",
-  "Education",
-  "Consulting",
-  "Photography",
+  "SEO",
+  "Coaching",
+  "Animation",
   "E-commerce",
-  "Technology",
-  "Healthcare",
-  "Real Estate",
-  "Food & Beverage",
+  "Podcasting",
+  "Logo Design",
+  "Illustration",
+  "UI/UX Design",
+  "Photography",
+  "Copywriting",
+  "Video Editing",
+  "Voice Acting",
+  "Blog Writing",
+  "Graphic Design",
+  "Brand Identity",
+  "Market Research",
+  "Content Writing",
   "Video Production",
+  "Email Marketing",
+  "Web Development",
+  "Game Development",
+  "Digital Marketing",
+  "Project Management",
+  "Business Consulting",
+  "AI & Machine Learning",
+  "Fullstack Development",
+  "Mobile App Development",
+  "Blockchain Development",
+  "Social Media Management",
 ];
 
 export function StepNicheSelection() {
@@ -69,25 +79,29 @@ export function StepNicheSelection() {
       </div>
 
       <div className="space-y-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3 max-w-3xl mx-auto">
-          {nicheOptions.map((option) => (
-            <Button
-              key={option}
-              variant={niche.includes(option) ? "default" : "outline"}
-              size="sm"
-              className={`h-auto py-3 md:py-4 px-3 md:px-4 text-xs md:text-sm font-medium transition-all duration-200 ${
-                niche.includes(option)
-                  ? "bg-primary text-primary-foreground shadow-lg scale-105"
-                  : niche.length >= 5 && !niche.includes(option)
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:border-primary/50 hover:bg-muted/50 hover:text-black cursor-pointer"
-              }`}
-              onClick={() => handleNicheToggle(option)}
-              disabled={niche.length >= 5 && !niche.includes(option)}
-            >
-              {option}
-            </Button>
-          ))}
+        <div className="max-w-3xl mx-auto">
+          <ScrollArea className="h-[400px] w-full rounded-lg border border-border p-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
+              {nicheOptions.map((option) => (
+                <Button
+                  key={option}
+                  variant={niche.includes(option) ? "default" : "outline"}
+                  size="sm"
+                  className={`h-auto py-3 md:py-4 px-3 md:px-4 text-xs md:text-sm font-medium transition-all duration-200 ${
+                    niche.includes(option)
+                      ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                      : niche.length >= 5 && !niche.includes(option)
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:border-primary/50 hover:bg-muted/50 hover:text-black cursor-pointer"
+                  }`}
+                  onClick={() => handleNicheToggle(option)}
+                  disabled={niche.length >= 5 && !niche.includes(option)}
+                >
+                  {option}
+                </Button>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
 
         {niche.length > 0 && (
