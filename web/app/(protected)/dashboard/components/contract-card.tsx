@@ -51,46 +51,46 @@ export const ContractCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
     >
-      <Card className="h-full" id={id}>
-        <CardContent className="p-4">
-          <div className="flex items-start justify-between">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="font-semibold text-sm truncate">{name}</h3>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                    status
-                  )}`}
-                >
-                  {status}
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground">{uploadedAt}</p>
+      <Card className="h-36 relative" id={id}>
+        <CardContent className="p-4 h-full flex items-center justify-between">
+          <div className="flex-1 min-w-0 pr-3">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-sm truncate">{name}</h3>
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                  status
+                )}`}
+              >
+                {status}
+              </span>
             </div>
-
-            <div className="flex items-center gap-2">
+            <p className="text-xs text-muted-foreground">{uploadedAt}</p>
+          </div>
+          <div className="flex items-center">
+            <div className="ml-auto mr-2">
               <CircularConfidence score={confidenceScore} />
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Download className="mr-2 h-4 w-4" />
-                    Download
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
         </CardContent>
+        <div className="absolute top-2 right-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                <MoreVertical className="h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <Eye className="mr-2 h-4 w-4" />
+                View
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </Card>
     </motion.div>
   );

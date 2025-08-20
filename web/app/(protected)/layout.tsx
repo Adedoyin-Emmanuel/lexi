@@ -17,11 +17,11 @@ export default async function ProtectedLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <main className="w-full">
-        <div className="p-2">
+        <div className="p-2 px-4">
           <AppSidebarHeader />
         </div>
         <Separator orientation="horizontal" className="h-4" />
-        <div className="p-2">{children}</div>
+        <div className="p-2 px-4">{children}</div>
       </main>
     </SidebarProvider>
   );
