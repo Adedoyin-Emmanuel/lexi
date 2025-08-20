@@ -1,7 +1,23 @@
-import React from "react";
+import { cookies } from "next/headers";
 
-const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div>{children}</div>;
-};
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-export default ProtectedLayout;
+export default async function ProtectedLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
+  return (
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <AppSidebar />
+      <main>
+        <SidebarTrigger />
+        {children}
+      </main>
+    </SidebarProvider>
+  );
+}
