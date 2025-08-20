@@ -33,7 +33,7 @@ export function StepRoleSelection() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg mx-auto">
         <div
-          className={`relative p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer group ${
+          className={`relative p-8 rounded-2xl border border-neutral-300 transition-all duration-300 cursor-pointer group ${
             role === "freelancer"
               ? "border-primary bg-primary/5 shadow-lg"
               : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -45,10 +45,10 @@ export function StepRoleSelection() {
               className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center transition-all ${
                 role === "freelancer"
                   ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground group-hover:bg-primary/10"
+                  : "bg-neutral-50 border border-neutral-200 text-muted-foreground group-hover:bg-primary/10"
               }`}
             >
-              <Briefcase className="h-8 w-8" />
+              <Briefcase className="h-8 w-8" strokeWidth={1} />
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2">Freelancer</h3>
@@ -60,7 +60,7 @@ export function StepRoleSelection() {
         </div>
 
         <div
-          className={`relative p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer group ${
+          className={`relative p-8 rounded-2xl border border-neutral-300 transition-all duration-300 cursor-pointer group ${
             role === "creator"
               ? "border-primary bg-primary/5 shadow-lg"
               : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -72,10 +72,10 @@ export function StepRoleSelection() {
               className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center transition-all ${
                 role === "creator"
                   ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground group-hover:bg-primary/10"
+                  : "bg-neutral-50 border border-neutral-200 text-muted-foreground group-hover:bg-primary/10"
               }`}
             >
-              <User className="h-8 w-8" />
+              <User className="h-8 w-8" strokeWidth={1} />
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2">Creator</h3>
@@ -91,7 +91,7 @@ export function StepRoleSelection() {
         <Button
           variant="ghost"
           onClick={prevStep}
-          className="flex items-center gap-2 hover:bg-muted"
+          className="flex items-center gap-2 hover:bg-muted hover:text-black cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -100,7 +100,7 @@ export function StepRoleSelection() {
         <Button
           onClick={handleContinue}
           disabled={!role}
-          className="flex items-center gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+          className="flex items-center gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 cursor-pointer"
         >
           Continue
           <ArrowRight className="h-4 w-4" />
