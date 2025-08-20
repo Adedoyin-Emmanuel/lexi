@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function ProtectedLayout({
   children,
@@ -15,7 +15,7 @@ export default async function ProtectedLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <main>
-        <SidebarTrigger />
+        {/* <SidebarTrigger /> */}
         {children}
       </main>
     </SidebarProvider>
