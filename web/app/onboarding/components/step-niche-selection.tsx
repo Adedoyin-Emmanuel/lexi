@@ -3,8 +3,8 @@
 import React from "react";
 import { ArrowLeft, ArrowRight, Target } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useOnboardingStore } from "@/app/store/onboarding";
 
 const nicheOptions = [
@@ -37,7 +37,9 @@ export function StepNicheSelection() {
   const handleNicheToggle = (selectedNiche: string) => {
     const updatedNiche = niche.includes(selectedNiche)
       ? niche.filter((n) => n !== selectedNiche)
-      : [...niche, selectedNiche];
+      : niche.length < 5
+      ? [...niche, selectedNiche]
+      : niche;
 
     updateData({ niche: updatedNiche });
   };
@@ -76,9 +78,12 @@ export function StepNicheSelection() {
               className={`h-auto py-4 px-4 text-sm font-medium transition-all duration-200 ${
                 niche.includes(option)
                   ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                  : niche.length >= 5 && !niche.includes(option)
+                  ? "opacity-50 cursor-not-allowed"
                   : "hover:border-primary/50 hover:bg-muted/50 hover:text-black cursor-pointer"
               }`}
               onClick={() => handleNicheToggle(option)}
+              disabled={niche.length >= 5 && !niche.includes(option)}
             >
               {option}
             </Button>
