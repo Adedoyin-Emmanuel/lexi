@@ -12,6 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CircularConfidence } from "./circular-confidence";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ContractCardProps {
   id: string;
@@ -54,22 +59,27 @@ export const ContractCard = ({
       <Card className="h-24 relative" id={id}>
         <CardContent className="p-4 h-full flex items-center justify-between">
           <div className="flex-1 min-w-0 pr-3">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold text-sm truncate">{name}</h3>
-              <span
-                className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                  status
-                )}`}
-              >
-                {status}
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">{uploadedAt}</p>
+            <h3 className="font-semibold text-sm truncate mb-1">{name}</h3>
+            <p className="text-xs text-muted-foreground mb-1">{uploadedAt}</p>
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                status
+              )}`}
+            >
+              {status}
+            </span>
           </div>
-          <div className="flex items-center mt-3">
-            <div className="ml-auto mr-2">
-              <CircularConfidence score={confidenceScore} />
-            </div>
+          <div className="flex items-center mt-4">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="cursor-help">
+                  <CircularConfidence score={confidenceScore} />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Contract confidence score</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </CardContent>
 
