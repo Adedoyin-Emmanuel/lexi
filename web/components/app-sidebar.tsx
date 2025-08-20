@@ -1,17 +1,17 @@
 import Link from "next/link";
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Calendar, Home, Inbox, Search, Settings, LogOut } from "lucide-react";
 
+import Logo from "./logo";
 import {
   Sidebar,
   SidebarMenu,
   SidebarGroup,
+  SidebarFooter,
   SidebarContent,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
-
-import Logo from "./logo";
 
 const items = [
   {
@@ -34,10 +34,18 @@ const items = [
     url: "#",
     icon: Search,
   },
+];
+
+const footerItems = [
   {
     title: "Settings",
     url: "#",
     icon: Settings,
+  },
+  {
+    title: "Logout",
+    url: "/auth/logout",
+    icon: LogOut,
   },
 ];
 
@@ -64,8 +72,27 @@ export const AppSidebar = () => {
           <br />
 
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-2">
               {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild >
+                    <a href={item.url}>
+                      <item.icon strokeWidth={1.5} />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {footerItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
@@ -78,7 +105,7 @@ export const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </SidebarContent>
+      </SidebarFooter>
     </Sidebar>
   );
 };
