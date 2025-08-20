@@ -66,12 +66,7 @@ const Header = () => {
               >
                 How it works
               </Link>
-              <Link
-                href="#pricing"
-                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
-              >
-                Pricing
-              </Link>
+
               <div className="pt-4">
                 <Button size="sm" className="w-full font-semibold">
                   Get Started
