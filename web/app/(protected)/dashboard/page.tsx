@@ -163,6 +163,7 @@ export default function Dashboard() {
       </div>
 
       <FloatingActionButton
+        className="block md:hidden"
         onClick={() => {
           console.log("Analyze new contract clicked");
         }}
