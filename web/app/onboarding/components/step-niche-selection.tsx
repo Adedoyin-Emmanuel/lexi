@@ -3,36 +3,36 @@
 import React from "react";
 import { ArrowLeft, ArrowRight, Target } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useOnboarding } from "./onboarding-context";
+import { Badge } from "@/components/ui/badge";
+import { useOnboardingStore } from "@/app/store/onboarding";
 
 const nicheOptions = [
   "Art",
-  "Music",
   "Design",
+  "Music",
   "Fitness",
-  "Writing",
   "Finance",
-  "Travel",
   "Fashion",
+  "Travel",
   "Gaming",
   "Sports",
-  "Technology",
+  "Writing",
   "Marketing",
   "Education",
   "Consulting",
-  "E-commerce",
-  "Healthcare",
   "Photography",
+  "E-commerce",
+  "Technology",
+  "Healthcare",
   "Real Estate",
   "Food & Beverage",
   "Video Production",
 ];
 
 export function StepNicheSelection() {
-  const { state, updateData, nextStep, prevStep } = useOnboarding();
-  const { niche } = state.data;
+  const { data, updateData, nextStep, prevStep } = useOnboardingStore();
+  const { niche } = data;
 
   const handleNicheToggle = (selectedNiche: string) => {
     const updatedNiche = niche.includes(selectedNiche)

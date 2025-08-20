@@ -4,11 +4,10 @@ import React from "react";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useOnboarding } from "./onboarding-context";
+import { useOnboardingStore } from "@/app/store/onboarding";
 
 export function OnboardingSuccess() {
-  const { state, reset } = useOnboarding();
-  const { data } = state;
+  const { data, reset } = useOnboardingStore();
 
   const handleGoToDashboard = () => {
     console.log("Redirecting to dashboard...");

@@ -8,13 +8,12 @@ import { OnboardingProgressBar } from "./progress-bar";
 import { OnboardingSuccess } from "./onboarding-success";
 import { StepRoleSelection } from "./step-role-selection";
 import { StepNicheSelection } from "./step-niche-selection";
-import { OnboardingProvider, useOnboarding } from "./onboarding-context";
+import { useOnboardingStore } from "@/app/store/onboarding";
 
 const stepComponents = [StepBasicInfo, StepRoleSelection, StepNicheSelection];
 
-function OnboardingContent() {
-  const { state } = useOnboarding();
-  const { currentStep, isComplete } = state;
+export function Onboarding() {
+  const { currentStep, isComplete } = useOnboardingStore();
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -88,13 +87,5 @@ function OnboardingContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export function Onboarding() {
-  return (
-    <OnboardingProvider>
-      <OnboardingContent />
-    </OnboardingProvider>
   );
 }

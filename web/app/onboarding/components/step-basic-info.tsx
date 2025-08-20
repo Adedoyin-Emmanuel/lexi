@@ -5,11 +5,11 @@ import { Sparkles, User } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useOnboarding } from "./onboarding-context";
+import { useOnboardingStore } from "@/app/store/onboarding";
 
 export function StepBasicInfo() {
-  const { state, updateData, nextStep } = useOnboarding();
-  const { name } = state.data;
+  const { data, updateData, nextStep } = useOnboardingStore();
+  const { name } = data;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

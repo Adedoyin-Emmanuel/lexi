@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Progress } from "@/components/ui/progress";
-import { useOnboarding } from "./onboarding-context";
+import { useOnboardingStore } from "@/app/store/onboarding";
 
 const steps = [
   { id: 1, title: "Name" },
@@ -11,8 +11,7 @@ const steps = [
 ];
 
 export function OnboardingProgressBar() {
-  const { state } = useOnboarding();
-  const { currentStep } = state;
+  const { currentStep } = useOnboardingStore();
 
   const progressPercentage = (currentStep / steps.length) * 100;
 
