@@ -137,14 +137,18 @@ const Hero = () => {
           <div className="text-center max-w-4xl mx-auto">
             <div className="mb-8 flex justify-center">
               <div className="relative">
-                <div className="px-6 py-3 rounded-full border border-primary/20 backdrop-blur-sm floating-icon">
+                <div className="px-6 py-2 md:py-3 rounded-full border border-primary/20 backdrop-blur-sm floating-icon">
                   <div className="flex items-center gap-2">
                     <Shield
-                      className="w-5 h-5 text-primary"
+                      className="hidden md:block w-5 h-5 text-primary"
                       strokeWidth={1.5}
                     />
-                    <span className="text-sm font-medium text-primary">
+                    <span className="hidden md:block text-sm font-medium text-primary">
                       AI-powered contract assistant for freelancers & creators
+                    </span>
+
+                    <span className="block md:hidden text-sm font-medium text-primary">
+                      AI contract assistant for freelancers & creators
                     </span>
                   </div>
                 </div>
