@@ -76,7 +76,7 @@ export function StepNicheSelection() {
               className={`h-auto py-4 px-4 text-sm font-medium transition-all duration-200 ${
                 niche.includes(option)
                   ? "bg-primary text-primary-foreground shadow-lg scale-105"
-                  : "hover:border-primary/50 hover:bg-muted/50"
+                  : "hover:border-primary/50 hover:bg-muted/50 hover:text-black cursor-pointer"
               }`}
               onClick={() => handleNicheToggle(option)}
             >
@@ -110,7 +110,7 @@ export function StepNicheSelection() {
         <Button
           variant="ghost"
           onClick={prevStep}
-          className="flex items-center gap-2 hover:bg-muted"
+          className="flex items-center gap-2 hover:bg-muted hover:text-black cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -119,7 +119,7 @@ export function StepNicheSelection() {
         <Button
           onClick={handleContinue}
           disabled={niche.length === 0}
-          className="flex items-center gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+          className="flex items-center gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 cursor-pointer"
         >
           Continue
           <ArrowRight className="h-4 w-4" />
