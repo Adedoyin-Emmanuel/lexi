@@ -15,16 +15,17 @@ export function OnboardingSuccess() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center relative overflow-hidden">
       <Confetti
         width={window.innerWidth}
         height={window.innerHeight}
         recycle={false}
         numberOfPieces={200}
+  
         colors={["#3b82f6", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b"]}
       />
 
-      <div className="w-full max-w-md mx-auto text-center space-y-6 md:space-y-8 relative z-10 px-4 md:px-0">
+      <div className="w-full max-w-md mx-auto text-center space-y-6 md:space-y-8 relative z-10 px-2 md:px-0">
         <div className="space-y-4">
           <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center shadow-sm">
             <PartyPopper className="h-10 w-10 text-white" strokeWidth={1.5} />
