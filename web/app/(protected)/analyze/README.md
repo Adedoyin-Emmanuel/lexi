@@ -5,6 +5,7 @@ The Analyze page is the core feature of Lexi, providing AI-powered contract anal
 ## Features
 
 ### 📄 Document Upload & Preview
+
 - **Drag & Drop Support**: Upload contracts via drag and drop or file browser
 - **Multiple Formats**: Supports PDF, Word documents, and text files
 - **Interactive Preview**: Side-by-side layout with document on left, insights on right
@@ -13,38 +14,45 @@ The Analyze page is the core feature of Lexi, providing AI-powered contract anal
 - **Search**: Search within the document content
 
 ### 🤖 AI Analysis Panel
+
 The insights panel is organized into 5 main sections:
 
 #### 1. Summary
+
 - Plain-language summary of the contract
 - AI confidence indicator
 - Key points and overview
 
 #### 2. Key Clauses
+
 - Ranked list of important contract clauses
 - Categories: Payment, Liability, IP, Termination, Confidentiality
 - Importance levels: High, Medium, Low
 - Interactive highlighting in document
 
 #### 3. Risks & Red Flags
+
 - Highlighted risky terms with severity indicators
 - Severity levels: Low, Medium, High
 - Detailed risk descriptions
 - Links to relevant contract sections
 
 #### 4. Obligations & Deadlines
+
 - Clear list of user obligations
 - Deadline tracking with visual indicators
 - Due date calculations
 - Priority-based organization
 
 #### 5. Negotiation Playbook
+
 - Suggested edits and redlines
 - Before/after text comparison
 - Reasoning for each suggestion
 - Copy-to-clipboard functionality
 
 ### 🎯 Interactive Features
+
 - **Cross-Highlighting**: Click any insight to highlight corresponding text in document
 - **Confidence Indicators**: Progress bars showing AI confidence levels
 - **Export Options**: PDF, Word, and Markdown export
@@ -75,6 +83,7 @@ analyze/
 ## Data Models
 
 ### ContractDocument
+
 ```typescript
 interface ContractDocument {
   id: string;
@@ -86,6 +95,7 @@ interface ContractDocument {
 ```
 
 ### AnalysisResult
+
 ```typescript
 interface AnalysisResult {
   summary: string;
@@ -100,17 +110,20 @@ interface AnalysisResult {
 ## Design Principles
 
 ### 🎨 Visual Design
+
 - **Primary Color**: #6366f1 (Indigo)
 - **Accent Color**: #f59e0b (Amber)
 - **Consistent Hierarchy**: Clear headings, expandable sections
 - **Professional UI**: Clean, modern interface using shadcn/ui components
 
 ### 📱 Responsive Design
+
 - **Desktop**: Side-by-side layout with document and insights
 - **Mobile**: Stacked layout with insights below document
 - **Adaptive**: Components adjust to screen size
 
 ### ♿ Accessibility
+
 - Keyboard navigation support
 - Screen reader compatibility
 - High contrast mode support

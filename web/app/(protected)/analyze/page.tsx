@@ -5,6 +5,11 @@ import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
 import { InsightsPanel } from "./components/insights-panel";
 import { UploadZone } from "./components/upload-zone";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 
 export interface ContractDocument {
   id: string;
@@ -28,7 +33,13 @@ export interface Clause {
   title: string;
   content: string;
   importance: "high" | "medium" | "low";
-  category: "termination" | "liability" | "ip" | "payment" | "confidentiality" | "other";
+  category:
+    | "termination"
+    | "liability"
+    | "ip"
+    | "payment"
+    | "confidentiality"
+    | "other";
   position: { start: number; end: number };
   confidence: number;
 }
@@ -68,7 +79,6 @@ const Analyze = () => {
   const [selectedClauseId, setSelectedClauseId] = useState<string | null>(null);
 
   const handleDocumentUpload = async (file: File) => {
-    // Simulate document processing
     const newDocument: ContractDocument = {
       id: Date.now().toString(),
       name: file.name,
@@ -76,19 +86,19 @@ const Analyze = () => {
       type: file.type === "application/pdf" ? "pdf" : "text",
       uploadedAt: new Date(),
     };
-    
+
     setDocument(newDocument);
     await analyzeDocument();
   };
 
   const analyzeDocument = async () => {
     setIsAnalyzing(true);
-    
-    // Simulate AI analysis
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     const mockAnalysis: AnalysisResult = {
-      summary: "This is a standard freelance contract with typical terms for content creation services. The contract includes standard payment terms, intellectual property clauses, and termination conditions.",
+      summary:
+        "This is a standard freelance contract with typical terms for content creation services. The contract includes standard payment terms, intellectual property clauses, and termination conditions.",
       keyClauses: [
         {
           id: "1",
@@ -97,7 +107,7 @@ const Analyze = () => {
           importance: "high",
           category: "payment",
           position: { start: 150, end: 200 },
-          confidence: 0.95
+          confidence: 0.95,
         },
         {
           id: "2",
@@ -106,17 +116,18 @@ const Analyze = () => {
           importance: "high",
           category: "ip",
           position: { start: 300, end: 350 },
-          confidence: 0.92
+          confidence: 0.92,
         },
         {
           id: "3",
           title: "Termination Clause",
-          content: "Either party may terminate this agreement with 30 days written notice",
+          content:
+            "Either party may terminate this agreement with 30 days written notice",
           importance: "medium",
           category: "termination",
           position: { start: 450, end: 500 },
-          confidence: 0.88
-        }
+          confidence: 0.88,
+        },
       ],
       risks: [
         {
@@ -125,16 +136,17 @@ const Analyze = () => {
           description: "60-day payment terms are longer than industry standard",
           severity: "medium",
           clauseId: "1",
-          confidence: 0.85
+          confidence: 0.85,
         },
         {
           id: "2",
           title: "IP Assignment",
-          description: "Complete IP transfer may limit future work opportunities",
+          description:
+            "Complete IP transfer may limit future work opportunities",
           severity: "high",
           clauseId: "2",
-          confidence: 0.90
-        }
+          confidence: 0.9,
+        },
       ],
       obligations: [
         {
@@ -143,8 +155,8 @@ const Analyze = () => {
           description: "Submit invoices within 5 days of project completion",
           deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
           clauseId: "1",
-          confidence: 0.87
-        }
+          confidence: 0.87,
+        },
       ],
       negotiationSuggestions: [
         {
@@ -152,23 +164,27 @@ const Analyze = () => {
           title: "Reduce Payment Window",
           currentText: "Payment shall be made within 60 days",
           suggestedText: "Payment shall be made within 30 days",
-          reasoning: "Industry standard is 30 days, faster payment improves cash flow",
+          reasoning:
+            "Industry standard is 30 days, faster payment improves cash flow",
           clauseId: "1",
-          confidence: 0.82
+          confidence: 0.82,
         },
         {
           id: "2",
           title: "Modify IP Terms",
-          currentText: "All work product shall remain the property of the client",
-          suggestedText: "Client receives license to use work product, creator retains portfolio rights",
-          reasoning: "Allows you to showcase work while giving client usage rights",
+          currentText:
+            "All work product shall remain the property of the client",
+          suggestedText:
+            "Client receives license to use work product, creator retains portfolio rights",
+          reasoning:
+            "Allows you to showcase work while giving client usage rights",
           clauseId: "2",
-          confidence: 0.78
-        }
+          confidence: 0.78,
+        },
       ],
-      confidence: 0.89
+      confidence: 0.89,
     };
-    
+
     setAnalysis(mockAnalysis);
     setIsAnalyzing(false);
   };
@@ -184,25 +200,27 @@ const Analyze = () => {
   };
 
   const handleExport = (format: "pdf" | "word" | "markdown") => {
-    // Implement export functionality
     console.log(`Exporting as ${format}`);
   };
 
   const handleShare = () => {
-    // Implement share functionality
     console.log("Sharing analysis");
   };
 
   if (!document) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <UploadZone onUpload={handleDocumentUpload} />
+      <div className="min-h-screen bg-gray-50 flex flex-col overflow-hidden">
+        <div className="flex-1 flex items-center justify-start p-8">
+          <div className="w-full max-w-4xl">
+            <UploadZone onUpload={handleDocumentUpload} />
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col overflow-hidden">
       <AnalyzeToolbar
         document={document}
         onReanalyze={handleReanalyze}
@@ -210,24 +228,30 @@ const Analyze = () => {
         onShare={handleShare}
         isAnalyzing={isAnalyzing}
       />
-      
-      <div className="flex h-[calc(100vh-80px)]">
-        <div className="flex-1 p-6">
-          <DocumentPreview
-            document={document}
-            selectedClauseId={selectedClauseId}
-            onClauseSelect={handleClauseSelect}
-          />
-        </div>
-        
-        <div className="w-96 border-l border-gray-200 bg-white">
-          <InsightsPanel
-            analysis={analysis}
-            isAnalyzing={isAnalyzing}
-            selectedClauseId={selectedClauseId}
-            onClauseSelect={handleClauseSelect}
-          />
-        </div>
+
+      <div className="flex-1 h-[calc(100vh-80px)] overflow-hidden">
+        <ResizablePanelGroup direction="horizontal" className="h-full">
+          <ResizablePanel defaultSize={60} minSize={30}>
+            <div className="h-full p-6 overflow-hidden">
+              <DocumentPreview
+                document={document}
+                selectedClauseId={selectedClauseId}
+                onClauseSelect={handleClauseSelect}
+              />
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          <ResizablePanel defaultSize={40} minSize={25}>
+            <InsightsPanel
+              analysis={analysis}
+              isAnalyzing={isAnalyzing}
+              selectedClauseId={selectedClauseId}
+              onClauseSelect={handleClauseSelect}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );

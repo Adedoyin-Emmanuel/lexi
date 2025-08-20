@@ -1,12 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
-import { FileText, Eye, EyeOff, Search, ZoomIn, ZoomOut } from "lucide-react";
+import {
+  FileText,
+  Eye,
+  EyeOff,
+  Search,
+  ZoomIn,
+  ZoomOut,
+  Download,
+  Share2,
+  File,
+  Image,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ContractDocument, Clause } from "../page";
 
 interface DocumentPreviewProps {
@@ -18,14 +34,13 @@ interface DocumentPreviewProps {
 export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   document,
   selectedClauseId,
-  onClauseSelect
+  onClauseSelect,
 }) => {
-  const [viewMode, setViewMode] = useState<"text" | "pdf">("text");
+  const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
   const [zoom, setZoom] = useState(100);
   const [searchTerm, setSearchTerm] = useState("");
   const [showHighlights, setShowHighlights] = useState(true);
 
-  // Mock clauses for highlighting demonstration
   const mockClauses: Clause[] = [
     {
       id: "1",
@@ -34,7 +49,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
       importance: "high",
       category: "payment",
       position: { start: 150, end: 200 },
-      confidence: 0.95
+      confidence: 0.95,
     },
     {
       id: "2",
@@ -43,17 +58,18 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
       importance: "high",
       category: "ip",
       position: { start: 300, end: 350 },
-      confidence: 0.92
+      confidence: 0.92,
     },
     {
       id: "3",
       title: "Termination Clause",
-      content: "Either party may terminate this agreement with 30 days written notice",
+      content:
+        "Either party may terminate this agreement with 30 days written notice",
       importance: "medium",
       category: "termination",
       position: { start: 450, end: 500 },
-      confidence: 0.88
-    }
+      confidence: 0.88,
+    },
   ];
 
   const highlightText = (text: string) => {
@@ -62,11 +78,14 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     let highlightedText = text;
     mockClauses.forEach((clause) => {
       const isSelected = selectedClauseId === clause.id;
-      const highlightClass = isSelected 
-        ? "bg-indigo-200 border-b-2 border-indigo-500" 
+      const highlightClass = isSelected
+        ? "bg-blue-200 border-b-2 border-blue-500"
         : "bg-yellow-100 hover:bg-yellow-200 cursor-pointer";
-      
-      const regex = new RegExp(`(${clause.content.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+
+      const regex = new RegExp(
+        `(${clause.content.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+        "gi"
+      );
       highlightedText = highlightedText.replace(regex, (match) => {
         return `<span class="${highlightClass} px-1 rounded" data-clause-id="${clause.id}">${match}</span>`;
       });
@@ -82,72 +101,259 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     }
   };
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 10, 200));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 10, 50));
+  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 10, 200));
+  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 10, 50));
+
+  const formatDocumentContent = (content: string) => {
+    if (!content) return getMockContractText();
+
+    return content
+      .replace(/\n/g, "<br>")
+      .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+      .replace(/\s{2,}/g, (match) => "&nbsp;".repeat(match.length));
+  };
+
+  const renderPreviewMode = () => (
+    <div className="h-full flex flex-col">
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-lg shadow-sm border p-8 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <File className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  {document.name}
+                </h3>
+                <p className="text-sm text-slate-500">
+                  Uploaded {document.uploadedAt.toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-slate-50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-slate-700">
+                      Document Type
+                    </span>
+                  </div>
+                  <p className="text-lg font-semibold text-slate-900">
+                    {document.type.toUpperCase()}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-slate-700">
+                      Analysis Status
+                    </span>
+                  </div>
+                  <p className="text-lg font-semibold text-green-600">
+                    Complete
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-slate-700">
+                      Key Findings
+                    </span>
+                  </div>
+                  <p className="text-lg font-semibold text-slate-900">
+                    3 Clauses
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                <h4 className="text-lg font-semibold text-slate-900 mb-3">
+                  Document Overview
+                </h4>
+                <div className="prose prose-sm max-w-none text-slate-700">
+                  <p>
+                    This contract has been analyzed and contains key clauses
+                    related to payment terms, intellectual property, and
+                    termination conditions. The AI has identified potential
+                    risks and provided negotiation suggestions to help you
+                    understand and improve the terms.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderOriginalMode = () => (
+    <div className="h-full overflow-auto">
+      <div
+        className="prose max-w-none p-6 bg-white rounded-lg border"
+        style={{ fontSize: `${zoom}%` }}
+      >
+        <div
+          className="whitespace-pre-wrap break-words"
+          dangerouslySetInnerHTML={{
+            __html: highlightText(formatDocumentContent(document.content)),
+          }}
+          onClick={handleTextClick}
+        />
+      </div>
+    </div>
+  );
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-4">
+    <Card className="h-full flex flex-col overflow-hidden">
+      <CardHeader className="pb-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
             Document Preview
           </CardTitle>
-          
+
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode("text")}
-                className={viewMode === "text" ? "bg-indigo-100 text-indigo-700" : ""}
-              >
-                <Eye className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode("pdf")}
-                className={viewMode === "pdf" ? "bg-indigo-100 text-indigo-700" : ""}
-              >
-                <FileText className="w-4 h-4" />
-              </Button>
-            </div>
-            
-            <div className="flex items-center gap-1">
-              <Button variant="ghost" size="sm" onClick={handleZoomOut}>
-                <ZoomOut className="w-4 h-4" />
-              </Button>
-              <Badge variant="outline" className="min-w-[60px] justify-center">
-                {zoom}%
-              </Badge>
-              <Button variant="ghost" size="sm" onClick={handleZoomIn}>
-                <ZoomIn className="w-4 h-4" />
-              </Button>
-            </div>
-            
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setShowHighlights(!showHighlights)}
+                    onClick={() => setViewMode("preview")}
+                    className={
+                      viewMode === "preview" ? "bg-blue-100 text-blue-700" : ""
+                    }
                   >
-                    {showHighlights ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    <Image className="w-4 h-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {showHighlights ? "Hide highlights" : "Show highlights"}
+                  <p>Preview mode</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setViewMode("original")}
+                    className={
+                      viewMode === "original" ? "bg-blue-100 text-blue-700" : ""
+                    }
+                  >
+                    <FileText className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Original document</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {viewMode === "original" && (
+              <>
+                <div className="flex items-center gap-1">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleZoomOut}
+                        >
+                          <ZoomOut className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Zoom out</p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Badge
+                      variant="outline"
+                      className="min-w-[60px] justify-center"
+                    >
+                      {zoom}%
+                    </Badge>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleZoomIn}
+                        >
+                          <ZoomIn className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Zoom in</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowHighlights(!showHighlights)}
+                      >
+                        {showHighlights ? (
+                          <Eye className="w-4 h-4" />
+                        ) : (
+                          <EyeOff className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {showHighlights ? "Hide highlights" : "Show highlights"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </>
+            )}
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Download className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Download document</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Share2 className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Share document</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search in document..."
               value={searchTerm}
@@ -158,35 +364,13 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 overflow-hidden">
-        <div 
-          className="h-full overflow-auto bg-white border rounded-lg p-6"
-          style={{ fontSize: `${zoom}%` }}
-        >
-          {viewMode === "text" ? (
-            <div 
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{ 
-                __html: highlightText(document.content || getMockContractText()) 
-              }}
-              onClick={handleTextClick}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              <div className="text-center">
-                <FileText className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                <p>PDF preview would be displayed here</p>
-                <p className="text-sm">Currently showing text mode</p>
-              </div>
-            </div>
-          )}
-        </div>
+      <CardContent className="flex-1 overflow-hidden p-0">
+        {viewMode === "preview" ? renderPreviewMode() : renderOriginalMode()}
       </CardContent>
     </Card>
   );
 };
 
-// Mock contract text for demonstration
 const getMockContractText = () => `
 FREELANCE CONTRACT AGREEMENT
 
