@@ -69,7 +69,7 @@ export const CircularConfidence = ({
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-semibold">{score}%</span>
+        <span className="text-[11px] font-semibold">{score}%</span>
       </div>
     </div>
   );

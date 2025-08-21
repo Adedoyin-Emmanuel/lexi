@@ -3,13 +3,7 @@
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  AnalysisResult,
-  Clause,
-  Risk,
-  Obligation,
-  NegotiationSuggestion,
-} from "../page";
+import { AnalysisResult } from "../page";
 import { SummaryCard } from "./summary-card";
 import { ClauseCard } from "./clause-card";
 import { RiskCard } from "./risk-card";
@@ -91,6 +85,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
             <SummaryCard
               summary={analysis.summary}
               confidence={analysis.confidence}
+              stats={analysis.stats}
             />
           </TabsContent>
 

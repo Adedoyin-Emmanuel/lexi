@@ -19,6 +19,16 @@ export interface ContractDocument {
   type: "pdf" | "text";
 }
 
+export interface ContractStats {
+  contractType: string;
+  partiesInvolved: number;
+  jurisdiction: string;
+  duration: string;
+  effectiveDate: string;
+  hasTerminationClause: boolean;
+  riskLevel: "low" | "medium" | "high";
+}
+
 export interface AnalysisResult {
   risks: Risk[];
   summary: string;
@@ -26,6 +36,7 @@ export interface AnalysisResult {
   keyClauses: Clause[];
   obligations: Obligation[];
   negotiationSuggestions: NegotiationSuggestion[];
+  stats: ContractStats;
 }
 
 export interface Clause {
@@ -182,6 +193,15 @@ const Analyze = () => {
           confidence: 0.78,
         },
       ],
+      stats: {
+        contractType: "Service Agreement",
+        partiesInvolved: 2,
+        jurisdiction: "California, USA",
+        duration: "12 months",
+        effectiveDate: "2024-01-15",
+        hasTerminationClause: true,
+        riskLevel: "medium",
+      },
       confidence: 0.89,
     };
 
@@ -201,10 +221,6 @@ const Analyze = () => {
 
   const handleExport = (format: "pdf" | "word" | "markdown") => {
     console.log(`Exporting as ${format}`);
-  };
-
-  const handleShare = () => {
-    console.log("Sharing analysis");
   };
 
   if (!document) {
@@ -228,7 +244,7 @@ const Analyze = () => {
 
       <div className="w-full overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
-          <ResizablePanel defaultSize={60} minSize={30}>
+          <ResizablePanel defaultSize={40} minSize={30}>
             <div className="h-full overflow-hidden">
               <DocumentPreview
                 document={document}
@@ -240,7 +256,7 @@ const Analyze = () => {
 
           <ResizableHandle withHandle />
 
-          <ResizablePanel defaultSize={40} minSize={25}>
+          <ResizablePanel defaultSize={60} minSize={25}>
             <InsightsPanel
               analysis={analysis}
               isAnalyzing={isAnalyzing}
