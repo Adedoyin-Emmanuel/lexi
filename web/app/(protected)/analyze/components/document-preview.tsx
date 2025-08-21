@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ContractDocument, Clause } from "../page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DocumentPreviewProps {
   document: ContractDocument;
@@ -26,6 +27,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
 }) => {
   const [showHighlights, setShowHighlights] = useState(true);
   const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
+  const isMobile = useIsMobile();
 
   const mockClauses: Clause[] = useMemo(
     () => [
@@ -82,13 +84,15 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
         ? "bg-blue-200 border-b-2 border-blue-500"
         : "bg-yellow-100 hover:bg-yellow-200 cursor-pointer";
 
-      const regex = new RegExp(
-        `(${clause.content.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
-        "gi"
-      );
-      highlightedText = highlightedText.replace(regex, (match) => {
-        return `<span class="${highlightClass} px-1 rounded" data-clause-id="${clause.id}">${match}</span>`;
-      });
+      // Use a more robust approach to find and highlight text
+      const clauseText = clause.content.trim();
+      if (highlightedText.includes(clauseText)) {
+        const escapedText = clauseText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`(${escapedText})`, "gi");
+        highlightedText = highlightedText.replace(regex, (match) => {
+          return `<span class="${highlightClass} px-1 rounded" data-clause-id="${clause.id}">${match}</span>`;
+        });
+      }
     });
 
     return highlightedText;
@@ -119,20 +123,29 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   }, []);
 
   const renderPreviewMode = () => (
-    <div className="h-full overflow-auto p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h1 className="text-2xl font-bold mb-6 text-center">
+    <div className={`h-full overflow-auto ${isMobile ? "p-3" : "p-6"}`}>
+      <div className={`${isMobile ? "w-full" : "max-w-4xl mx-auto"}`}>
+        <div
+          className={`bg-white rounded-lg shadow-sm ${
+            isMobile ? "p-4" : "p-6"
+          }`}
+        >
+          <h1
+            className={`font-bold mb-6 text-center text-gray-900 ${
+              isMobile ? "text-xl" : "text-2xl"
+            }`}
+          >
             Plain English Contract
           </h1>
-          <div className="prose max-w-none">
-            <div className="text-gray-700 leading-relaxed space-y-4">
-              {plainEnglishContent.split("\n\n").map((paragraph, index) => (
-                <p key={index} className="text-base leading-7">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+          <div className="text-gray-700 leading-relaxed space-y-4">
+            {plainEnglishContent.split("\n\n").map((paragraph, index) => (
+              <p
+                key={index}
+                className={`leading-7 ${isMobile ? "text-sm" : "text-base"}`}
+              >
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
       </div>
@@ -140,11 +153,17 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   );
 
   const renderOriginalMode = () => (
-    <div className="h-full overflow-auto p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div className={`h-full overflow-auto ${isMobile ? "p-3" : "p-6"}`}>
+      <div className={`${isMobile ? "w-full" : "max-w-4xl mx-auto"}`}>
+        <div
+          className={`bg-white rounded-lg shadow-sm border border-gray-200 ${
+            isMobile ? "p-4" : "p-6"
+          }`}
+        >
           <div
-            className="prose max-w-none"
+            className={`text-gray-900 leading-relaxed whitespace-pre-wrap break-words ${
+              isMobile ? "text-sm" : ""
+            }`}
             dangerouslySetInnerHTML={{
               __html: highlightedText.replace(/\n/g, "<br>"),
             }}
@@ -157,22 +176,29 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
 
   return (
     <Card className="h-full flex flex-col overflow-hidden">
-      <CardHeader className="pb-4 flex-shrink-0 border-b">
+      <CardHeader
+        className={`pb-4 flex-shrink-0 border-b ${isMobile ? "px-3 py-3" : ""}`}
+      >
         <div className="flex items-center justify-between">
-          <CardTitle>Document Preview</CardTitle>
-          <div className="flex items-center gap-2">
+          <CardTitle className={isMobile ? "text-base" : ""}>
+            Document Preview
+          </CardTitle>
+          <div className={`flex items-center gap-2 ${isMobile ? "gap-1" : ""}`}>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size={isMobile ? "sm" : "sm"}
                     onClick={() => handleViewModeChange("preview")}
-                    className={
+                    className={`${isMobile ? "h-8 w-8 p-0" : ""} ${
                       viewMode === "preview" ? "bg-blue-100 text-primary" : ""
-                    }
+                    }`}
                   >
-                    <Image className="w-4 h-4" strokeWidth={1.5} />
+                    <Image
+                      className={`${isMobile ? "w-3 h-3" : "w-4 h-4"}`}
+                      strokeWidth={1.5}
+                    />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -184,13 +210,16 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size={isMobile ? "sm" : "sm"}
                     onClick={() => handleViewModeChange("original")}
-                    className={
+                    className={`${isMobile ? "h-8 w-8 p-0" : ""} ${
                       viewMode === "original" ? "bg-blue-100 text-primary" : ""
-                    }
+                    }`}
                   >
-                    <FileText className="w-4 h-4" strokeWidth={1.5} />
+                    <FileText
+                      className={`${isMobile ? "w-3 h-3" : "w-4 h-4"}`}
+                      strokeWidth={1.5}
+                    />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -205,13 +234,20 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size={isMobile ? "sm" : "sm"}
                       onClick={handleToggleHighlights}
+                      className={isMobile ? "h-8 w-8 p-0" : ""}
                     >
                       {showHighlights ? (
-                        <Eye className="w-4 h-4" strokeWidth={1.5} />
+                        <Eye
+                          className={`${isMobile ? "w-3 h-3" : "w-4 h-4"}`}
+                          strokeWidth={1.5}
+                        />
                       ) : (
-                        <EyeOff className="w-4 h-4" strokeWidth={1.5} />
+                        <EyeOff
+                          className={`${isMobile ? "w-3 h-3" : "w-4 h-4"}`}
+                          strokeWidth={1.5}
+                        />
                       )}
                     </Button>
                   </TooltipTrigger>

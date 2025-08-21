@@ -10,6 +10,7 @@ import { Risk } from "../page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface RiskCardProps {
   risk: Risk;
@@ -41,11 +42,12 @@ const shouldAbstain = (confidence: number) => {
 export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
   const confidenceScore = Math.round(risk.confidence * 100);
   const abstain = shouldAbstain(risk.confidence);
+  const isMobile = useIsMobile();
 
   if (abstain) {
     return (
       <Card className="shadow-sm border border-gray-200">
-        <CardContent className="p-6">
+        <CardContent className={`${isMobile ? "p-4" : "p-6"}`}>
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0 pt-1">
               <HelpCircle
@@ -55,7 +57,11 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
             </div>
 
             <div className="flex-1 min-w-0">
-              <CardTitle className="text-base font-semibold text-foreground mb-2">
+              <CardTitle
+                className={`font-semibold text-foreground mb-2 ${
+                  isMobile ? "text-sm" : "text-base"
+                }`}
+              >
                 {risk.title}
               </CardTitle>
 
@@ -72,11 +78,19 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
                     className="w-4 h-4 text-amber-600"
                     strokeWidth={1.5}
                   />
-                  <span className="text-sm font-medium text-amber-800">
+                  <span
+                    className={`font-medium text-amber-800 ${
+                      isMobile ? "text-sm" : "text-sm"
+                    }`}
+                  >
                     Manual Review Required
                   </span>
                 </div>
-                <p className="text-sm text-amber-700 leading-relaxed">
+                <p
+                  className={`text-amber-700 leading-relaxed ${
+                    isMobile ? "text-sm" : "text-sm"
+                  }`}
+                >
                   AI confidence is too low ({confidenceScore}%) to provide a
                   reliable assessment. Please review this potential risk
                   manually to ensure accuracy.
@@ -91,10 +105,12 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
 
   return (
     <Card
-      className="cursor-pointer transition-all hover:shadow-md shadow-sm border border-gray-200"
+      className={`cursor-pointer transition-all hover:shadow-md shadow-sm border border-gray-200 ${
+        isMobile ? "mx-1" : ""
+      }`}
       onClick={onSelect}
     >
-      <CardContent className="p-6">
+      <CardContent className={`${isMobile ? "p-4" : "p-6"}`}>
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0 pt-1">
             <AlertTriangle
@@ -104,7 +120,11 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
           </div>
 
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-base font-semibold text-foreground mb-2">
+            <CardTitle
+              className={`font-semibold text-foreground mb-2 ${
+                isMobile ? "text-sm" : "text-base"
+              }`}
+            >
               {risk.title}
             </CardTitle>
 
@@ -115,13 +135,21 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
               {risk.severity} risk
             </Badge>
 
-            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+            <p
+              className={`text-muted-foreground leading-relaxed mb-3 ${
+                isMobile ? "text-sm" : "text-sm"
+              }`}
+            >
               {risk.description}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        <div
+          className={`flex items-center justify-between pt-3 border-t border-gray-100 ${
+            isMobile ? "flex-col gap-3 items-start" : ""
+          }`}
+        >
           <div className="flex items-center gap-2 text-xs">
             <TrendingUp className="w-3 h-3" strokeWidth={1.5} />
             <span className={`font-medium `}>
@@ -134,11 +162,17 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div
+            className={`flex items-center gap-2 ${
+              isMobile ? "w-full justify-start" : ""
+            }`}
+          >
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-2 text-xs cursor-pointer"
+              className={`text-xs cursor-pointer ${
+                isMobile ? "h-8 px-2" : "h-8 px-2"
+              }`}
               onClick={(e) => {
                 e.stopPropagation();
               }}
@@ -150,7 +184,9 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-2 text-xs cursor-pointer"
+              className={`text-xs cursor-pointer ${
+                isMobile ? "h-8 px-2" : "h-8 px-2"
+              }`}
               onClick={(e) => {
                 e.stopPropagation();
               }}

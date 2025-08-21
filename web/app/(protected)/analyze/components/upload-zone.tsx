@@ -6,6 +6,7 @@ import { Upload, FileText, AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface UploadZoneProps {
   onUpload: (file: File) => void;
@@ -13,6 +14,7 @@ interface UploadZoneProps {
 
 export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -64,37 +66,58 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
             : "border-muted-foreground/25 bg-background"
         }`}
       >
-        <CardContent className="p-8 sm:p-12">
+        <CardContent className={`${isMobile ? "p-6" : "p-8 sm:p-12"}`}>
           <div {...getRootProps()} className="text-center cursor-pointer">
             <input {...getInputProps()} />
 
             <div className="flex flex-col items-center space-y-6">
-              <div className="w-16 h-16 border border-dashed border-gray-200 rounded-full flex items-center justify-center">
+              <div
+                className={`border border-dashed border-gray-200 rounded-full flex items-center justify-center ${
+                  isMobile ? "w-12 h-12" : "w-16 h-16"
+                }`}
+              >
                 {isDragActive ? (
-                  <Upload className="w-8 h-8 text-primary" strokeWidth={1.5} />
+                  <Upload
+                    className={`text-primary ${
+                      isMobile ? "w-6 h-6" : "w-8 h-8"
+                    }`}
+                    strokeWidth={1.5}
+                  />
                 ) : (
                   <FileText
-                    className="w-8 h-8 text-muted-foreground"
+                    className={`text-muted-foreground ${
+                      isMobile ? "w-6 h-6" : "w-8 h-8"
+                    }`}
                     strokeWidth={1.5}
                   />
                 )}
               </div>
 
               <div className="space-y-1">
-                <h3 className="text-xl font-medium text-foreground capitalize">
+                <h3
+                  className={`font-medium text-foreground capitalize ${
+                    isMobile ? "text-lg" : "text-xl"
+                  }`}
+                >
                   {isDragActive
                     ? "Drop your contract here"
                     : "Upload your contract"}
                 </h3>
 
-                <p className="text-xs text-muted-foreground">
+                <p
+                  className={`text-muted-foreground ${
+                    isMobile ? "text-xs" : "text-xs"
+                  }`}
+                >
                   Drag and drop or click to browse (pdf, docx, txt)
                 </p>
               </div>
 
               <Button
                 variant="outline"
-                className="w-4/6 hover:bg-primary cursor-pointer border border-gray-300"
+                className={`hover:bg-primary cursor-pointer border border-gray-300 ${
+                  isMobile ? "w-full" : "w-4/6"
+                }`}
               >
                 Choose File
               </Button>

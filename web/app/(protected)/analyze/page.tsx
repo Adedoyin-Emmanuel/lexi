@@ -10,6 +10,7 @@ import { UploadZone } from "./components/upload-zone";
 import { InsightsPanel } from "./components/insights-panel";
 import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface ContractDocument {
   id: string;
@@ -94,6 +95,10 @@ const Analyze = () => {
   const [document, setDocument] = useState<ContractDocument | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [selectedClauseId, setSelectedClauseId] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<"document" | "insights">(
+    "document"
+  );
+  const isMobile = useIsMobile();
 
   const handleDocumentUpload = async (file: File) => {
     const newDocument: ContractDocument = {
@@ -232,8 +237,65 @@ const Analyze = () => {
   if (!document) {
     return (
       <div className="w-full flex flex-col overflow-hidden">
-        <div className="w-full max-w-4xl">
+        <div className="w-full max-w-4xl mx-auto px-4">
           <UploadZone onUpload={handleDocumentUpload} />
+        </div>
+      </div>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <div className="w-full flex flex-col overflow-hidden">
+        <AnalyzeToolbar
+          document={document}
+          onExport={handleExport}
+          isAnalyzing={isAnalyzing}
+          onReanalyze={handleReanalyze}
+        />
+
+        <div className="flex border-b border-gray-200 bg-white">
+          <button
+            onClick={() => setActiveView("document")}
+            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+              activeView === "document"
+                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Document
+          </button>
+          <button
+            onClick={() => setActiveView("insights")}
+            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+              activeView === "insights"
+                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Analysis
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-hidden">
+          {activeView === "document" ? (
+            <div className="h-full">
+              <DocumentPreview
+                document={document}
+                selectedClauseId={selectedClauseId}
+                onClauseSelect={handleClauseSelect}
+              />
+            </div>
+          ) : (
+            <div className="h-full">
+              <InsightsPanel
+                analysis={analysis}
+                isAnalyzing={isAnalyzing}
+                selectedClauseId={selectedClauseId}
+                onClauseSelect={handleClauseSelect}
+              />
+            </div>
+          )}
         </div>
       </div>
     );

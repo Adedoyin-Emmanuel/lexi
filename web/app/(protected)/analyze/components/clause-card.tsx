@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../dashboard/components/circular-confidence";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ClauseCardProps {
   clause: Clause;
@@ -21,6 +22,7 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const confidenceScore = Math.round(clause.confidence * 100);
+  const isMobile = useIsMobile();
 
   const clauseRisks = risks.filter((risk) => risk.clauseId === clause.id);
   const hasRisks = clauseRisks.length > 0;
@@ -38,16 +40,22 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
   };
 
   return (
-    <Card className={`cursor-pointer transition-all hover:shadow-md `}>
-      <CardHeader className="pb-4">
+    <Card
+      className={`cursor-pointer transition-all hover:shadow-md ${
+        isMobile ? "mx-1" : ""
+      }`}
+    >
+      <CardHeader className={`pb-4 ${isMobile ? "px-4 py-3" : ""}`}>
         <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-lg font-bold flex-1">
+          <CardTitle
+            className={`font-bold flex-1 ${isMobile ? "text-base" : "text-lg"}`}
+          >
             {clause.title}
           </CardTitle>
 
           <CircularConfidence
             score={confidenceScore}
-            size={40}
+            size={isMobile ? 32 : 40}
             strokeWidth={3}
           />
         </div>
@@ -65,12 +73,12 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
         )}
       </CardHeader>
 
-      <CardContent className="pt-0 space-y-4">
+      <CardContent className={`pt-0 space-y-4 ${isMobile ? "px-4 pb-4" : ""}`}>
         <div className="space-y-2">
           <p
-            className={`text-sm text-slate-700 leading-relaxed ${
+            className={`text-slate-700 leading-relaxed ${
               !isExpanded ? "line-clamp-3" : ""
-            }`}
+            } ${isMobile ? "text-sm" : "text-sm"}`}
           >
             {clause.content}
           </p>
@@ -102,18 +110,30 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
 
         <Separator />
 
-        <div className="flex items-center justify-between pt-2">
+        <div
+          className={`flex items-center justify-between pt-2 ${
+            isMobile ? "flex-col gap-3 items-start" : ""
+          }`}
+        >
           <div className="flex items-center gap-1">
-            <span className="text-xs text-slate-500">
+            <span
+              className={`text-slate-500 ${isMobile ? "text-xs" : "text-xs"}`}
+            >
               Position: {clause.position.start}-{clause.position.end}
             </span>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div
+            className={`flex items-center gap-1 ${
+              isMobile ? "w-full justify-start" : ""
+            }`}
+          >
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-2 text-xs cursor-pointer"
+              className={`text-xs cursor-pointer ${
+                isMobile ? "h-8 px-2 text-xs" : "h-8 px-2 text-xs"
+              }`}
               onClick={handleViewInDocument}
             >
               <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
@@ -124,7 +144,9 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 px-2 text-xs text-red-600 hover:text-red-700 cursor-pointer hover:bg-red-50"
+                className={`text-xs text-red-600 hover:text-red-700 cursor-pointer hover:bg-red-50 ${
+                  isMobile ? "h-8 px-2" : "h-8 px-2"
+                }`}
                 onClick={handleViewRisk}
               >
                 <AlertTriangle className="w-3 h-3 mr-1" />

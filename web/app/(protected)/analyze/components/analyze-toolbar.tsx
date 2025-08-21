@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ContractDocument } from "../page";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AnalyzeToolbarProps {
   isAnalyzing: boolean;
@@ -24,6 +25,8 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
   onReanalyze,
   isAnalyzing,
 }) => {
+  const isMobile = useIsMobile();
+
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -33,26 +36,48 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
   };
 
   return (
-    <div className="w-full py-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-lg font-semibold text-gray-900">
+    <div className="w-full py-4 px-4">
+      <div
+        className={`flex items-center justify-between ${
+          isMobile ? "flex-col gap-4" : ""
+        }`}
+      >
+        <div className={`flex items-center gap-4 ${isMobile ? "w-full" : ""}`}>
+          <div
+            className={`flex items-center gap-3 ${isMobile ? "w-full" : ""}`}
+          >
+            <div className={isMobile ? "w-full" : ""}>
+              <h1
+                className={`font-semibold text-gray-900 ${
+                  isMobile ? "text-base" : "text-lg"
+                }`}
+              >
                 {document.name}
               </h1>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div
+                className={`flex items-center gap-2 text-sm text-gray-500 ${
+                  isMobile ? "flex-wrap" : ""
+                }`}
+              >
                 <span>{document.type.toUpperCase()}</span>
                 <span>•</span>
                 <span>{formatFileSize(document.content.length)}</span>
                 <span>•</span>
-                <span>Uploaded {document.uploadedAt.toLocaleDateString()}</span>
+                <span className={isMobile ? "text-xs" : ""}>
+                  {isMobile
+                    ? "Uploaded " + document.uploadedAt.toLocaleDateString()
+                    : "Uploaded " + document.uploadedAt.toLocaleDateString()}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div
+          className={`flex items-center gap-2 ${
+            isMobile ? "w-full justify-center" : ""
+          }`}
+        >
           <Button
             size="sm"
             variant="outline"
@@ -64,7 +89,7 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
               className={`w-4 h-4 mr-2  ${isAnalyzing ? "animate-spin" : ""}`}
               strokeWidth={1.5}
             />
-            Re-analyze
+            {isMobile ? "Re-analyze" : "Re-analyze"}
           </Button>
 
           <DropdownMenu>
