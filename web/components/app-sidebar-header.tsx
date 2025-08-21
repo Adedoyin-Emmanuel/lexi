@@ -6,9 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Axios } from "@/app/config/axios";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const pageConfig = {
   "/dashboard": {
