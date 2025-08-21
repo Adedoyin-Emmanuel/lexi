@@ -36,7 +36,7 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
   };
 
   return (
-    <div className="w-full py-4 px-4">
+    <div className="w-full py-4 md:px-4">
       <div
         className={`flex items-center justify-between ${
           isMobile ? "flex-col gap-4" : ""
@@ -74,8 +74,8 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
         </div>
 
         <div
-          className={`flex items-center gap-2 ${
-            isMobile ? "w-full justify-center" : ""
+          className={`flex items-center gap-2 md:mb-0 mb-4 ${
+            isMobile ? "w-full justify-start" : "justify-end"
           }`}
         >
           <Button

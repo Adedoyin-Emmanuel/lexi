@@ -65,14 +65,17 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
       className="cursor-pointer transition-all hover:shadow-md shadow-sm border border-gray-200"
       onClick={onSelect}
     >
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex items-start gap-3 sm:gap-4">
           <div className="flex-shrink-0 pt-1">
-            <Calendar className="w-6 h-6 text-gray-600" strokeWidth={1.5} />
+            <Calendar
+              className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600"
+              strokeWidth={1.5}
+            />
           </div>
 
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-base font-semibold text-foreground mb-2">
+            <CardTitle className="text-sm sm:text-base font-semibold text-foreground mb-2">
               {obligation.title}
             </CardTitle>
 
@@ -85,14 +88,17 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
               </Badge>
             )}
 
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-4">
               {obligation.description}
             </p>
 
             {obligation.deadline && (
               <div className="flex items-center gap-2 mb-3">
-                <Clock className="w-4 h-4 text-gray-500" strokeWidth={1.5} />
-                <span className="text-sm text-gray-700">
+                <Clock
+                  className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500"
+                  strokeWidth={1.5}
+                />
+                <span className="text-xs sm:text-sm text-gray-700">
                   {obligation.deadline.toLocaleDateString()} at{" "}
                   {obligation.deadline.toLocaleTimeString([], {
                     hour: "2-digit",
@@ -104,7 +110,7 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-100">
           <div className="flex items-center gap-2 text-xs">
             <TrendingUp className="w-3 h-3" strokeWidth={1.5} />
             <span className="font-medium">
@@ -121,25 +127,27 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-2 text-xs cursor-pointer"
+              className="h-8 px-2 text-xs cursor-pointer flex-1 sm:flex-none"
               onClick={(e) => {
                 e.stopPropagation();
               }}
             >
               <FileText className="w-3 h-3 mr-1" strokeWidth={1.5} />
-              View suggestions
+              <span className="hidden sm:inline">View suggestions</span>
+              <span className="sm:hidden">Suggestions</span>
             </Button>
 
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-2 text-xs cursor-pointer"
+              className="h-8 px-2 text-xs cursor-pointer flex-1 sm:flex-none"
               onClick={(e) => {
                 e.stopPropagation();
               }}
             >
               <ExternalLink className="w-3 h-3 mr-1" strokeWidth={1.5} />
-              View in Document
+              <span className="hidden sm:inline">View in Document</span>
+              <span className="sm:hidden">Document</span>
             </Button>
           </div>
         </div>
