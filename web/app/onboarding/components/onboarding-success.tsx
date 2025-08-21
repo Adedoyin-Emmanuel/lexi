@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import Confetti from "react-confetti";
 import { ArrowRight, PartyPopper } from "lucide-react";
 
@@ -10,10 +11,6 @@ import { useOnboardingStore } from "@/app/store/onboarding";
 export function OnboardingSuccess() {
   const { data } = useOnboardingStore();
 
-  const handleGoToDashboard = () => {
-    console.log("Redirecting to dashboard...");
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center relative overflow-hidden">
       <Confetti
@@ -21,7 +18,6 @@ export function OnboardingSuccess() {
         height={window.innerHeight}
         recycle={false}
         numberOfPieces={200}
-  
         colors={["#3b82f6", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b"]}
       />
 
@@ -73,13 +69,12 @@ export function OnboardingSuccess() {
           </div>
         </div>
 
-        <Button
-          onClick={handleGoToDashboard}
-          className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
-        >
-          Continue
-          <ArrowRight className="h-4 w-4 ml-2" />
-        </Button>
+        <Link href="/dashboard">
+          <Button className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
+            Continue
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        </Link>
       </div>
     </div>
   );

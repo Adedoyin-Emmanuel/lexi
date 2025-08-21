@@ -7,17 +7,16 @@ import { JWT_SECRET } from "./../constants/app";
 
 const useAuth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers["authorization"];
-  const authCookie = req.cookies["lexi_auth_access_token"];
   const userAgent = req.headers["user-agent"];
 
-  if (!authHeader && !authCookie) {
+  if (!authHeader) {
     logger(
       `Missing authorization header or cookie from ${req.ip} with user agent ${userAgent}`
     );
     return response(res, 401, "Unauthorized - Missing authentication token");
   }
 
-  const token = authHeader?.split(" ")[1] || authCookie;
+  const token = authHeader?.split(" ")[1];
 
   if (!token) {
     logger(`Invalid request from ${req.ip} with user agent ${userAgent}`);

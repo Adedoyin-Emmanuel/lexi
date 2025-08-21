@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
-import { ArrowLeft, ArrowRight, Target } from "lucide-react";
+import toast from "react-hot-toast";
+import React, { useState } from "react";
+import { ArrowLeft, ArrowRight, Target, Loader2 } from "lucide-react";
 
+import { Axios } from "@/app/config/axios";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -11,25 +13,27 @@ import { useOnboardingStore } from "@/app/store/onboarding";
 const nicheOptions = [
   "SEO",
   "Coaching",
+  "Youtuber",
   "Animation",
   "E-commerce",
   "Podcasting",
   "Logo Design",
-  "Illustration",
   "UI/UX Design",
   "Photography",
   "Copywriting",
-  "Video Editing",
-  "Voice Acting",
   "Blog Writing",
+  "Illustration",
+  "Voice Acting",
+  "Video Editing",
   "Graphic Design",
   "Brand Identity",
   "Market Research",
   "Content Writing",
-  "Video Production",
   "Email Marketing",
   "Web Development",
   "Game Development",
+  "Video Production",
+  "Content Creation",
   "Digital Marketing",
   "Project Management",
   "Business Consulting",
@@ -41,6 +45,7 @@ const nicheOptions = [
 ];
 
 export function StepNicheSelection() {
+  const [isLoading, setIsLoading] = useState(false);
   const { data, updateData, nextStep, prevStep } = useOnboardingStore();
   const { niche } = data;
 
@@ -57,6 +62,29 @@ export function StepNicheSelection() {
   const handleContinue = () => {
     if (niche.length > 0) {
       nextStep();
+    }
+  };
+
+  const handleUpdateOnboardingDetails = async () => {
+    try {
+      setIsLoading(true);
+
+      const dataToSend = {
+        specialities: niche,
+        userType: data.role,
+        displayName: data.name,
+      };
+
+      await Axios.post("/user/onboard", dataToSend);
+
+      handleContinue();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message;
+
+      toast.error(errorMessage || "Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,9 +115,9 @@ export function StepNicheSelection() {
                   key={option}
                   variant={niche.includes(option) ? "default" : "outline"}
                   size="sm"
-                  className={`h-auto py-3 md:py-4 px-3 md:px-4 text-xs md:text-sm font-medium transition-all duration-200 ${
+                  className={`h-auto py-3 md:py-4 px-3 md:px-4 text-xs md:text-sm font-medium transition-all duration-200 min-w-0 flex-1 ${
                     niche.includes(option)
-                      ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                      ? "bg-primary text-primary-foreground shadow-lg scale-105 cursor-pointer"
                       : niche.length >= 5 && !niche.includes(option)
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:border-primary/50 hover:bg-muted/50 hover:text-black cursor-pointer"
@@ -97,7 +125,7 @@ export function StepNicheSelection() {
                   onClick={() => handleNicheToggle(option)}
                   disabled={niche.length >= 5 && !niche.includes(option)}
                 >
-                  {option}
+                  <span className="truncate">{option}</span>
                 </Button>
               ))}
             </div>
@@ -136,11 +164,18 @@ export function StepNicheSelection() {
         </Button>
 
         <Button
-          onClick={handleContinue}
-          disabled={niche.length === 0}
+          onClick={handleUpdateOnboardingDetails}
+          disabled={niche.length === 0 || isLoading}
           className="flex items-center gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 cursor-pointer"
         >
-          Continue
+          {isLoading ? (
+            <>
+              <Loader2 className="animate-spin text-white" strokeWidth={1.5} />
+              <span className="text-sm font-medium">Loading...</span>
+            </>
+          ) : (
+            "Continue"
+          )}
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>

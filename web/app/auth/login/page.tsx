@@ -18,7 +18,7 @@ const Login = () => {
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
 
-      const urlToRedirectTo = `${apiUrl}/auth/google?redirectUrl=${encodeURIComponent(
+      const urlToRedirectTo = `${apiUrl}/v1/auth/google?redirectUrl=${encodeURIComponent(
         redirectUrl
       )}`;
 
