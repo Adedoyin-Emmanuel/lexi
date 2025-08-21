@@ -8,3 +8,9 @@ export const MORGAN_CONFIG = IS_PRODUCTION
   : "dev";
 
 export const PORT = process.env.PORT || 2800;
+
+export const GOOGLE_CALLBACK_URL = `${
+  IS_PRODUCTION
+    ? `https://api.uselexi.xyz/v1/auth/google/callback`
+    : "http://localhost:2800/v1/auth/google/callback"
+}`;

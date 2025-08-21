@@ -84,22 +84,20 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
               </Badge>
             )}
 
-            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               {obligation.description}
             </p>
 
             {obligation.deadline && (
-              <div className="bg-gray-50 p-3 border border-gray-200 mb-3">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-gray-600" strokeWidth={1.5} />
-                  <span className="text-sm font-medium text-gray-800">
-                    Deadline: {obligation.deadline.toLocaleDateString()} at{" "}
-                    {obligation.deadline.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="w-4 h-4 text-gray-500" strokeWidth={1.5} />
+                <span className="text-sm text-gray-700">
+                  {obligation.deadline.toLocaleDateString()} at{" "}
+                  {obligation.deadline.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
               </div>
             )}
           </div>
