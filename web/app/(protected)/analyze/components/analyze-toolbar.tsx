@@ -58,10 +58,10 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
             variant="outline"
             onClick={onReanalyze}
             disabled={isAnalyzing}
-            className="cursor-pointer"
+            className="cursor-pointer border !border-gray-300 text-gray-800"
           >
             <RefreshCw
-              className={`w-4 h-4 mr-2 ${isAnalyzing ? "animate-spin" : ""}`}
+              className={`w-4 h-4 mr-2  ${isAnalyzing ? "animate-spin" : ""}`}
               strokeWidth={1.5}
             />
             Re-analyze
@@ -69,7 +69,11 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="cursor-pointer">
+              <Button
+                variant="outline"
+                size="sm"
+                className="cursor-pointer  border !border-gray-300 text-gray-800"
+              >
                 <Download className="w-4 h-4 mr-2" strokeWidth={1.5} />
                 Export
               </Button>
