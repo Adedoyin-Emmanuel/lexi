@@ -67,22 +67,34 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
             Summary
           </TabsTrigger>
           <TabsTrigger value="clauses" className="text-xs py-2 cursor-pointer">
-            Clauses
+            <span>Clauses</span>
+            <span className="ml-1.5 px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium min-w-[20px] h-5 flex items-center justify-center">
+              {analysis.keyClauses.length}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="risks" className="text-xs py-2 cursor-pointer">
-            Risks
+            <span>Risks</span>
+            <span className="ml-1.5 px-1.5 py-0.5 bg-red-100 text-red-700 text-xs rounded-full font-medium min-w-[20px] h-5 flex items-center justify-center">
+              {analysis.risks.length}
+            </span>
           </TabsTrigger>
           <TabsTrigger
             value="obligations"
             className="text-xs py-2 cursor-pointer"
           >
-            Obligations
+            <span>Obligations</span>
+            <span className="ml-1.5 px-1.5 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full font-medium min-w-[20px] h-5 flex items-center justify-center">
+              {analysis.obligations.length}
+            </span>
           </TabsTrigger>
           <TabsTrigger
             value="negotiation"
             className="text-xs py-2 cursor-pointer"
           >
-            Suggestions
+            <span>Suggestions</span>
+            <span className="ml-1.5 px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium min-w-[20px] h-5 flex items-center justify-center">
+              {analysis.negotiationSuggestions.length}
+            </span>
           </TabsTrigger>
         </TabsList>
 
