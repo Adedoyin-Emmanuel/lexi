@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
     "/auth/logout",
   ];
 
-  const authPaths = ["/auth/login", "/auth/callback"];
+  const authPaths = ["/auth/login"];
 
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
@@ -29,12 +29,16 @@ export function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get("lexi_auth_refresh_token")?.value;
   const isAuthenticated = !!refreshToken;
 
-  // If user is authenticated and trying to access auth pages, redirect to dashboard
+  /**
+   * If user is authenticated and trying to access auth pages, redirect to dashboard
+   */
   if (isAuthenticated && isAuthPath) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // If user is not authenticated and trying to access protected paths, redirect to login
+  /**
+   * If user is not authenticated and trying to access protected paths, redirect to login
+   */
   if (!isAuthenticated && isProtectedPath) {
     const isProduction = process.env.NODE_ENV === "production";
     const baseAuthUrl = isProduction

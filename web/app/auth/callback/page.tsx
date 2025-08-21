@@ -46,12 +46,13 @@ function CallbackContent() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen w-full">
+      <div className="flex flex-col items-center justify-center min-h-screen w-full">
         <Loader2
           className="animate-spin text-primary"
           strokeWidth={1.5}
           size={25}
         />
+        <p className="block text-muted-foreground py-2">Loading...</p>
       </div>
     );
   }

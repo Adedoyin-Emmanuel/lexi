@@ -1,14 +1,39 @@
 "use client";
 
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+
+import { Axios } from "@/app/config/axios";
 import { Button } from "@/components/ui/button";
 
 const Logout = () => {
+  const router = useRouter();
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await Axios.post("/auth/logout");
+      return response.data;
+    },
+    onSuccess: () => {
+      localStorage.removeItem("accessToken");
+      toast.success("Logged out successfully");
+      router.push("/auth/login");
+    },
+    onError: (error) => {
+      console.error("Logout failed:", error);
+      localStorage.removeItem("accessToken");
+      toast.error("Logout failed");
+      router.push("/auth/login");
+    },
+  });
+
   const handleLogout = () => {
-    console.log("Logging out...");
+    logoutMutation.mutate();
   };
 
   const handleCancel = () => {
-    console.log("Cancelled logout");
+    router.push("/dashboard");
   };
 
   return (
@@ -29,6 +54,7 @@ const Logout = () => {
             <Button
               variant="outline"
               onClick={handleCancel}
+              disabled={logoutMutation.isPending}
               className="flex-1 cursor-pointer hover:bg-gray-100 hover:text-black text-black font-medium"
             >
               Cancel
@@ -36,9 +62,10 @@ const Logout = () => {
             <Button
               variant="destructive"
               onClick={handleLogout}
+              disabled={logoutMutation.isPending}
               className="flex-1 cursor-pointer"
             >
-              Sign out
+              {logoutMutation.isPending ? "Signing out..." : "Sign out"}
             </Button>
           </div>
         </div>
