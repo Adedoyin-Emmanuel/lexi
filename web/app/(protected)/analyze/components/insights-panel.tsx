@@ -96,6 +96,12 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                 clause={clause}
                 isSelected={selectedClauseId === clause.id}
                 onSelect={() => onClauseSelect(clause.id)}
+                risks={analysis.risks}
+                onViewRisk={(clauseId: string) => {
+                  // Switch to risks tab and select the clause
+                  setActiveTab("risks");
+                  onClauseSelect(clauseId);
+                }}
               />
             ))}
           </TabsContent>

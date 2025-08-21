@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../dashboard/components/circular-confidence";
-
+ 
 interface ContractStats {
   contractType:
     | "NDA"
