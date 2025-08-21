@@ -1,12 +1,11 @@
-import { Types } from "mongoose";
 import { Result } from "tsfluent";
 
 import { IValidationResult } from "./types";
 import { aiMlApi, logger } from "../../../../utils";
 
-export default class DocumentValidationPipeline {
+export default class DocumentValidator {
   private readonly MAX_CONTENT_LENGTH = 70000;
-  public async validate(contract: string, documentId: Types.ObjectId) {
+  public async validate(contract: string) {
     try {
       if (!contract) {
         return Result.fail("Contract is required");

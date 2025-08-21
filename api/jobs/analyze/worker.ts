@@ -3,6 +3,9 @@ import { Job, Worker } from "bullmq";
 
 import { IJob } from "./../types";
 import { logger } from "./../../utils";
+import DocumentValidator from "./pipeline/validation";
+import { redisService } from "./../../services/redis";
+import { IValidationResult } from "./pipeline/validation/types";
 import { documentRepository } from "./../../models/repositories";
 import { DOCUMENT_STATUS } from "./../../models/document/interfaces";
 
@@ -67,13 +70,19 @@ export default class AnalyzeWorker implements IJob {
       default:
         logger(`Document ${documentId} is in an unknown status`);
         break;
+    }
 
-      /** Start processing */
+    /** Start processing */
+    await this.validateAndProcessDocument(documentId, document);
 
-      /**
+    /**
+     * At this stage, validation is done and we have the contract type
+     */
+
+    /**
        *
-       * 1. Validate document if it is a contract or not
-       * 2. Detecct the contract type and check if it is in (NDA, ICA or License Agreement)
+       * 1. Validate document if it is a contract or not -> Done
+       * 2. Detect the contract type and check if it is in (NDA, ICA or License Agreement)
        * 3. Lexical formatting * Convert the text into HTML-like structured format:
        * Paragraphs <p>
        * Headings <h1/h2> for clauses
@@ -135,7 +144,6 @@ export default class AnalyzeWorker implements IJob {
             * AI Confidence Score
             * Start index, end index
        */
-    }
   }
 
   start(): void {

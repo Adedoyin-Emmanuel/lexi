@@ -72,3 +72,12 @@ export interface ISummary {
   overallConfidenceScore: number;
   terminationClasePresent: boolean;
 }
+
+
+export interface IValidationMetadata {
+  reason: string;
+  inScope: boolean;
+  confidenceScore: number;
+  contractType: CONTRACT_TYPE;
+  isValidContract: boolean;
+}

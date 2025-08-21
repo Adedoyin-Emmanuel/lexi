@@ -14,6 +14,7 @@ import {
   IObligation,
   ISuggestion,
   DOCUMENT_STATUS,
+  IValidationMetadata,
 } from "./interfaces";
 import { User } from "../user";
 import { Chat } from "../chat";
@@ -67,6 +68,9 @@ class Document {
 
   @prop({ default: false })
   hasAbstainWarnings: boolean;
+
+  @prop({ required: false, default: {} })
+  validationMetadata?: IValidationMetadata;
 
   @prop({ required: false, default: false })
   isFlagged: boolean; /** Whether a document is flagged for not being a valid contract */

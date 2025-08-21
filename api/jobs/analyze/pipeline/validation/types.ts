@@ -1,9 +1,11 @@
+import { CONTRACT_TYPE } from "./../../../../models/document/interfaces";
+
 export interface IValidationResult {
   reason: string;
   inScope: boolean;
   confidenceScore: number;
   isValidContract: boolean;
-  contractType: "NDA" | "ICA" | "License Agreement" | "Other";
+  contractType: CONTRACT_TYPE;
 }
 
 export interface IValidationError {
