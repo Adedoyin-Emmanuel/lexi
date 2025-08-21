@@ -36,7 +36,12 @@ class Document {
   @prop({ required: false, type: () => Object })
   summary: ISummary;
 
-  @prop({ required: false, type: String, enum: DOCUMENT_STATUS })
+  @prop({
+    required: false,
+    type: String,
+    enum: DOCUMENT_STATUS,
+    default: DOCUMENT_STATUS.PENDING,
+  })
   status: DOCUMENT_STATUS;
 
   @prop({ required: false, default: "" })
@@ -62,6 +67,9 @@ class Document {
 
   @prop({ default: false })
   hasAbstainWarnings: boolean;
+
+  @prop({ required: false, default: false })
+  isFlagged: boolean; /** Whether a document is flagged for not being a valid contract */
 }
 const DocumentModel = getModelForClass(Document);
 

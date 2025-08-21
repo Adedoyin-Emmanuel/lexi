@@ -1,6 +1,6 @@
 export enum DOCUMENT_STATUS {
   FAILED = "failed",
-  UPLOADED = "uploaded",
+  PENDING = "pending",
   COMPLETED = "completed",
   PROCESSING = "processing",
 }

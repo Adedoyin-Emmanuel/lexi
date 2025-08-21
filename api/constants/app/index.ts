@@ -17,7 +17,7 @@ export const MONGODB_URL =
   process.env.MONGODB_URL || "mongodb://localhost:27017/lexi";
 export const SESSION_SECRET = process.env.SESSION_SECRET;
 export const AIML_API_KEY = process.env.AIML_API_KEY;
-export const AIML_API_URL = process.env.AIML_API_URL;
+export const AIML_API_BASE_URL = process.env.AIML_API_BASE_URL;
 
 export const GOOGLE_CALLBACK_URL = `${
   IS_PRODUCTION
