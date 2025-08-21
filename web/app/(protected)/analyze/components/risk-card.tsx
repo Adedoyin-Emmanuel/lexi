@@ -1,19 +1,17 @@
-"use client";
+import {
+  TrendingUp,
+  HelpCircle,
+  AlertCircle,
+  ExternalLink,
+  AlertOctagon,
+  AlertTriangle,
+} from "lucide-react";
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Risk } from "../page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import {
-  AlertTriangle,
-  AlertCircle,
-  AlertOctagon,
-  ExternalLink,
-  TrendingUp,
-  HelpCircle,
-} from "lucide-react";
-import { Risk } from "../page";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../dashboard/components/circular-confidence";
 
 interface RiskCardProps {
@@ -55,7 +53,7 @@ const getConfidenceLevel = (confidence: number) => {
 };
 
 const shouldAbstain = (confidence: number) => {
-  return confidence < 0.6; // Abstain if confidence is below 60%
+  return confidence < 0.6;
 };
 
 export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {

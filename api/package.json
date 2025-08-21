@@ -39,6 +39,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@typegoose/typegoose": "^12.18.0",
     "axios": "^1.10.0",
     "body-parser": "^2.2.0",
     "cheerio": "^1.1.0",
@@ -51,6 +52,7 @@
     "got-scraping": "^4.1.1",
     "helmet": "^8.1.0",
     "joi": "^17.13.3",
+    "mongoose": "^8.17.2",
     "morgan": "^1.10.0",
     "ts-node": "^10.9.2",
     "tsfluent": "^1.5.2"
