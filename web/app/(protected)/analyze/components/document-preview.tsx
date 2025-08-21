@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, Image, ZoomIn, EyeOff, ZoomOut, FileText } from "lucide-react";
+import { useState, useMemo, useCallback } from "react";
+import { Eye, Image, EyeOff, FileText } from "lucide-react";
 
 import {
   Tooltip,
@@ -9,7 +9,6 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ContractDocument, Clause } from "../page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,45 +24,58 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   selectedClauseId,
   onClauseSelect,
 }) => {
-  const [zoom, setZoom] = useState(100);
   const [showHighlights, setShowHighlights] = useState(true);
   const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
 
-  const mockClauses: Clause[] = [
-    {
-      id: "1",
-      title: "Payment Terms",
-      content: "Payment shall be made within 60 days of invoice submission",
-      importance: "high",
-      category: "payment",
-      position: { start: 150, end: 200 },
-      confidence: 0.95,
-    },
-    {
-      id: "2",
-      title: "Intellectual Property",
-      content: "All work product shall remain the property of the client",
-      importance: "high",
-      category: "ip",
-      position: { start: 300, end: 350 },
-      confidence: 0.92,
-    },
-    {
-      id: "3",
-      title: "Termination Clause",
-      content:
-        "Either party may terminate this agreement with 30 days written notice",
-      importance: "medium",
-      category: "termination",
-      position: { start: 450, end: 500 },
-      confidence: 0.88,
-    },
-  ];
+  const mockClauses: Clause[] = useMemo(
+    () => [
+      {
+        id: "1",
+        title: "Payment Terms",
+        content: "Payment shall be made within 60 days of invoice submission",
+        importance: "high",
+        category: "payment",
+        position: { start: 150, end: 200 },
+        confidence: 0.95,
+      },
+      {
+        id: "2",
+        title: "Intellectual Property",
+        content: "All work product shall remain the property of the client",
+        importance: "high",
+        category: "ip",
+        position: { start: 300, end: 350 },
+        confidence: 0.92,
+      },
+      {
+        id: "3",
+        title: "Termination Clause",
+        content:
+          "Either party may terminate this agreement with 30 days written notice",
+        importance: "medium",
+        category: "termination",
+        position: { start: 450, end: 500 },
+        confidence: 0.88,
+      },
+    ],
+    []
+  );
 
-  const highlightText = (text: string) => {
-    if (!showHighlights) return text;
+  const documentContent = useMemo(() => {
+    if (document.content) {
+      return document.content;
+    }
+    return getMockContractText();
+  }, [document.content]);
 
-    let highlightedText = text;
+  const plainEnglishContent = useMemo(() => {
+    return getPlainEnglishContract();
+  }, []);
+
+  const highlightedText = useMemo(() => {
+    if (!showHighlights || viewMode !== "original") return documentContent;
+
+    let highlightedText = documentContent;
     mockClauses.forEach((clause) => {
       const isSelected = selectedClauseId === clause.id;
       const highlightClass = isSelected
@@ -80,50 +92,46 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     });
 
     return highlightedText;
-  };
+  }, [
+    documentContent,
+    showHighlights,
+    viewMode,
+    mockClauses,
+    selectedClauseId,
+  ]);
 
-  const handleTextClick = (event: React.MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (target.dataset.clauseId) {
-      onClauseSelect(target.dataset.clauseId);
-    }
-  };
+  const handleTextClick = useCallback(
+    (event: React.MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (target.dataset.clauseId) {
+        onClauseSelect(target.dataset.clauseId);
+      }
+    },
+    [onClauseSelect]
+  );
 
-  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 10, 200));
-  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 10, 50));
+  const handleViewModeChange = useCallback((mode: "preview" | "original") => {
+    setViewMode(mode);
+  }, []);
 
-  const formatDocumentContent = (content: string) => {
-    if (!content) return getMockContractText();
-
-    return content
-      .replace(/\n/g, "<br>")
-      .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
-      .replace(/\s{2,}/g, (match) => "&nbsp;".repeat(match.length));
-  };
+  const handleToggleHighlights = useCallback(() => {
+    setShowHighlights((prev) => !prev);
+  }, []);
 
   const renderPreviewMode = () => (
-    <div className="h-full flex flex-col">
-      <div className="flex-1 overflow-auto">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-2 mb-6">
-            <div className="flex items-center gap-3 mb-6"></div>
-
-            <div className="space-y-6">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate
-              nisi cum adipisci deleniti voluptates modi rerum, odit ducimus
-              ipsa et. Temporibus necessitatibus optio quis, vitae sunt
-              provident reiciendis in maiores. Laudantium architecto, dolore
-              illo et voluptate perspiciatis ullam eaque consectetur minus illum
-              deleniti quam molestias nisi quos repellat similique aut
-              explicabo, reprehenderit officiis nesciunt, soluta adipisci. Eum
-              nobis quod minima. Molestiae porro unde earum eius labore!
-              Nesciunt dignissimos sapiente minima impedit et, nam quaerat
-              exercitationem nihil doloremque nobis voluptatibus a asperiores
-              at, quisquam, voluptatem molestiae quam totam! At, accusamus
-              eveniet. Molestiae dolor est omnis, amet, dicta beatae quidem
-              necessitatibus vitae eos libero esse similique in quam! Molestias
-              explicabo reiciendis repudiandae saepe. Perferendis, assumenda?
-              Minus omnis minima perspiciatis? Recusandae, nemo fugit. Deserunt
+    <div className="h-full overflow-auto p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            Plain English Contract
+          </h1>
+          <div className="prose max-w-none">
+            <div className="text-gray-700 leading-relaxed space-y-4">
+              {plainEnglishContent.split("\n\n").map((paragraph, index) => (
+                <p key={index} className="text-base leading-7">
+                  {paragraph}
+                </p>
+              ))}
             </div>
           </div>
         </div>
@@ -132,25 +140,24 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   );
 
   const renderOriginalMode = () => (
-    <div className="h-full overflow-auto">
-      <div
-        className="prose rounded-lg border border-gray-200"
-        style={{ fontSize: `${zoom}%` }}
-      >
-        <div
-          className="whitespace-pre-wrap break-words"
-          dangerouslySetInnerHTML={{
-            __html: highlightText(formatDocumentContent(document.content)),
-          }}
-          onClick={handleTextClick}
-        />
+    <div className="h-full overflow-auto p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div
+            className="prose max-w-none"
+            dangerouslySetInnerHTML={{
+              __html: highlightedText.replace(/\n/g, "<br>"),
+            }}
+            onClick={handleTextClick}
+          />
+        </div>
       </div>
     </div>
   );
 
   return (
     <Card className="h-full flex flex-col overflow-hidden">
-      <CardHeader className="pb-4 flex-shrink-0 border border-none">
+      <CardHeader className="pb-4 flex-shrink-0 border-b">
         <div className="flex items-center justify-between">
           <CardTitle>Document Preview</CardTitle>
           <div className="flex items-center gap-2">
@@ -160,7 +167,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setViewMode("preview")}
+                    onClick={() => handleViewModeChange("preview")}
                     className={
                       viewMode === "preview" ? "bg-blue-100 text-primary" : ""
                     }
@@ -169,7 +176,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Preview mode</p>
+                  <p>Plain English</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -178,7 +185,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setViewMode("original")}
+                    onClick={() => handleViewModeChange("original")}
                     className={
                       viewMode === "original" ? "bg-blue-100 text-primary" : ""
                     }
@@ -193,85 +200,62 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
             </TooltipProvider>
 
             {viewMode === "original" && (
-              <>
-                <div className="flex items-center gap-1">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleZoomOut}
-                        >
-                          <ZoomOut className="w-4 h-4" strokeWidth={1.5} />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Zoom out</p>
-                      </TooltipContent>
-                    </Tooltip>
-
-                    <Badge
-                      variant="outline"
-                      className="min-w-[60px] justify-center"
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleToggleHighlights}
                     >
-                      {zoom}%
-                    </Badge>
-
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleZoomIn}
-                        >
-                          <ZoomIn className="w-4 h-4" strokeWidth={1.5} />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Zoom in</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowHighlights(!showHighlights)}
-                      >
-                        {showHighlights ? (
-                          <Eye className="w-4 h-4" strokeWidth={1.5} />
-                        ) : (
-                          <EyeOff className="w-4 h-4" strokeWidth={1.5} />
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        {showHighlights ? "Hide highlights" : "Show highlights"}
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </>
+                      {showHighlights ? (
+                        <Eye className="w-4 h-4" strokeWidth={1.5} />
+                      ) : (
+                        <EyeOff className="w-4 h-4" strokeWidth={1.5} />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {showHighlights ? "Hide highlights" : "Show highlights"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="w-full overflow-hidden p-0">
+      <CardContent className="flex-1 overflow-hidden p-0">
         {viewMode === "preview" ? renderPreviewMode() : renderOriginalMode()}
       </CardContent>
     </Card>
   );
 };
 
-const getMockContractText = () => `
-FREELANCE CONTRACT AGREEMENT
+const getPlainEnglishContract =
+  () => `This is a contract between you (the client) and a freelancer who will create content for you.
+
+What the freelancer will do: They will write blog posts, social media content, and marketing materials as described in your project brief.
+
+When you need to pay: You have 60 days to pay after they send you an invoice. They must send the invoice within 5 days of finishing the work.
+
+Who owns the work: Once you pay in full, you own all the work they created. However, they can still use it in their portfolio to show other potential clients.
+
+How to end the contract: Either of you can cancel this agreement by giving 30 days written notice. If you cancel, you still need to pay for any work they've already completed.
+
+Keeping things private: The freelancer promises to keep your business information and secrets confidential.
+
+Working relationship: The freelancer is not your employee. They work for themselves and are responsible for their own taxes and benefits.
+
+Limits on responsibility: Neither of you can sue each other for indirect damages that might happen because of this contract.
+
+What law applies: This contract follows the laws of your state or country.
+
+Both parties sign below to agree to these terms.`;
+
+const getMockContractText = () => `FREELANCE CONTRACT AGREEMENT
 
 This Freelance Contract Agreement (the "Agreement") is entered into as of [Date] by and between [Client Name] ("Client") and [Freelancer Name] ("Freelancer").
 
@@ -303,5 +287,4 @@ IN WITNESS WHEREOF, the parties have executed this agreement as of the date firs
 
 [Client Signature]                    [Freelancer Signature]
 [Client Name]                        [Freelancer Name]
-[Date]                               [Date]
-`;
+[Date]                               [Date]`;
