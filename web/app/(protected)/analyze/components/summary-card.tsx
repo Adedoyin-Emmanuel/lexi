@@ -10,11 +10,11 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+import { ContractStats } from "../page";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../dashboard/components/circular-confidence";
-import { ContractStats } from "../page";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SummaryCardProps {
   summary: string;

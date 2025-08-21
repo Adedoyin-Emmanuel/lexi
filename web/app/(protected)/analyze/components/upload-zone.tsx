@@ -5,8 +5,8 @@ import { useDropzone, FileRejection } from "react-dropzone";
 import { Upload, FileText, AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface UploadZoneProps {
   onUpload: (file: File) => void;

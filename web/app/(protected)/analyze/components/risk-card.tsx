@@ -1,16 +1,16 @@
 import {
+  FileText,
   TrendingUp,
   HelpCircle,
-  AlertTriangle,
   ExternalLink,
-  FileText,
+  AlertTriangle,
 } from "lucide-react";
 
 import { Risk } from "../page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 interface RiskCardProps {
   risk: Risk;

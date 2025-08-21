@@ -10,9 +10,9 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ContractDocument, Clause } from "../page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DocumentPreviewProps {
   document: ContractDocument;

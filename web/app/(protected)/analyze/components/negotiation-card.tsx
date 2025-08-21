@@ -1,7 +1,7 @@
 "use client";
 
-import { Copy, Check, ArrowDown, TrendingUp, ExternalLink } from "lucide-react";
 import { useState } from "react";
+import { Copy, Check, ArrowDown, TrendingUp, ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { NegotiationSuggestion } from "../page";

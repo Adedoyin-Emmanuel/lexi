@@ -1,17 +1,18 @@
 "use client";
 
+import {
+  Clock,
+  FileText,
+  Calendar,
+  TrendingUp,
+  ExternalLink,
+} from "lucide-react";
 import React from "react";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+
+import { Obligation } from "../page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Calendar,
-  Clock,
-  ExternalLink,
-  TrendingUp,
-  FileText,
-} from "lucide-react";
-import { Obligation } from "../page";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 interface ObligationCardProps {
   obligation: Obligation;
