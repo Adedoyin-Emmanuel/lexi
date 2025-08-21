@@ -53,6 +53,12 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({ clause, onSelect }) => {
   const confidenceScore = Math.round(clause.confidence * 100);
   const confidenceColor = getConfidenceColor(clause.confidence);
 
+  // Truncate content to ~200 characters for summary
+  const summary =
+    clause.content.length > 200
+      ? `${clause.content.substring(0, 200)}...`
+      : clause.content;
+
   return (
     <Card
       className={`cursor-pointer transition-all hover:shadow-md border-slate-200 ${
@@ -67,7 +73,9 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({ clause, onSelect }) => {
           </CardTitle>
           <Badge
             variant="outline"
-            className={`text-xs flex-shrink-0 ${getCategoryColor(clause.category)}`}
+            className={`text-xs flex-shrink-0 ${getCategoryColor(
+              clause.category
+            )}`}
           >
             {getCategoryLabel(clause.category)}
           </Badge>
@@ -78,10 +86,15 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({ clause, onSelect }) => {
         <div className="space-y-4">
           {/* Clause Summary */}
           <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-            <p className="text-sm text-slate-700 leading-relaxed line-clamp-3">
-              {clause.content.length > 200
-                ? `${clause.content.substring(0, 200)}...`
-                : clause.content}
+            <p
+              className="text-sm text-slate-700 leading-relaxed overflow-hidden"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+              }}
+            >
+              {summary}
             </p>
           </div>
 

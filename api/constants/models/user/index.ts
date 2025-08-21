@@ -31,3 +31,7 @@ class User {
   @prop({ required: true })
   lastLogin: Date;
 }
+
+const UserModel = getModelForClass(User);
+
+export { UserModel, User };

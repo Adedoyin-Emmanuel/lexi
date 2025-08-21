@@ -63,12 +63,12 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
 
   if (abstain) {
     return (
-      <Card className="border-slate-200 bg-amber-50 border-amber-200">
+      <Card className="border-amber-200 bg-amber-50">
         <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-2">
+          <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <HelpCircle className="w-4 h-4 text-amber-600" />
-              <CardTitle className="text-sm font-medium truncate">
+              <HelpCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+              <CardTitle className="text-sm font-medium text-amber-900 truncate">
                 {risk.title}
               </CardTitle>
             </div>
@@ -82,23 +82,24 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
         </CardHeader>
 
         <CardContent className="pt-0">
-          <div className="bg-amber-100 rounded-lg p-3 border border-amber-200">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="w-4 h-4 text-amber-600" />
+          <div className="bg-amber-100 rounded-lg p-4 border border-amber-200">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
               <span className="text-sm font-medium text-amber-800">
                 Manual Review Required
               </span>
             </div>
-            <p className="text-sm text-amber-700">
+            <p className="text-sm text-amber-700 leading-relaxed mb-4">
               AI confidence is too low ({confidenceScore}%) to provide a
               reliable assessment. Please review this potential risk manually to
               ensure accuracy.
             </p>
-            <div className="flex items-center gap-2 mt-3">
+            <div className="flex items-center gap-3">
               <CircularConfidence
                 score={confidenceScore}
-                size={24}
+                size={32}
                 strokeWidth={2}
+                className="flex-shrink-0"
               />
               <span className="text-xs text-amber-600">
                 {confidenceScore}% confidence - below threshold
@@ -112,14 +113,14 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
 
   return (
     <Card
-      className="cursor-pointer transition-all hover:shadow-md border-slate-200"
+      className="cursor-pointer transition-all hover:shadow-md border-slate-200 hover:border-slate-300"
       onClick={onSelect}
     >
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             {getSeverityIcon(risk.severity)}
-            <CardTitle className="text-sm font-medium truncate">
+            <CardTitle className="text-sm font-medium text-slate-900 truncate">
               {risk.title}
             </CardTitle>
           </div>
@@ -132,42 +133,45 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
             {risk.severity} risk
           </Badge>
         </div>
-
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 flex-1">
-            <Progress
-              value={confidenceScore}
-              className={`h-1 flex-1 ${
-                risk.severity === "high"
-                  ? "bg-red-100"
-                  : risk.severity === "medium"
-                  ? "bg-yellow-100"
-                  : "bg-green-100"
-              }`}
-            />
-            <CircularConfidence
-              score={confidenceScore}
-              size={20}
-              strokeWidth={2}
-              className="flex-shrink-0"
-            />
-          </div>
-          <span className="text-xs text-slate-500 flex-shrink-0">
-            {confidenceScore}%
-          </span>
-        </div>
       </CardHeader>
 
       <CardContent className="pt-0">
-        <div className="space-y-3">
-          <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+        <div className="space-y-4">
+          {/* Risk Description */}
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
             <p className="text-sm text-slate-700 leading-relaxed">
               {risk.description}
             </p>
           </div>
 
-          <div className={`p-2 rounded-lg border ${confidenceInfo.bg}`}>
-            <div className="flex items-center gap-2">
+          {/* Confidence Section */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 flex-1">
+              <Progress
+                value={confidenceScore}
+                className={`h-2 flex-1 ${
+                  risk.severity === "high"
+                    ? "bg-red-100"
+                    : risk.severity === "medium"
+                    ? "bg-yellow-100"
+                    : "bg-green-100"
+                }`}
+              />
+              <CircularConfidence
+                score={confidenceScore}
+                size={32}
+                strokeWidth={2}
+                className="flex-shrink-0"
+              />
+            </div>
+            <span className="text-xs text-slate-500 flex-shrink-0">
+              {confidenceScore}%
+            </span>
+          </div>
+
+          {/* Confidence Level Badge */}
+          <div className={`p-3 rounded-lg border ${confidenceInfo.bg}`}>
+            <div className="flex items-center gap-2 mb-1">
               <div
                 className={`w-2 h-2 rounded-full ${confidenceInfo.color.replace(
                   "text-",
@@ -178,7 +182,7 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
                 {confidenceInfo.level} Confidence
               </span>
             </div>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-xs text-slate-600 leading-relaxed">
               {confidenceScore >= 90
                 ? "AI is very confident in this risk assessment"
                 : confidenceScore >= 80
@@ -190,7 +194,8 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mt-4">
+        {/* Footer */}
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <TrendingUp className="w-3 h-3" />
             <span>AI confidence level</span>
@@ -199,7 +204,7 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 px-2 text-xs"
+            className="h-7 px-2 text-xs hover:bg-slate-100"
             onClick={(e) => {
               e.stopPropagation();
             }}
