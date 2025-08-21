@@ -45,7 +45,8 @@ export default class AuthController {
             err,
             false,
             null,
-            req.session.redirectUrl
+            req.session.redirectUrl,
+            false
           );
           return res.redirect(url);
         }
@@ -56,9 +57,10 @@ export default class AuthController {
           const newUser = {
             googleId: user.id,
             name: user.name,
-            email: user.emails[0].value,
             avatar: user.avatar,
             lastLogin: new Date(),
+            email: user.emails[0].value,
+            googleDisplayName: user.name,
           };
 
           existingUser = await userRepository.create(newUser as User);
@@ -77,7 +79,8 @@ export default class AuthController {
           err,
           true,
           accessToken,
-          req.session.redirectUrl
+          req.session.redirectUrl,
+          existingUser.isOnboarded
         );
 
         return res.redirect(url);
@@ -138,10 +141,11 @@ const getAuthCallbackUrl = (
   error: string,
   success: boolean,
   accessToken: string | null,
-  redirectUrl: string
+  redirectUrl: string,
+  isOnboarded?: boolean
 ) => {
   const baseParams = success
-    ? `success=${success}&message=Google authentication successful&accessToken=${accessToken}`
+    ? `success=${success}&message=Google authentication successful&accessToken=${accessToken}&isOnboarded=${isOnboarded}`
     : `success=${success}&error=${error}`;
 
   return IS_PRODUCTION

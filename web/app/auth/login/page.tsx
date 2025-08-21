@@ -49,7 +49,7 @@ const Login = () => {
           variant="outline"
           disabled={isLoading}
           onClick={handleContinueWithGoogle}
-          className="w-full bg-white border-gray-200 hover:bg-transparent hover:text-black text-black font-medium cursor-pointer"
+          className="w-full cursor-pointer bg-white border-gray-200 hover:bg-transparent hover:text-black text-black font-medium "
         >
           {isLoading ? (
             <Loader2 className="animate-spin" strokeWidth={1.5} />

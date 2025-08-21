@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 export const GLOBAL_RATE_LIMIT_WINDOW_MS = 60 * 1000;
 export const GLOBAL_REQUEST_PER_MINUTE = 100;
 export const ALLOWED_FILE_UPLOAD_EXTENSIONS = ["png", "jpeg", "jpg"];
@@ -8,8 +12,7 @@ export const MORGAN_CONFIG = IS_PRODUCTION
   : "dev";
 
 export const PORT = process.env.PORT || 2800;
-export const JWT_SECRET =
-  process.env.JWT_SECRET || "your-jwt-secret-change-in-production";
+export const JWT_SECRET = process.env.JWT_SECRET;
 export const MONGODB_URL =
   process.env.MONGODB_URL || "mongodb://localhost:27017/lexi";
 export const SESSION_SECRET =
