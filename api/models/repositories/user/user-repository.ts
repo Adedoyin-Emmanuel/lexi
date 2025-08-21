@@ -1,6 +1,6 @@
+import { User, UserModel } from "../../user";
 import { Repository } from "../base/repository";
 import { IUserRepository } from "./i-user-repository";
-import { User, UserModel } from "../../user";
 
 class UserRepository extends Repository<User> implements IUserRepository {
   constructor() {

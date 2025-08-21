@@ -37,7 +37,9 @@ class User {
   @prop({ required: false, default: [] })
   specialities: string[]; /** The domain the user works in (e.g. "software development", "design", "marketing", etc.) */
 
-  @prop({ required: false })
+  @prop({ required: false, default: false })
+  isOnboarded: boolean;
+
   @prop({ required: true, unique: true })
   email: string;
 
