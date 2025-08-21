@@ -115,7 +115,7 @@ export const AppSidebarHeader = () => {
                   alt={userData?.name || "User"}
                 />
 
-                <AvatarFallback className="bg-primary/10 text-primary">
+                <AvatarFallback className=" text-primary">
                   {userData?.displayName?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
