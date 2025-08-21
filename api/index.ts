@@ -15,6 +15,7 @@ import express, { Application } from "express";
 import baseRouter from "./features/base/route";
 import authRouter from "./features/auth/route";
 import userRouter from "./features/user/route";
+import JobsConfig from "./jobs/config/init-jobs";
 import analyzeRouter from "./features/analyze/route";
 
 import {
@@ -95,6 +96,12 @@ class ApiServer {
     this.app.use(useErrorHandler);
   }
 
+  private setupBackgroundJobs(): void {
+    const jobsConfig = new JobsConfig();
+
+    jobsConfig.start();
+  }
+
   public async connectDatabase(): Promise<void> {
     await connectToDatabase();
   }
@@ -119,6 +126,8 @@ class ApiServer {
 
       await this.connectDatabase();
       await this.connectRedis();
+
+      this.setupBackgroundJobs();
 
       this.server = this.app.listen(port, () => {
         logger(`Server is running on PORT ${port} 🚀`);
