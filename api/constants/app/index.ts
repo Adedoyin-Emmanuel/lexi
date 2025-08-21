@@ -8,7 +8,12 @@ export const MORGAN_CONFIG = IS_PRODUCTION
   : "dev";
 
 export const PORT = process.env.PORT || 2800;
-export const JWT_SECRET = process.env.JWT_SECRET;
+export const JWT_SECRET =
+  process.env.JWT_SECRET || "your-jwt-secret-change-in-production";
+export const MONGODB_URL =
+  process.env.MONGODB_URL || "mongodb://localhost:27017/lexi";
+export const SESSION_SECRET =
+  process.env.SESSION_SECRET || "your-secret-key-change-in-production";
 
 export const GOOGLE_CALLBACK_URL = `${
   IS_PRODUCTION

@@ -11,7 +11,7 @@ const useAuth = async (req: Request, res: Response, next: NextFunction) => {
   const userAgent = req.headers["user-agent"];
 
   if (!authHeader && !authCookie) {
-    logger.info(
+    logger(
       `Missing authorization header or cookie from ${req.ip} with user agent ${userAgent}`
     );
     return response(res, 401, "Unauthorized - Missing authentication token");
