@@ -5,6 +5,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "./jwt";
+import aiMlApi from "./aiml";
 import logger from "./logger";
 import redisClient from "./redis";
 import response from "./response";
@@ -15,6 +16,7 @@ import { connectToDatabase, disconnectFromDatabase } from "./database";
 
 export {
   logger,
+  aiMlApi,
   response,
   passport,
   verifyToken,
