@@ -2,25 +2,40 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 /**
- * Middleware to check authentication via clipsave_auth_refresh_token.
- * If unauthenticated, redirects to auth.clipsave.ng (or localhost) with original URL preserved.
+ * Middleware to check authentication via lexi_auth_refresh_token.
+ * If unauthenticated, redirects to auth/login with original URL preserved.
+ * If authenticated, redirects away from auth pages to dashboard.
  * Only specified protected paths require authentication.
  */
 export function middleware(request: NextRequest) {
-  const protectedPaths = ["/dashboard", "/analyze", "/settings", "/onboarding"];
+  const protectedPaths = [
+    "/analyze",
+    "/settings",
+    "/dashboard",
+    "/onboarding",
+    "/auth/logout",
+  ];
+
+  const authPaths = ["/auth/login", "/auth/callback"];
 
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
   );
 
-  if (!isProtectedPath) {
-    return NextResponse.next();
-  }
+  const isAuthPath = authPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path)
+  );
 
   const refreshToken = request.cookies.get("lexi_auth_refresh_token")?.value;
   const isAuthenticated = !!refreshToken;
 
-  if (!isAuthenticated) {
+  // If user is authenticated and trying to access auth pages, redirect to dashboard
+  if (isAuthenticated && isAuthPath) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // If user is not authenticated and trying to access protected paths, redirect to login
+  if (!isAuthenticated && isProtectedPath) {
     const isProduction = process.env.NODE_ENV === "production";
     const baseAuthUrl = isProduction
       ? "https://uselexi.xyz/auth/login"
