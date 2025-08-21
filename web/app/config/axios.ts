@@ -1,7 +1,7 @@
 import axios, {
   AxiosError,
-  InternalAxiosRequestConfig,
   AxiosResponse,
+  InternalAxiosRequestConfig,
 } from "axios";
 
 interface QueuedRequest {
@@ -63,7 +63,11 @@ Axios.interceptors.response.use(
       const refreshResponse = await Axios.post("/auth/refresh", {}, {
         withCredentials: true,
         _retry: true,
-      } as any);
+      } as CustomAxiosRequestConfig);
+
+      if (refreshResponse.data?.accessToken) {
+        localStorage.setItem("accessToken", refreshResponse.data.accessToken);
+      }
 
       processQueue();
 
@@ -80,6 +84,10 @@ Axios.interceptors.response.use(
 
 Axios.interceptors.request.use(
   (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
