@@ -1,5 +1,5 @@
 import { IRepository } from "../base/i-repository";
-import { Token } from "./../../../models/token";
+import { Token } from "../../token";
 
 export interface ITokenRepository extends IRepository<Token> {
   findByToken(token: string): Promise<Token | null>;

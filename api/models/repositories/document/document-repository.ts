@@ -1,6 +1,6 @@
 import { Repository } from "../base/repository";
 import { IDocumentRepository } from "./i-document-repository";
-import { Document, DocumentModel } from "../../../models/document";
+import { Document, DocumentModel } from "../../document";
 
 class DocumentRepository
   extends Repository<Document>
