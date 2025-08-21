@@ -1,55 +1,37 @@
 import {
   TrendingUp,
   HelpCircle,
-  AlertCircle,
-  ExternalLink,
-  AlertOctagon,
   AlertTriangle,
+  ExternalLink,
+  FileText,
 } from "lucide-react";
 
 import { Risk } from "../page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CircularConfidence } from "../../dashboard/components/circular-confidence";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 interface RiskCardProps {
   risk: Risk;
   onSelect: () => void;
 }
 
-const getSeverityIcon = (severity: Risk["severity"]) => {
-  switch (severity) {
-    case "high":
-      return <AlertOctagon className="w-4 h-4 text-red-600" />;
-    case "medium":
-      return <AlertTriangle className="w-4 h-4 text-yellow-600" />;
-    case "low":
-      return <AlertCircle className="w-4 h-4 text-green-600" />;
-  }
-};
-
 const getSeverityColor = (severity: Risk["severity"]) => {
   switch (severity) {
     case "high":
-      return "bg-red-100 text-red-800 border-red-200";
+      return "bg-red-50 text-red-800 border-red-200";
     case "medium":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      return "bg-yellow-50 text-yellow-800 border-yellow-200";
     case "low":
-      return "bg-green-100 text-green-800 border-green-200";
+      return "bg-green-50 text-green-800 border-green-200";
   }
 };
 
-const getConfidenceLevel = (confidence: number) => {
-  const score = Math.round(confidence * 100);
-  if (score >= 90)
-    return { level: "Very High", color: "text-green-600", bg: "bg-green-50" };
-  if (score >= 80)
-    return { level: "High", color: "text-blue-600", bg: "bg-blue-50" };
-  if (score >= 70)
-    return { level: "Moderate", color: "text-yellow-600", bg: "bg-yellow-50" };
-  return { level: "Low", color: "text-red-600", bg: "bg-red-50" };
+const getConfidenceColor = (confidence: number) => {
+  if (confidence >= 90) return "text-green-600";
+  if (confidence >= 80) return "text-blue-600";
+  if (confidence >= 70) return "text-yellow-600";
+  return "text-red-600";
 };
 
 const shouldAbstain = (confidence: number) => {
@@ -57,53 +39,49 @@ const shouldAbstain = (confidence: number) => {
 };
 
 export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
-  const confidenceInfo = getConfidenceLevel(risk.confidence);
   const confidenceScore = Math.round(risk.confidence * 100);
   const abstain = shouldAbstain(risk.confidence);
 
   if (abstain) {
     return (
-      <Card className="border-amber-200 bg-amber-50">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <HelpCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-              <CardTitle className="text-sm font-medium text-amber-900 truncate">
+      <Card className="shadow-sm border border-gray-200">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 pt-1">
+              <HelpCircle
+                className="w-6 h-6 text-amber-600"
+                strokeWidth={1.5}
+              />
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-base font-semibold text-foreground mb-2">
                 {risk.title}
               </CardTitle>
-            </div>
-            <Badge
-              variant="outline"
-              className="text-xs bg-amber-100 text-amber-800 border-amber-200 flex-shrink-0"
-            >
-              Low Confidence
-            </Badge>
-          </div>
-        </CardHeader>
 
-        <CardContent className="pt-0">
-          <div className="bg-amber-100 rounded-lg p-4 border border-amber-200">
-            <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-              <span className="text-sm font-medium text-amber-800">
-                Manual Review Required
-              </span>
-            </div>
-            <p className="text-sm text-amber-700 leading-relaxed mb-4">
-              AI confidence is too low ({confidenceScore}%) to provide a
-              reliable assessment. Please review this potential risk manually to
-              ensure accuracy.
-            </p>
-            <div className="flex items-center gap-3">
-              <CircularConfidence
-                score={confidenceScore}
-                size={32}
-                strokeWidth={2}
-                className="flex-shrink-0"
-              />
-              <span className="text-xs text-amber-600">
-                {confidenceScore}% confidence - below threshold
-              </span>
+              <Badge
+                variant="outline"
+                className="text-xs bg-amber-100 text-amber-800 border-amber-200 mb-3"
+              >
+                Low Confidence
+              </Badge>
+
+              <div className="bg-amber-100/80 p-4 border border-amber-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle
+                    className="w-4 h-4 text-amber-600"
+                    strokeWidth={1.5}
+                  />
+                  <span className="text-sm font-medium text-amber-800">
+                    Manual Review Required
+                  </span>
+                </div>
+                <p className="text-sm text-amber-700 leading-relaxed">
+                  AI confidence is too low ({confidenceScore}%) to provide a
+                  reliable assessment. Please review this potential risk
+                  manually to ensure accuracy.
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -113,105 +91,71 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
 
   return (
     <Card
-      className="cursor-pointer transition-all hover:shadow-md border-slate-200 hover:border-slate-300"
+      className="cursor-pointer transition-all hover:shadow-md shadow-sm border border-gray-200"
       onClick={onSelect}
     >
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            {getSeverityIcon(risk.severity)}
-            <CardTitle className="text-sm font-medium text-slate-900 truncate">
+      <CardContent className="p-6">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0 pt-1">
+            <AlertTriangle
+              className="w-6 h-6 text-orange-600"
+              strokeWidth={1.5}
+            />
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-base font-semibold text-foreground mb-2">
               {risk.title}
             </CardTitle>
-          </div>
-          <Badge
-            variant="outline"
-            className={`text-xs flex-shrink-0 ${getSeverityColor(
-              risk.severity
-            )}`}
-          >
-            {risk.severity} risk
-          </Badge>
-        </div>
-      </CardHeader>
 
-      <CardContent className="pt-0">
-        <div className="space-y-4">
-          {/* Risk Description */}
-          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-            <p className="text-sm text-slate-700 leading-relaxed">
+            <Badge
+              variant="outline"
+              className={`text-xs mb-3 ${getSeverityColor(risk.severity)}`}
+            >
+              {risk.severity} risk
+            </Badge>
+
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
               {risk.description}
             </p>
           </div>
+        </div>
 
-          {/* Confidence Section */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 flex-1">
-              <Progress
-                value={confidenceScore}
-                className={`h-2 flex-1 ${
-                  risk.severity === "high"
-                    ? "bg-red-100"
-                    : risk.severity === "medium"
-                    ? "bg-yellow-100"
-                    : "bg-green-100"
-                }`}
-              />
-              <CircularConfidence
-                score={confidenceScore}
-                size={32}
-                strokeWidth={2}
-                className="flex-shrink-0"
-              />
-            </div>
-            <span className="text-xs text-slate-500 flex-shrink-0">
-              {confidenceScore}%
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          <div className="flex items-center gap-2 text-xs">
+            <TrendingUp className="w-3 h-3" strokeWidth={1.5} />
+            <span
+              className={`font-medium ${getConfidenceColor(confidenceScore)}`}
+            >
+              AI confidence: {confidenceScore}%
             </span>
           </div>
 
-          {/* Confidence Level Badge */}
-          <div className={`p-3 rounded-lg border ${confidenceInfo.bg}`}>
-            <div className="flex items-center gap-2 mb-1">
-              <div
-                className={`w-2 h-2 rounded-full ${confidenceInfo.color.replace(
-                  "text-",
-                  "bg-"
-                )}`}
-              ></div>
-              <span className={`text-xs font-medium ${confidenceInfo.color}`}>
-                {confidenceInfo.level} Confidence
-              </span>
-            </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              {confidenceScore >= 90
-                ? "AI is very confident in this risk assessment"
-                : confidenceScore >= 80
-                ? "AI is confident in this risk assessment"
-                : confidenceScore >= 70
-                ? "AI is moderately confident - review recommended"
-                : "AI has low confidence - manual verification advised"}
-            </p>
-          </div>
-        </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <FileText className="w-3 h-3 mr-1" strokeWidth={1.5} />
+              View Redlines
+            </Button>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <TrendingUp className="w-3 h-3" />
-            <span>AI confidence level</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <ExternalLink className="w-3 h-3 mr-1" strokeWidth={1.5} />
+              View in Document
+            </Button>
           </div>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 px-2 text-xs hover:bg-slate-100"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <ExternalLink className="w-3 h-3 mr-1" />
-            View in Document
-          </Button>
         </div>
       </CardContent>
     </Card>

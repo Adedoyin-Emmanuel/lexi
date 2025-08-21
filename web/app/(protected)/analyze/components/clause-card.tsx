@@ -1,119 +1,136 @@
+import { useState } from "react";
+import { ChevronDown, ChevronUp, Eye, AlertTriangle } from "lucide-react";
+
+import { Clause, Risk } from "../page";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../dashboard/components/circular-confidence";
-import { Clause } from "../page";
 
 interface ClauseCardProps {
   clause: Clause;
-  onSelect?: () => void;
+  risks?: Risk[];
+  onViewRisk?: (clauseId: string) => void;
 }
 
-const getCategoryColor = (category: Clause["category"]) => {
-  switch (category) {
-    case "termination":
-      return "bg-red-100 text-red-800 border-red-200";
-    case "liability":
-      return "bg-orange-100 text-orange-800 border-orange-200";
-    case "ip":
-      return "bg-purple-100 text-purple-800 border-purple-200";
-    case "payment":
-      return "bg-green-100 text-green-800 border-green-200";
-    case "confidentiality":
-      return "bg-blue-100 text-blue-800 border-blue-200";
-    case "other":
-      return "bg-slate-100 text-slate-800 border-slate-200";
-  }
-};
-
-const getCategoryLabel = (category: Clause["category"]) => {
-  switch (category) {
-    case "termination":
-      return "Termination";
-    case "liability":
-      return "Liability";
-    case "ip":
-      return "IP Rights";
-    case "payment":
-      return "Payment";
-    case "confidentiality":
-      return "Confidentiality";
-    case "other":
-      return "Other";
-  }
-};
-
-const getConfidenceColor = (confidence: number) => {
-  const score = Math.round(confidence * 100);
-  if (score >= 80) return "text-green-600";
-  if (score >= 60) return "text-yellow-600";
-  return "text-red-600";
-};
-
-export const ClauseCard: React.FC<ClauseCardProps> = ({ clause, onSelect }) => {
+export const ClauseCard: React.FC<ClauseCardProps> = ({
+  clause,
+  risks = [],
+  onViewRisk,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const confidenceScore = Math.round(clause.confidence * 100);
-  const confidenceColor = getConfidenceColor(clause.confidence);
 
-  // Truncate content to ~200 characters for summary
-  const summary =
-    clause.content.length > 200
-      ? `${clause.content.substring(0, 200)}...`
-      : clause.content;
+  const clauseRisks = risks.filter((risk) => risk.clauseId === clause.id);
+  const hasRisks = clauseRisks.length > 0;
+
+  const handleViewInDocument = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log("View clause in document:", clause.id);
+  };
+
+  const handleViewRisk = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onViewRisk) {
+      onViewRisk(clause.id);
+    }
+  };
 
   return (
-    <Card
-      className={`cursor-pointer transition-all hover:shadow-md border-slate-200 ${
-        onSelect ? "hover:border-slate-300" : ""
-      }`}
-      onClick={onSelect}
-    >
-      <CardHeader className="pb-3">
+    <Card className={`cursor-pointer transition-all hover:shadow-md `}>
+      <CardHeader className="pb-4">
         <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-sm font-medium text-slate-900 leading-tight flex-1">
+          <CardTitle className="text-lg font-bold flex-1">
             {clause.title}
           </CardTitle>
-          <Badge
-            variant="outline"
-            className={`text-xs flex-shrink-0 ${getCategoryColor(
-              clause.category
-            )}`}
-          >
-            {getCategoryLabel(clause.category)}
-          </Badge>
+
+          <CircularConfidence
+            score={confidenceScore}
+            size={40}
+            strokeWidth={3}
+          />
         </div>
+
+        {hasRisks && (
+          <div className="flex items-center gap-2">
+            <Badge
+              variant="outline"
+              className="bg-red-100 text-red-800 border-red-200 text-xs"
+            >
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              Risky
+            </Badge>
+          </div>
+        )}
       </CardHeader>
 
-      <CardContent className="pt-0">
-        <div className="space-y-4">
-          {/* Clause Summary */}
-          <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-            <p
-              className="text-sm text-slate-700 leading-relaxed overflow-hidden"
-              style={{
-                display: "-webkit-box",
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: "vertical",
+      <CardContent className="pt-0 space-y-4">
+        <div className="space-y-2">
+          <p
+            className={`text-sm text-slate-700 leading-relaxed ${
+              !isExpanded ? "line-clamp-3" : ""
+            }`}
+          >
+            {clause.content}
+          </p>
+
+          {clause.content.length > 200 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
               }}
             >
-              {summary}
-            </p>
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="w-3 h-3 mr-1" />
+                  Read less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-3 h-3 mr-1" />
+                  Read more
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+
+        <Separator />
+
+        <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-slate-500">
+              Position: {clause.position.start}-{clause.position.end}
+            </span>
           </div>
 
-          {/* Confidence Section */}
-          <div className="flex flex-col items-center gap-2">
-            <CircularConfidence
-              score={confidenceScore}
-              size={48}
-              strokeWidth={3}
-              className="flex-shrink-0"
-            />
-            <div className="text-center">
-              <span className={`text-xs font-medium ${confidenceColor}`}>
-                Confidence
-              </span>
-              <div className="text-xs text-slate-500 mt-1">
-                {confidenceScore}%
-              </div>
-            </div>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-xs cursor-pointer"
+              onClick={handleViewInDocument}
+            >
+              <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
+              View in Document
+            </Button>
+
+            {hasRisks && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2 text-xs text-red-600 hover:text-red-700 cursor-pointer hover:bg-red-50"
+                onClick={handleViewRisk}
+              >
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                View Risk
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
