@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 
+import {
+  response,
+  passport,
+  verifyToken,
+  setAuthCookies,
+  clearAuthCookies,
+} from "../../utils";
 import { IGoogleUser } from "./types";
 import { AuthService } from "./service";
 import { User } from "../../models/user";
 import { signInSchema } from "./auth.dto";
-import {
-  response,
-  passport,
-  setAuthCookies,
-  clearAuthCookies,
-  verifyToken,
-} from "../../utils";
 import { IS_PRODUCTION } from "../../constants/app";
 import { userRepository, tokenRepository } from "./../../models/repositories";
 
@@ -97,7 +97,11 @@ export default class AuthController {
     return response(res, 200, "Logged out successfully");
   }
 
-  static async refreshToken(req: Request, res: Response, next: NextFunction) {
+  static async refreshAccessToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     const refreshToken = req.cookies.lexi_auth_refresh_token;
 
     if (!refreshToken) {

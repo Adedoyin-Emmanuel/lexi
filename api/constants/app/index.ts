@@ -8,6 +8,7 @@ export const MORGAN_CONFIG = IS_PRODUCTION
   : "dev";
 
 export const PORT = process.env.PORT || 2800;
+export const JWT_SECRET = process.env.JWT_SECRET;
 
 export const GOOGLE_CALLBACK_URL = `${
   IS_PRODUCTION
