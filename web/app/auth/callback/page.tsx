@@ -37,21 +37,21 @@ function CallbackContent() {
 
     setIsLoading(false);
 
-    if (isSuccessful && redirectUrl && accessToken) {
+    if (isSuccessful && redirectUrl && accessToken && !needsOnboarding) {
       localStorage.setItem("accessToken", accessToken);
 
-      const timer = setTimeout(() => {
-        router.push(redirectUrl);
-      }, 1500);
-
-      return () => clearTimeout(timer);
+      router.push("/dashboard");
     }
-  }, [success, error, redirectUrl, accessToken, router]);
+  }, [success, error, redirectUrl, accessToken, router, needsOnboarding]);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="animate-spin" strokeWidth={1.5} size={25} />
+      <div className="flex items-center justify-center min-h-screen w-full">
+        <Loader2
+          className="animate-spin text-primary"
+          strokeWidth={1.5}
+          size={25}
+        />
       </div>
     );
   }

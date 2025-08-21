@@ -2,14 +2,6 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { CheckCircle, Sparkles } from "lucide-react";
 
-import {
-  Card,
-  CardTitle,
-  CardHeader,
-  CardFooter,
-  CardContent,
-  CardDescription,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface AuthSuccessProps {
@@ -32,16 +24,16 @@ const AuthSuccess = ({
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+    <div className="w-full flex items-center justify-center min-h-screen  p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-4">
+        <div className="w-full max-w-md shadow-none border-none">
+          <div className="space-y-4">
             <motion.div
-              className="flex items-center justify-center text-green-500"
+              className="flex items-center justify-center text-primary"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
@@ -57,30 +49,30 @@ const AuthSuccess = ({
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <CardTitle className="text-center text-2xl font-bold">
+              <h2 className="text-center text-2xl font-bold">
                 {needsOnboarding
                   ? "Welcome to Lexi!"
                   : "Authentication Successful"}
-              </CardTitle>
+              </h2>
             </motion.div>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              <CardDescription className="text-center">
+              <div className="text-center">
                 {needsOnboarding
                   ? "Your Google sign-in was successful. Let's personalize Lexi to match your profession and needs."
                   : "Your Google sign-in was successful. You may now return to the app."}
-              </CardDescription>
+              </div>
             </motion.div>
-          </CardHeader>
+          </div>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <CardContent className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-gray-500 py-2">
               <p>
                 {needsOnboarding
                   ? "This will help Lexi provide more relevant and accurate contract analysis."
@@ -88,20 +80,23 @@ const AuthSuccess = ({
                   ? "You will be redirected automatically in a moment."
                   : "You can safely close this window or continue to your dashboard."}
               </p>
-            </CardContent>
+            </div>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <CardFooter className="flex justify-center pb-6 pt-2">
-              <Button onClick={handleContinue} className="w-full">
+            <div className="flex justify-center pb-6 pt-2 mt-4">
+              <Button
+                onClick={handleContinue}
+                className="w-full cursor-pointer"
+              >
                 {needsOnboarding ? "Start Onboarding" : "Continue"}
               </Button>
-            </CardFooter>
+            </div>
           </motion.div>
-        </Card>
+        </div>
       </motion.div>
     </div>
   );

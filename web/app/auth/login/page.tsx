@@ -52,7 +52,7 @@ const Login = () => {
           className="w-full cursor-pointer bg-white border-gray-200 hover:bg-transparent hover:text-black text-black font-medium "
         >
           {isLoading ? (
-            <Loader2 className="animate-spin" strokeWidth={1.5} />
+            <Loader2 className="animate-spin text-primary" strokeWidth={1.5} />
           ) : (
             <Google />
           )}
