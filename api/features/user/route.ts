@@ -9,4 +9,6 @@ router.post("/onboard", [useAuth], UserController.onboardUser);
 
 router.put("/", [useAuth], UserController.updateUserDetails);
 
+router.get("/me", [useAuth], UserController.getMe);
+
 export default router;

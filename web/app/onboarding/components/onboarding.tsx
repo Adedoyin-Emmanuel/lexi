@@ -13,9 +13,9 @@ import { useOnboardingStore } from "@/app/store/onboarding";
 const stepComponents = [StepBasicInfo, StepRoleSelection, StepNicheSelection];
 
 export function Onboarding() {
-  const { currentStep, isComplete } = useOnboardingStore();
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const { currentStep, isComplete } = useOnboardingStore();
 
   useEffect(() => {
     if (stepRefs.current.length !== stepComponents.length) {

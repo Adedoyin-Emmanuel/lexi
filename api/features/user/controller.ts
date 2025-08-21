@@ -56,4 +56,23 @@ export default class UserController {
 
     return response(res, 200, "User details updated successfully");
   }
+
+  static async getMe(req: Request, res: Response) {
+    const currentUser = req.user;
+
+    const user = await userRepository.findById(currentUser.userId.toString());
+
+    if (!user) {
+      return response(res, 404, "User not found");
+    }
+
+    const userDetails = {
+      name: user.name,
+      avatar: user.avatar,
+      displayName: user.displayName,
+      hasOnboarded: user.isOnboarded,
+    };
+
+    return response(res, 200, "User details fetched successfully", userDetails);
+  }
 }
