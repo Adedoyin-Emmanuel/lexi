@@ -10,6 +10,7 @@ import redisClient from "./redis";
 import response from "./response";
 import passport from "./passport";
 import corsOptions from "./cors-options";
+import { encryptTextWithKey, decryptText } from "./encryption";
 import { connectToDatabase, disconnectFromDatabase } from "./database";
 
 export {
@@ -17,11 +18,13 @@ export {
   response,
   passport,
   verifyToken,
+  decryptText,
   redisClient,
   corsOptions,
   setAuthCookies,
   clearAuthCookies,
   connectToDatabase,
+  encryptTextWithKey,
   generateAccessToken,
   generateRefreshToken,
   disconnectFromDatabase,

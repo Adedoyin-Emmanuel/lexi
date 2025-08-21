@@ -15,6 +15,7 @@ import express, { Application } from "express";
 import baseRouter from "./features/base/route";
 import authRouter from "./features/auth/route";
 import userRouter from "./features/user/route";
+import analyzeRouter from "./features/analyze/route";
 
 import {
   logger,
@@ -26,10 +27,10 @@ import {
 } from "./utils";
 import { useErrorHandler, useNotFound } from "./middlewares/";
 import {
-  IS_PRODUCTION,
   PORT,
-  SESSION_SECRET,
   MONGODB_URL,
+  IS_PRODUCTION,
+  SESSION_SECRET,
 } from "./constants/app";
 
 dotenv.config();
@@ -86,6 +87,7 @@ class ApiServer {
     this.app.use(`${apiPath}`, baseRouter);
     this.app.use(`${apiPath}/auth`, authRouter);
     this.app.use(`${apiPath}/user`, userRouter);
+    this.app.use(`${apiPath}/analyze`, analyzeRouter);
   }
 
   private setupErrorHandlers(): void {

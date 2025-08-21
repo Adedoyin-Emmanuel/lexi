@@ -7,6 +7,7 @@ import {
   ResizableHandle,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Axios } from "@/app/config/axios";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getTextFromFile } from "@/lib/file-reader";
 import { UploadZone } from "./components/upload-zone";
@@ -111,12 +112,6 @@ const Analyze = () => {
         fileContent
       );
 
-      console.log("Encryption details:", {
-        originalLength: fileContent.length,
-        encryptedLength: encryptedData.length,
-        keyLength: keyBase64.length,
-      });
-
       const newDocument: ContractDocument = {
         name: file.name,
         uploadedAt: new Date(),
@@ -130,29 +125,23 @@ const Analyze = () => {
             : "text",
       };
 
-      console.log("File details:", {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        lastModified: file.lastModified,
-        contentLength: fileContent.length,
-      });
-
       setDocument(newDocument);
 
-      console.log("Document encrypted successfully:", {
-        documentId: newDocument.id,
-        encryptedContentLength: encryptedData.length,
-        encryptionKeyLength: keyBase64.length,
-        fileName: file.name,
-        fileType: newDocument.type,
-        fileSize: file.size,
-        uploadedAt: newDocument.uploadedAt.toISOString(),
-      });
+      const dataToSend = {
+        key: keyBase64,
+        type:
+          file.type === "application/pdf"
+            ? "pdf"
+            : file.type.includes("word")
+            ? "docx"
+            : "text",
+        content: encryptedData,
+        name: file.name,
+      };
 
-      console.log("Encryption key:", keyBase64);
+      const response = await Axios.post("/analyze", dataToSend);
 
-      console.log("Encrypted data:", encryptedData);
+      console.log(response);
 
       await analyzeDocument();
     } catch (error) {
