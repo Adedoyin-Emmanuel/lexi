@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileText, TrendingUp, CheckCircle } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { FileText, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../dashboard/components/circular-confidence";
 
 interface SummaryCardProps {

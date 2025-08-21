@@ -221,7 +221,6 @@ const Analyze = () => {
     <div className="w-full flex flex-col overflow-hidden">
       <AnalyzeToolbar
         document={document}
-        onShare={handleShare}
         onExport={handleExport}
         isAnalyzing={isAnalyzing}
         onReanalyze={handleReanalyze}

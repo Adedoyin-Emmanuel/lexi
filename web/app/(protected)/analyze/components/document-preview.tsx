@@ -1,29 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  FileText,
-  Eye,
-  EyeOff,
-  Search,
-  ZoomIn,
-  ZoomOut,
-  Download,
-  Share2,
-  File,
-  Image,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { Eye, Image, ZoomIn, EyeOff, ZoomOut, FileText } from "lucide-react";
+
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
+  TooltipProvider,
 } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ContractDocument, Clause } from "../page";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface DocumentPreviewProps {
   document: ContractDocument;
@@ -36,10 +25,9 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   selectedClauseId,
   onClauseSelect,
 }) => {
-  const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
   const [zoom, setZoom] = useState(100);
-  const [searchTerm, setSearchTerm] = useState("");
   const [showHighlights, setShowHighlights] = useState(true);
+  const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
 
   const mockClauses: Clause[] = [
     {
@@ -117,74 +105,25 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     <div className="h-full flex flex-col">
       <div className="flex-1 overflow-auto">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-8 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <File className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900">
-                  {document.name}
-                </h3>
-                <p className="text-sm text-slate-500">
-                  Uploaded {document.uploadedAt.toLocaleDateString()}
-                </p>
-              </div>
-            </div>
+          <div className="bg-white rounded-lg shadow-sm p-2 mb-6">
+            <div className="flex items-center gap-3 mb-6"></div>
 
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-slate-700">
-                      Document Type
-                    </span>
-                  </div>
-                  <p className="text-lg font-semibold text-slate-900">
-                    {document.type.toUpperCase()}
-                  </p>
-                </div>
-
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-slate-700">
-                      Analysis Status
-                    </span>
-                  </div>
-                  <p className="text-lg font-semibold text-green-600">
-                    Complete
-                  </p>
-                </div>
-
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-slate-700">
-                      Key Findings
-                    </span>
-                  </div>
-                  <p className="text-lg font-semibold text-slate-900">
-                    3 Clauses
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
-                <h4 className="text-lg font-semibold text-slate-900 mb-3">
-                  Document Overview
-                </h4>
-                <div className="prose prose-sm max-w-none text-slate-700">
-                  <p>
-                    This contract has been analyzed and contains key clauses
-                    related to payment terms, intellectual property, and
-                    termination conditions. The AI has identified potential
-                    risks and provided negotiation suggestions to help you
-                    understand and improve the terms.
-                  </p>
-                </div>
-              </div>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate
+              nisi cum adipisci deleniti voluptates modi rerum, odit ducimus
+              ipsa et. Temporibus necessitatibus optio quis, vitae sunt
+              provident reiciendis in maiores. Laudantium architecto, dolore
+              illo et voluptate perspiciatis ullam eaque consectetur minus illum
+              deleniti quam molestias nisi quos repellat similique aut
+              explicabo, reprehenderit officiis nesciunt, soluta adipisci. Eum
+              nobis quod minima. Molestiae porro unde earum eius labore!
+              Nesciunt dignissimos sapiente minima impedit et, nam quaerat
+              exercitationem nihil doloremque nobis voluptatibus a asperiores
+              at, quisquam, voluptatem molestiae quam totam! At, accusamus
+              eveniet. Molestiae dolor est omnis, amet, dicta beatae quidem
+              necessitatibus vitae eos libero esse similique in quam! Molestias
+              explicabo reiciendis repudiandae saepe. Perferendis, assumenda?
+              Minus omnis minima perspiciatis? Recusandae, nemo fugit. Deserunt
             </div>
           </div>
         </div>
@@ -195,7 +134,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   const renderOriginalMode = () => (
     <div className="h-full overflow-auto">
       <div
-        className="prose max-w-none p-6 bg-white rounded-lg border"
+        className="prose rounded-lg border border-gray-200"
         style={{ fontSize: `${zoom}%` }}
       >
         <div
@@ -211,13 +150,9 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
 
   return (
     <Card className="h-full flex flex-col overflow-hidden">
-      <CardHeader className="pb-4 flex-shrink-0">
+      <CardHeader className="pb-4 flex-shrink-0 border border-none">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            Document Preview
-          </CardTitle>
-
+          <CardTitle>Document Preview</CardTitle>
           <div className="flex items-center gap-2">
             <TooltipProvider>
               <Tooltip>
@@ -227,10 +162,10 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                     size="sm"
                     onClick={() => setViewMode("preview")}
                     className={
-                      viewMode === "preview" ? "bg-blue-100 text-blue-700" : ""
+                      viewMode === "preview" ? "bg-blue-100 text-primary" : ""
                     }
                   >
-                    <Image className="w-4 h-4" />
+                    <Image className="w-4 h-4" strokeWidth={1.5} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -245,10 +180,10 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                     size="sm"
                     onClick={() => setViewMode("original")}
                     className={
-                      viewMode === "original" ? "bg-blue-100 text-blue-700" : ""
+                      viewMode === "original" ? "bg-blue-100 text-primary" : ""
                     }
                   >
-                    <FileText className="w-4 h-4" />
+                    <FileText className="w-4 h-4" strokeWidth={1.5} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -268,7 +203,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                           size="sm"
                           onClick={handleZoomOut}
                         >
-                          <ZoomOut className="w-4 h-4" />
+                          <ZoomOut className="w-4 h-4" strokeWidth={1.5} />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -290,7 +225,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                           size="sm"
                           onClick={handleZoomIn}
                         >
-                          <ZoomIn className="w-4 h-4" />
+                          <ZoomIn className="w-4 h-4" strokeWidth={1.5} />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -309,9 +244,9 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                         onClick={() => setShowHighlights(!showHighlights)}
                       >
                         {showHighlights ? (
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-4 h-4" strokeWidth={1.5} />
                         ) : (
-                          <EyeOff className="w-4 h-4" />
+                          <EyeOff className="w-4 h-4" strokeWidth={1.5} />
                         )}
                       </Button>
                     </TooltipTrigger>
@@ -324,47 +259,11 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                 </TooltipProvider>
               </>
             )}
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Download className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Download document</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Share2 className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Share document</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              placeholder="Search in document..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 overflow-hidden p-0">
+      <CardContent className="w-full overflow-hidden p-0">
         {viewMode === "preview" ? renderPreviewMode() : renderOriginalMode()}
       </CardContent>
     </Card>

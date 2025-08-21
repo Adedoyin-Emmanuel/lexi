@@ -26,8 +26,8 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
         const validTypes = [
-          "application/pdf",
           "text/plain",
+          "application/pdf",
           "application/msword",
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         ];
@@ -46,8 +46,8 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "application/pdf": [".pdf"],
       "text/plain": [".txt"],
+      "application/pdf": [".pdf"],
       "application/msword": [".doc"],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [".docx"],
