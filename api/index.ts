@@ -7,6 +7,7 @@ import { Server } from "http";
 import "express-async-errors";
 import EventEmitter from "events";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import express, { Application } from "express";
@@ -49,6 +50,7 @@ class ApiServer {
   private setupMiddlewares(): void {
     this.app.use(cors(corsOptions));
     this.app.use(bodyParser.json({ limit: "1mb" }));
+    this.app.use(cookieParser());
     this.app.use(morgan("dev"));
     this.app.use(helmet());
 

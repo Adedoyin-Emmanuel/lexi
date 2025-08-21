@@ -105,7 +105,9 @@ export default class AuthController {
     res: Response,
     next: NextFunction
   ) {
-    const refreshToken = req.cookies.lexi_auth_refresh_token;
+    const refreshToken = req.cookies?.lexi_auth_refresh_token;
+
+    console.log(`cookies: ${JSON.stringify(req.cookies)}`);
 
     if (!refreshToken) {
       return response(res, 401, "Unauthorized, no refresh token found");

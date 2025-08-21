@@ -53,5 +53,6 @@ export const useAuth = () => {
     error,
     isLoading,
     isAuthenticated: !!user,
+    hasOnboarded: user?.hasOnboarded,
   };
 };

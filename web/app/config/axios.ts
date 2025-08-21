@@ -41,7 +41,7 @@ Axios.interceptors.response.use(
     if (
       error.response?.status !== 401 ||
       originalRequest._retry ||
-      originalRequest.url?.includes("/auth/refresh")
+      originalRequest.url?.includes("/auth/refresh-token")
     ) {
       return Promise.reject(error);
     }
@@ -60,13 +60,16 @@ Axios.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const refreshResponse = await Axios.post("/auth/refresh", {}, {
+      const refreshResponse = await Axios.post("/auth/refresh-token", {}, {
         withCredentials: true,
         _retry: true,
       } as CustomAxiosRequestConfig);
 
-      if (refreshResponse.data?.accessToken) {
-        localStorage.setItem("accessToken", refreshResponse.data.accessToken);
+      if (refreshResponse.data.data.accessToken) {
+        localStorage.setItem(
+          "accessToken",
+          refreshResponse.data.data.accessToken
+        );
       }
 
       processQueue();

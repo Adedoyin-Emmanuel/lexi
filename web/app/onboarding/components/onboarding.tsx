@@ -3,16 +3,19 @@
 import { gsap } from "gsap";
 import React, { useEffect, useRef } from "react";
 
+import { useAuth } from "@/hooks/use-auth";
 import { StepBasicInfo } from "./step-basic-info";
 import { OnboardingProgressBar } from "./progress-bar";
 import { OnboardingSuccess } from "./onboarding-success";
 import { StepRoleSelection } from "./step-role-selection";
 import { StepNicheSelection } from "./step-niche-selection";
 import { useOnboardingStore } from "@/app/store/onboarding";
+import { Loader2 } from "lucide-react";
 
 const stepComponents = [StepBasicInfo, StepRoleSelection, StepNicheSelection];
 
 export function Onboarding() {
+  const { hasOnboarded, isLoading } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
   const { currentStep, isComplete } = useOnboardingStore();
@@ -55,6 +58,19 @@ export function Onboarding() {
 
   if (isComplete) {
     return <OnboardingSuccess />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full flex flex-col justify-center items-center space-y-4">
+        <Loader2 className="animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  if (hasOnboarded) {
+    return <OnboardingSuccess isExistingUser />;
   }
 
   return (
