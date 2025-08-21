@@ -73,7 +73,7 @@ export default class AnalyzeWorker implements IJob {
     }
 
     /** Start processing */
-    await this.validateAndProcessDocument(documentId, document);
+    await this.validateAndProcessDocument(documentId);
 
     /**
      * At this stage, validation is done and we have the contract type
@@ -144,6 +144,69 @@ export default class AnalyzeWorker implements IJob {
             * AI Confidence Score
             * Start index, end index
        */
+  }
+
+  private async validateAndProcessDocument(
+    documentId: Types.ObjectId
+  ): Promise<void> {
+    const documentContent = await redisService.get(`document:${documentId}`);
+
+    logger(`Redis document content: ${documentContent}`);
+
+    if (!documentContent) {
+      throw new Error("Document content not found");
+    }
+
+    const documentValidator = new DocumentValidator();
+
+    const validateContractResult = await documentValidator.validate(
+      documentContent as string
+    );
+
+    if (validateContractResult.isFailure) {
+      throw new Error(validateContractResult.errors.join(", "));
+    }
+
+    const validationResult = validateContractResult.value as IValidationResult;
+
+    if (!validationResult.isValidContract) {
+      await documentRepository.update(documentId, {
+        status: DOCUMENT_STATUS.FAILED,
+        failureReason: validationResult.reason,
+        isFlagged: true,
+      });
+
+      return;
+    }
+
+    const contractType = validationResult.contractType;
+
+    if (
+      contractType !== "nda" &&
+      contractType !== "ica" &&
+      contractType !== "license agreement"
+    ) {
+      await documentRepository.update(documentId, {
+        status: DOCUMENT_STATUS.FAILED,
+        failureReason: "Invalid contract type",
+      });
+      return;
+    }
+
+    /**
+     * Update the document details with the info we've gotten from validation
+     */
+    await documentRepository.update(documentId, {
+      validationMetadata: {
+        reason: validationResult.reason,
+        inScope: validationResult.inScope,
+        contractType: validationResult.contractType,
+        isValidContract: validationResult.isValidContract,
+        confidenceScore: validationResult.confidenceScore,
+      },
+    });
+
+    // Emit an event to the client
   }
 
   start(): void {
