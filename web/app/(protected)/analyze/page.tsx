@@ -10,6 +10,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getTextFromFile } from "@/lib/file-reader";
 import { UploadZone } from "./components/upload-zone";
+import { encryptTextWithNewKey } from "@/lib/encryption";
 import { InsightsPanel } from "./components/insights-panel";
 import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
@@ -30,10 +31,10 @@ export interface ContractStats {
     | "Service Agreement"
     | "Employment Contract"
     | "Other";
-  partiesInvolved: number;
-  jurisdiction: string;
   duration: string;
+  jurisdiction: string;
   effectiveDate: string;
+  partiesInvolved: number;
   hasTerminationClause: boolean;
   riskLevel: "low" | "medium" | "high";
 }
@@ -106,7 +107,15 @@ const Analyze = () => {
     try {
       const fileContent = await getTextFromFile(file);
 
-      console.log("File content:", fileContent);
+      const { encryptedData, keyBase64 } = await encryptTextWithNewKey(
+        fileContent
+      );
+
+      console.log("Encryption details:", {
+        originalLength: fileContent.length,
+        encryptedLength: encryptedData.length,
+        keyLength: keyBase64.length,
+      });
 
       const newDocument: ContractDocument = {
         name: file.name,
@@ -130,6 +139,21 @@ const Analyze = () => {
       });
 
       setDocument(newDocument);
+
+      console.log("Document encrypted successfully:", {
+        documentId: newDocument.id,
+        encryptedContentLength: encryptedData.length,
+        encryptionKeyLength: keyBase64.length,
+        fileName: file.name,
+        fileType: newDocument.type,
+        fileSize: file.size,
+        uploadedAt: newDocument.uploadedAt.toISOString(),
+      });
+
+      console.log("Encryption key:", keyBase64);
+
+      console.log("Encrypted data:", encryptedData);
+
       await analyzeDocument();
     } catch (error) {
       console.error("Error processing file:", error);
