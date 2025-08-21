@@ -13,6 +13,8 @@ import express, { Application } from "express";
 
 import baseRouter from "./features/base/route";
 import authRouter from "./features/auth/route";
+import userRouter from "./features/user/route";
+
 import {
   logger,
   passport,
@@ -81,6 +83,7 @@ class ApiServer {
 
     this.app.use(`${apiPath}`, baseRouter);
     this.app.use(`${apiPath}/auth`, authRouter);
+    this.app.use(`${apiPath}/user`, userRouter);
   }
 
   private setupErrorHandlers(): void {

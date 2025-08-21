@@ -8,3 +8,5 @@ const router = Router();
 router.post("/onboard", [useAuth], UserController.onboardUser);
 
 router.put("/", [useAuth], UserController.updateUserDetails);
+
+export default router;
