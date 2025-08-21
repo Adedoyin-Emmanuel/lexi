@@ -2,10 +2,13 @@
 
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
+import { Axios } from "@/app/config/axios";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const pageConfig = {
   "/dashboard": {
@@ -26,9 +29,24 @@ const pageConfig = {
   },
 };
 
+interface UserData {
+  name: string;
+  avatar: string;
+  displayName: string;
+  hasOnboarded: boolean;
+}
+
 export const AppSidebarHeader = () => {
   const pathname = usePathname();
   const { isMobile, toggleSidebar } = useSidebar();
+
+  const { data: userData, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: async (): Promise<UserData> => {
+      const response = await Axios.get("/user/me");
+      return response.data.data;
+    },
+  });
 
   const currentPage = pageConfig[pathname as keyof typeof pageConfig] || {
     title: "Page",
@@ -40,15 +58,19 @@ export const AppSidebarHeader = () => {
       <div className="flex items-center gap-3">
         {isMobile ? (
           <>
-            <Avatar className="h-9 w-9">
-              <AvatarImage
-                src="https://github.com/adedoyin-emmanuel.png"
-                alt="Adedoyin Emmanuel"
-              />
-              <AvatarFallback className="bg-primary/10 text-primary">
-                AE
-              </AvatarFallback>
-            </Avatar>
+            {isLoading ? (
+              <Skeleton className="h-9 w-9 rounded-full" />
+            ) : (
+              <Avatar className="h-9 w-9">
+                <AvatarImage
+                  src={userData?.avatar}
+                  alt={userData?.name || "User"}
+                />
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  {userData?.displayName?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+            )}
 
             <div className="flex-1 min-w-0">
               <h1 className="text-sm font-semibold text-foreground truncate">
@@ -83,15 +105,22 @@ export const AppSidebarHeader = () => {
             <span className="sr-only">Toggle sidebar</span>
           </Button>
         ) : (
-          <Avatar className="h-9 w-9">
-            <AvatarImage
-              src="https://github.com/adedoyin-emmanuel.png"
-              alt="Adedoyin Emmanuel"
-            />
-            <AvatarFallback className="bg-primary/10 text-primary">
-              AE
-            </AvatarFallback>
-          </Avatar>
+          <>
+            {isLoading ? (
+              <Skeleton className="h-9 w-9 rounded-full" />
+            ) : (
+              <Avatar className="h-9 w-9">
+                <AvatarImage
+                  src={userData?.avatar}
+                  alt={userData?.name || "User"}
+                />
+
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  {userData?.displayName?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+            )}
+          </>
         )}
       </div>
     </header>
