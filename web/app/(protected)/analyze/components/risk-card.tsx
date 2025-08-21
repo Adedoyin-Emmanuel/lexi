@@ -124,10 +124,13 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
           <div className="flex items-center gap-2 text-xs">
             <TrendingUp className="w-3 h-3" strokeWidth={1.5} />
-            <span
-              className={`font-medium ${getConfidenceColor(confidenceScore)}`}
-            >
-              AI confidence: {confidenceScore}%
+            <span className={`font-medium `}>
+              AI confidence:{" "}
+              <span
+                className={`font-bold ${getConfidenceColor(confidenceScore)}`}
+              >
+                {confidenceScore}%
+              </span>
             </span>
           </div>
 
@@ -135,19 +138,19 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-3 text-xs hover:bg-gray-100"
+              className="h-8 px-2 text-xs cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
               }}
             >
               <FileText className="w-3 h-3 mr-1" strokeWidth={1.5} />
-              View Redlines
+              View suggestions
             </Button>
 
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-3 text-xs hover:bg-gray-100"
+              className="h-8 px-2 text-xs cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
               }}
