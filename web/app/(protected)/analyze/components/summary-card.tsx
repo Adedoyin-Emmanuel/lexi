@@ -13,22 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../dashboard/components/circular-confidence";
- 
-interface ContractStats {
-  contractType:
-    | "NDA"
-    | "ICA"
-    | "License Agreement"
-    | "Service Agreement"
-    | "Employment Contract"
-    | "Other";
-  duration: string;
-  jurisdiction: string;
-  effectiveDate: string;
-  partiesInvolved: number;
-  hasTerminationClause: boolean;
-  riskLevel: "low" | "medium" | "high";
-}
+import { ContractStats } from "../page";
 
 interface SummaryCardProps {
   summary: string;

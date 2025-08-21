@@ -20,7 +20,13 @@ export interface ContractDocument {
 }
 
 export interface ContractStats {
-  contractType: string;
+  contractType:
+    | "NDA"
+    | "ICA"
+    | "License Agreement"
+    | "Service Agreement"
+    | "Employment Contract"
+    | "Other";
   partiesInvolved: number;
   jurisdiction: string;
   duration: string;

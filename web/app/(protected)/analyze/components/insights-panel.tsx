@@ -1,27 +1,27 @@
 "use client";
 
 import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { AnalysisResult } from "../page";
-import { SummaryCard } from "./summary-card";
-import { ClauseCard } from "./clause-card";
+
 import { RiskCard } from "./risk-card";
+import { AnalysisResult } from "../page";
+import { ClauseCard } from "./clause-card";
+import { SummaryCard } from "./summary-card";
 import { ObligationCard } from "./obligation-card";
-import { NegotiationCard } from "./negotiation-card";
 import { LoadingSkeleton } from "./loading-skeleton";
+import { NegotiationCard } from "./negotiation-card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface InsightsPanelProps {
-  analysis: AnalysisResult | null;
   isAnalyzing: boolean;
   selectedClauseId: string | null;
+  analysis: AnalysisResult | null;
   onClauseSelect: (clauseId: string) => void;
 }
 
 export const InsightsPanel: React.FC<InsightsPanelProps> = ({
   analysis,
   isAnalyzing,
-  selectedClauseId,
   onClauseSelect,
 }) => {
   const [activeTab, setActiveTab] = useState("summary");
@@ -63,20 +63,26 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
         className="flex-1 flex flex-col"
       >
         <TabsList className="grid w-full grid-cols-5 mx-4 mt-4 h-auto p-1">
-          <TabsTrigger value="summary" className="text-xs py-2">
+          <TabsTrigger value="summary" className="text-xs py-2 cursor-pointer">
             Summary
           </TabsTrigger>
-          <TabsTrigger value="clauses" className="text-xs py-2">
+          <TabsTrigger value="clauses" className="text-xs py-2 cursor-pointer">
             Clauses
           </TabsTrigger>
-          <TabsTrigger value="risks" className="text-xs py-2">
+          <TabsTrigger value="risks" className="text-xs py-2 cursor-pointer">
             Risks
           </TabsTrigger>
-          <TabsTrigger value="obligations" className="text-xs py-2">
+          <TabsTrigger
+            value="obligations"
+            className="text-xs py-2 cursor-pointer"
+          >
             Obligations
           </TabsTrigger>
-          <TabsTrigger value="negotiation" className="text-xs py-2">
-            Redlines
+          <TabsTrigger
+            value="negotiation"
+            className="text-xs py-2 cursor-pointer"
+          >
+            Suggestions
           </TabsTrigger>
         </TabsList>
 
@@ -94,11 +100,8 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
               <ClauseCard
                 key={clause.id}
                 clause={clause}
-                isSelected={selectedClauseId === clause.id}
-                onSelect={() => onClauseSelect(clause.id)}
                 risks={analysis.risks}
                 onViewRisk={(clauseId: string) => {
-                  // Switch to risks tab and select the clause
                   setActiveTab("risks");
                   onClauseSelect(clauseId);
                 }}
