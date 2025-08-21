@@ -42,7 +42,7 @@
   "dependencies": {
     "@typegoose/typegoose": "^12.18.0",
     "@types/express-session": "^1.18.2",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "body-parser": "^2.2.0",
     "cheerio": "^1.1.0",
     "connect-mongo": "^5.1.0",
@@ -61,6 +61,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.2",
     "morgan": "^1.10.0",
+    "openai": "^5.13.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "redis": "^5.8.2",
