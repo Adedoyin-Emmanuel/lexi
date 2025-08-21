@@ -13,8 +13,8 @@ interface UploadZoneProps {
 }
 
 export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
-  const [error, setError] = useState<string | null>(null);
   const isMobile = useIsMobile();
+  const [error, setError] = useState<string | null>(null);
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {

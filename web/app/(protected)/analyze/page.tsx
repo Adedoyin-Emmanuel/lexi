@@ -1,23 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
+
 import {
   ResizablePanel,
   ResizableHandle,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { getTextFromFile } from "@/lib/file-reader";
 import { UploadZone } from "./components/upload-zone";
 import { InsightsPanel } from "./components/insights-panel";
 import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface ContractDocument {
   id: string;
   name: string;
   content: string;
   uploadedAt: Date;
-  type: "pdf" | "text";
+  type: "pdf" | "text" | "docx";
 }
 
 export interface ContractStats {
@@ -101,16 +103,37 @@ const Analyze = () => {
   const isMobile = useIsMobile();
 
   const handleDocumentUpload = async (file: File) => {
-    const newDocument: ContractDocument = {
-      name: file.name,
-      uploadedAt: new Date(),
-      id: Date.now().toString(),
-      content: await file.text(),
-      type: file.type === "application/pdf" ? "pdf" : "text",
-    };
+    try {
+      const fileContent = await getTextFromFile(file);
 
-    setDocument(newDocument);
-    await analyzeDocument();
+      console.log("File content:", fileContent);
+
+      const newDocument: ContractDocument = {
+        name: file.name,
+        uploadedAt: new Date(),
+        id: Date.now().toString(),
+        content: fileContent,
+        type:
+          file.type === "application/pdf"
+            ? "pdf"
+            : file.type.includes("word")
+            ? "docx"
+            : "text",
+      };
+
+      console.log("File details:", {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+        contentLength: fileContent.length,
+      });
+
+      setDocument(newDocument);
+      await analyzeDocument();
+    } catch (error) {
+      console.error("Error processing file:", error);
+    }
   };
 
   const analyzeDocument = async () => {
