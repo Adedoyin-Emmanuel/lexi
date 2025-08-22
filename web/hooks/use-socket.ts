@@ -5,6 +5,10 @@ export const useSocket = (userId: string) => {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
+    if (!userId || userId.trim() === "") {
+      return;
+    }
+
     const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL as string, {
       auth: { userId },
       withCredentials: true,

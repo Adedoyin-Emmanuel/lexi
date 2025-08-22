@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Axios } from "@/app/config/axios";
 
 interface User {
+  id: string;
   name: string;
   avatar: string;
   displayName: string;

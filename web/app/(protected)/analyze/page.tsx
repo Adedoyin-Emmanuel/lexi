@@ -17,6 +17,10 @@ import { encryptTextWithNewKey } from "@/lib/encryption";
 import { InsightsPanel } from "./components/insights-panel";
 import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
+import {
+  IDocumentAnalysisStartedPayload,
+  SOCKET_EVENTS,
+} from "@/hooks/types/socket";
 
 export interface ContractDocument {
   id: string;
@@ -105,8 +109,16 @@ const Analyze = () => {
     "document"
   );
   const isMobile = useIsMobile();
-  // const { user } = useAuth();
-  // const socket = useSocket(user.);
+
+  const { user } = useAuth();
+  const socket = useSocket(user?.id as string);
+
+  socket?.on(
+    SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED,
+    (data: IDocumentAnalysisStartedPayload) => {
+      console.log("Document analysis started", data);
+    }
+  );
 
   const handleDocumentUpload = async (file: File) => {
     try {

@@ -68,7 +68,7 @@ export default class UserController {
         res,
         200,
         "User details fetched successfully",
-        JSON.parse(cachedUser as string)
+        cachedUser
       );
     }
 

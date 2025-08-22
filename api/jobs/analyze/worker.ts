@@ -2,13 +2,14 @@ import { Types } from "mongoose";
 import { Job, Worker } from "bullmq";
 
 import { IJob } from "./../types";
-import { logger } from "./../../utils";
+import { logger, getSocket } from "./../../utils";
 import {
   ISummary,
   CONTRACT_TYPE,
   DOCUMENT_STATUS,
 } from "./../../models/document/interfaces";
 import DocumentSummarizer from "./pipeline/summary";
+import { SOCKET_EVENTS } from "./../../types/socket";
 import DocumentValidator from "./pipeline/validation";
 import { redisService } from "./../../services/redis";
 import DocumentStructurer from "./pipeline/structuring";
@@ -40,6 +41,7 @@ export default class AnalyzeWorker implements IJob {
 
   async process(job: Job): Promise<void> {
     const documentId = job?.data?._id as Types.ObjectId;
+    const userId = job?.data?.userId;
     const document = await documentRepository.findById(documentId.toString());
 
     if (!document) {
@@ -58,9 +60,9 @@ export default class AnalyzeWorker implements IJob {
           status: DOCUMENT_STATUS.PROCESSING,
         });
 
-        /**
-         * Emit event to client
-         */
+        getSocket()
+          .to(userId.toString())
+          .emit(SOCKET_EVENTS.DOCUMENT_ANALYSIS_PROCESSING);
 
         break;
 
@@ -81,16 +83,19 @@ export default class AnalyzeWorker implements IJob {
         break;
     }
 
-    await this.validateAndProcessDocument(documentId);
+    await this.validateAndProcessDocument(documentId, userId);
 
-    await this.structureDocument(documentId);
+    await this.structureDocument(documentId, userId);
 
-    await this.summarizeDocument(documentId);
+    await this.summarizeDocument(documentId, userId);
 
-    await this.extractDocumentDetails(documentId);
+    await this.extractDocumentDetails(documentId, userId);
   }
 
-  public async extractDocumentDetails(documentId: Types.ObjectId) {
+  public async extractDocumentDetails(
+    documentId: Types.ObjectId,
+    userId: Types.ObjectId
+  ) {
     const extractor = new DocumentDetailsExtractor();
 
     const contract = await redisService.get(`document:${documentId}`);
@@ -120,10 +125,18 @@ export default class AnalyzeWorker implements IJob {
       extractionMetadata: extractionDetails.metadata,
     });
 
-    //Emit event to client
+    getSocket()
+      .to(userId.toString())
+      .emit(SOCKET_EVENTS.DOCUMENT_ANALYSIS_DETAILS_EXTRACTED, {
+        documentId: documentId.toString(),
+        extractionDetails: extractionDetails,
+      });
   }
 
-  private async summarizeDocument(documentId: Types.ObjectId) {
+  private async summarizeDocument(
+    documentId: Types.ObjectId,
+    userId: Types.ObjectId
+  ) {
     const summarizer = new DocumentSummarizer();
 
     const contract = await redisService.get(`document:${documentId}`);
@@ -148,10 +161,18 @@ export default class AnalyzeWorker implements IJob {
       summary: summary,
     });
 
-    // Emit event to client
+    getSocket()
+      .to(userId.toString())
+      .emit(SOCKET_EVENTS.DOCUMENT_ANALYSIS_SUMMARIZED, {
+        documentId: documentId.toString(),
+        summary: summary,
+      });
   }
 
-  private async structureDocument(documentId: Types.ObjectId) {
+  private async structureDocument(
+    documentId: Types.ObjectId,
+    userId: Types.ObjectId
+  ) {
     const structurer = new DocumentStructurer();
 
     const structureResult = await structurer.structure(documentId);
@@ -168,12 +189,19 @@ export default class AnalyzeWorker implements IJob {
       structuredContract: structuredContract,
     });
 
-    // Emit to client
+    getSocket()
+      .to(userId.toString())
+      .emit(SOCKET_EVENTS.DOCUMENT_ANALYSIS_STRUCTURED, {
+        documentId: documentId.toString(),
+        structuredContract: structuredContract,
+      });
   }
 
   private async validateAndProcessDocument(
+    userId: Types.ObjectId,
     documentId: Types.ObjectId
   ): Promise<void> {
+    const validUserId = userId.toString();
     const documentContent = await redisService.get(`document:${documentId}`);
 
     logger(`Redis document content: ${documentContent}`);
@@ -195,13 +223,7 @@ export default class AnalyzeWorker implements IJob {
     const validationResult = validateContractResult.value as IValidationResult;
 
     if (!validationResult.isValidContract) {
-      await documentRepository.update(documentId, {
-        status: DOCUMENT_STATUS.FAILED,
-        failureReason: validationResult.reason,
-        isFlagged: true,
-      });
-
-      return;
+      throw new Error(validationResult.reason);
     }
 
     const contractType = validationResult.contractType.toLocaleLowerCase();
@@ -211,11 +233,7 @@ export default class AnalyzeWorker implements IJob {
       contractType !== CONTRACT_TYPE.ICA &&
       contractType !== CONTRACT_TYPE.LICENSE_AGREEMENT
     ) {
-      await documentRepository.update(documentId, {
-        status: DOCUMENT_STATUS.FAILED,
-        failureReason: "Invalid contract type",
-      });
-      return;
+      throw new Error("Invalid contract type");
     }
 
     /**
@@ -231,7 +249,16 @@ export default class AnalyzeWorker implements IJob {
       },
     });
 
-    // Emit an event to the client
+    getSocket()
+      .to(validUserId)
+      .emit(SOCKET_EVENTS.DOCUMENT_ANALYSIS_VALIDATED, {
+        documentId: documentId.toString(),
+        reason: validationResult.reason,
+        inScope: validationResult.inScope,
+        contractType: validationResult.contractType,
+        isValidContract: validationResult.isValidContract,
+        confidenceScore: validationResult.confidenceScore,
+      });
   }
 
   start(): void {
@@ -239,6 +266,12 @@ export default class AnalyzeWorker implements IJob {
 
     this._worker.on("completed", (job) => {
       logger(`Job ${job.id} completed`);
+
+      getSocket()
+        .to(job?.data?.userId.toString())
+        .emit(SOCKET_EVENTS.DOCUMENT_ANALYSIS_COMPLETED, {
+          documentId: job?.data?._id.toString(),
+        });
     });
 
     this._worker.on("failed", async (job, error) => {
@@ -247,13 +280,19 @@ export default class AnalyzeWorker implements IJob {
       const documentId = job?.data?._id;
 
       if (documentId) {
-        /**
-         * Emit job failed event to client
-         */
+        console.log(error);
+
         await documentRepository.update(documentId as Types.ObjectId, {
           status: DOCUMENT_STATUS.FAILED,
           failureReason: error.message,
         });
+
+        getSocket()
+          .to(job?.data?.userId.toString())
+          .emit(SOCKET_EVENTS.DOCUMENT_ANALYSIS_FAILED, {
+            documentId: documentId.toString(),
+            failureReason: error.message,
+          });
       }
     });
 

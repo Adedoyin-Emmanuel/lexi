@@ -2,9 +2,10 @@ import { Types } from "mongoose";
 import { Request, Response } from "express";
 
 import { analyzeSchema } from "./analyze.dto";
+import { SOCKET_EVENTS } from "./../../types/socket";
 import AnalyzeQueue from "./../../jobs/analyze/queue";
 import { redisService } from "./../../services/redis";
-import { response, decryptText, logger } from "./../../utils";
+import { response, decryptText, logger, getSocket } from "./../../utils";
 import { documentRepository } from "./../../models/repositories";
 
 export default class AnalyzeController {
@@ -31,7 +32,11 @@ export default class AnalyzeController {
 
     await this._analyzeQueue.add(newDocument);
 
-    // Emit event to the client
+    getSocket()
+      .to(currentUser.userId.toString())
+      .emit(SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED, {
+        documentId: newDocument._id,
+      });
 
     return response(res, 200, "Document analysis started");
   }
