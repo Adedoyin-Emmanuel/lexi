@@ -228,10 +228,14 @@ export default class AnalyzeWorker implements IJob {
 
     const contractType = validationResult.contractType.toLocaleLowerCase();
 
+    logger(contractType);
+    logger(validationResult);
+
     if (
-      contractType !== CONTRACT_TYPE.NDA &&
-      contractType !== CONTRACT_TYPE.ICA &&
-      contractType !== CONTRACT_TYPE.LICENSE_AGREEMENT
+      contractType.toLowerCase() !== CONTRACT_TYPE.NDA.toLocaleLowerCase() &&
+      contractType.toLowerCase() !== CONTRACT_TYPE.ICA.toLocaleLowerCase() &&
+      contractType.toLowerCase() !==
+        CONTRACT_TYPE.LICENSE_AGREEMENT.toLocaleLowerCase()
     ) {
       throw new Error("Invalid contract type");
     }

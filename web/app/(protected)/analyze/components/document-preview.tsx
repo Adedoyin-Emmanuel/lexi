@@ -45,8 +45,8 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     if (plainEnglishSummary) {
       return plainEnglishSummary;
     }
-    // Fallback to dummy text only if no summary is available
-    return getPlainEnglishContract();
+    // Show loading state when no summary is available
+    return null;
   }, [plainEnglishSummary]);
 
   const highlightedText = useMemo(() => {
@@ -98,14 +98,23 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
             Plain English Contract
           </h1>
           <div className="text-gray-700 leading-relaxed space-y-4">
-            {plainEnglishContent.split("\n\n").map((paragraph, index) => (
-              <p
-                key={index}
-                className={`leading-7 ${isMobile ? "text-sm" : "text-base"}`}
-              >
-                {paragraph}
-              </p>
-            ))}
+            {plainEnglishContent ? (
+              plainEnglishContent.split("\n\n").map((paragraph, index) => (
+                <p
+                  key={index}
+                  className={`leading-7 ${isMobile ? "text-sm" : "text-base"}`}
+                >
+                  {paragraph}
+                </p>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">
+                  Plain English summary will be available after analysis is
+                  complete.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -227,27 +236,6 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     </Card>
   );
 };
-
-const getPlainEnglishContract =
-  () => `This is a contract between you (the client) and a freelancer who will create content for you.
-
-What the freelancer will do: They will write blog posts, social media content, and marketing materials as described in your project brief.
-
-When you need to pay: You have 60 days to pay after they send you an invoice. They must send the invoice within 5 days of finishing the work.
-
-Who owns the work: Once you pay in full, you own all the work they created. However, they can still use it in their portfolio to show other potential clients.
-
-How to end the contract: Either of you can cancel this agreement by giving 30 days written notice. If you cancel, you still need to pay for any work they've already completed.
-
-Keeping things private: The freelancer promises to keep your business information and secrets confidential.
-
-Working relationship: The freelancer is not your employee. They work for themselves and are responsible for their own taxes and benefits.
-
-Limits on responsibility: Neither of you can sue each other for indirect damages that might happen because of this contract.
-
-What law applies: This contract follows the laws of your state or country.
-
-Both parties sign below to agree to these terms.`;
 
 const getMockContractText = () => `FREELANCE CONTRACT AGREEMENT
 
