@@ -143,10 +143,10 @@ export default class DocumentSummarizer {
             {
             "duration": "5 years",
             "rawSummary": "Technical summary with legal terminology and precise contract terms...",
-            "plainEnglishSummary": "<div class='space-y-6'><div class='mb-6'><h3 class='text-xl font-bold text-gray-900 mb-3'>What This Contract Means</h3><p class='text-gray-700 mb-4'>Here's what this contract means in plain English:</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Key Terms</h4><ul class='space-y-2 list-disc list-inside text-gray-700'><li><span class='font-medium'>What you're agreeing to:</span> [Explanation in simple terms]</li><li><span class='font-medium'>What they're agreeing to:</span> [Explanation in simple terms]</li></ul></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Important Details</h4><p class='text-gray-700'>[Detailed explanation using everyday language]</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Things to Watch Out For</h4><div class='bg-yellow-50 border-l-4 border-yellow-400 p-4'><p class='text-yellow-800'>[Any concerning clauses explained simply]</p></div></div><div><h4 class='text-lg font-semibold text-gray-800 mb-3'>Bottom Line</h4><p class='text-gray-700 font-medium'>[Summary of what this means for you practically]</p></div></div>",
+            "plainEnglishSummary": "<div class='space-y-3'><div class='mb-4'><h3 class='text-xl font-bold text-gray-900 mb-3'>What This Contract Means</h3><p class='text-gray-700 mb-4'>Here's what this contract means in plain English:</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Key Terms</h4><ul class='space-y-2 list-disc list-inside text-gray-700'><li><span class='font-medium'>What you're agreeing to:</span> [Explanation in simple terms]</li><li><span class='font-medium'>What they're agreeing to:</span> [Explanation in simple terms]</li></ul></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Important Details</h4><p class='text-gray-700'>[Detailed explanation using everyday language]</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Things to Watch Out For</h4><div class='bg-yellow-50 border-l-4 border-yellow-400 p-4'><p class='text-yellow-800'>[Any concerning clauses explained simply]</p></div></div><div><h4 class='text-lg font-semibold text-gray-800 mb-3'>Bottom Line</h4><p class='text-gray-700 font-medium'>[Summary of what this means for you practically]</p></div></div>",
             "jurisdiction": "New York, USA", 
             "effectiveDate": "January 1, 2024",
-            "overviewSummary": "Brief 2-3 sentence executive summary highlighting the core purpose and key terms.",
+            "overviewSummary": "Brief 3-5 sentence executive summary highlighting the core purpose and key terms.",
             "overallRiskScore": 65,
             "totalPartiesInvolved": 2,
             "overallConfidenceScore": 87,
@@ -157,7 +157,7 @@ export default class DocumentSummarizer {
             - The plain English summary should be formatted as clean, semantic HTML with Tailwind CSS utility classes
             - Use Tailwind classes for styling: spacing (space-y-4, mb-3), typography (text-xl, font-bold), colors (text-gray-700, bg-yellow-50), layout (border-l-4, p-4)
             - Structure content with proper hierarchy: h3 for main heading, h4 for sections
-            - Use warning styling for concerning clauses: 'bg-yellow-50 border-l-4 border-yellow-400 p-4' with 'text-yellow-800'
+            - Use warning styling for concerning clauses: 'bg-red-50 border-red-400 p-4' with 'text-red-600'
             - Make the HTML content significantly longer and more detailed than the raw summary
             - Use conversational tone in plain English version ("This means..." "In other words..." "Simply put...")
             - Provide realistic risk scores based on actual contract terms

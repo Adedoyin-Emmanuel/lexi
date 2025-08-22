@@ -63,7 +63,6 @@ export interface AnalysisState {
   } | null;
   error: string | null;
   summary: ISummary | null;
-  selectedClauseId: string | null;
   extraction: IExtractionResult | null;
   structuredContract: IStructuredContract | null;
 }
@@ -81,7 +80,6 @@ const Analyze = () => {
     validation: null,
     isAnalyzing: false,
     currentStep: "idle",
-    selectedClauseId: null,
     structuredContract: null,
   });
 
@@ -272,14 +270,7 @@ const Analyze = () => {
     }
   };
 
-  const handleClauseSelect = (clauseId: string) => {
-    console.log("Clause selected:", clauseId);
-    setAnalysisState((prev) => ({
-      ...prev,
-      selectedClauseId: clauseId,
-    }));
-    setActiveView("document");
-  };
+
 
   const handleReanalyze = () => {
     if (document) {
@@ -292,7 +283,6 @@ const Analyze = () => {
         summary: null,
         extraction: null,
         error: null,
-        selectedClauseId: null,
       });
       setDocument(null);
     }
@@ -308,7 +298,6 @@ const Analyze = () => {
       summary: null,
       extraction: null,
       error: null,
-      selectedClauseId: null,
     });
 
     if (document) {
@@ -335,7 +324,6 @@ const Analyze = () => {
       summary: null,
       extraction: null,
       error: null,
-      selectedClauseId: null,
     });
     setDocument(null);
   };
@@ -397,18 +385,14 @@ const Analyze = () => {
             <div className="h-full">
               <DocumentPreview
                 document={document}
-                onClauseSelect={handleClauseSelect}
                 structuredContract={analysisState.structuredContract}
                 plainEnglishSummary={analysisState.summary?.plainEnglishSummary}
-                selectedClauseId={analysisState.selectedClauseId}
               />
             </div>
           ) : (
             <div className="h-full">
               <InsightsPanel
                 analysisState={analysisState}
-                onClauseSelect={handleClauseSelect}
-                onViewInDocument={handleClauseSelect}
               />
             </div>
           )}
@@ -444,10 +428,8 @@ const Analyze = () => {
             <div className="h-full overflow-hidden">
               <DocumentPreview
                 document={document}
-                onClauseSelect={handleClauseSelect}
                 structuredContract={analysisState.structuredContract}
                 plainEnglishSummary={analysisState.summary?.plainEnglishSummary}
-                selectedClauseId={analysisState.selectedClauseId}
               />
             </div>
           </ResizablePanel>
@@ -457,8 +439,6 @@ const Analyze = () => {
           <ResizablePanel defaultSize={60} minSize={25}>
             <InsightsPanel
               analysisState={analysisState}
-              onClauseSelect={handleClauseSelect}
-              onViewInDocument={handleClauseSelect}
             />
           </ResizablePanel>
         </ResizablePanelGroup>

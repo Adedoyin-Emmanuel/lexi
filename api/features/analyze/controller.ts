@@ -5,8 +5,8 @@ import { analyzeSchema } from "./analyze.dto";
 import { SOCKET_EVENTS } from "./../../types/socket";
 import AnalyzeQueue from "./../../jobs/analyze/queue";
 import { redisService } from "./../../services/redis";
-import { response, decryptText, logger, getSocket } from "./../../utils";
 import { documentRepository } from "./../../models/repositories";
+import { response, decryptText, logger, getSocket } from "./../../utils";
 
 export default class AnalyzeController {
   private static readonly _analyzeQueue: AnalyzeQueue = new AnalyzeQueue();

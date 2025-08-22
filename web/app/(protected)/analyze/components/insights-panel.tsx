@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface InsightsPanelProps {
   analysisState: AnalysisState;
-  onClauseSelect: (clauseId: string) => void;
+  onClauseSelect?: (clauseId: string) => void;
   onViewInDocument?: (clauseId: string) => void;
 }
 
@@ -251,7 +251,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                   <ClauseCard
                     key={`${clause.title}-${index}`}
                     clause={convertClauseToFrontend(clause)}
-                    onViewRisk={() => onClauseSelect(clause.title)}
+                    onViewRisk={() => onClauseSelect?.(clause.title)}
                     onViewInDocument={onViewInDocument}
                   />
                 ))}
@@ -264,7 +264,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                   <RiskCard
                     key={`${risk.title}-${index}`}
                     risk={convertRiskToFrontend(risk)}
-                    onSelect={() => onClauseSelect(risk.title)}
+                    onSelect={() => onClauseSelect?.(risk.title)}
                     onViewInDocument={onViewInDocument}
                   />
                 ))}
@@ -277,7 +277,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                   <ObligationCard
                     key={`${obligation.title}-${index}`}
                     obligation={convertObligationToFrontend(obligation)}
-                    onSelect={() => onClauseSelect(obligation.title)}
+                    onSelect={() => onClauseSelect?.(obligation.title)}
                     onViewInDocument={onViewInDocument}
                   />
                 ))}
@@ -290,7 +290,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                   <NegotiationCard
                     key={`${suggestion.title}-${index}`}
                     suggestion={convertSuggestionToFrontend(suggestion)}
-                    onSelect={() => onClauseSelect(suggestion.title)}
+                    onSelect={() => onClauseSelect?.(suggestion.title)}
                     onViewInDocument={onViewInDocument}
                   />
                 ))}
