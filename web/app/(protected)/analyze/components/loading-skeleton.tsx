@@ -1,4 +1,4 @@
-import { Brain, Sparkles } from "lucide-react";
+import { Brain } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -8,11 +8,14 @@ export const LoadingSkeleton: React.FC = () => {
     <div className="h-full flex flex-col">
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center gap-2">
-          <Brain className="w-5 h-5 text-indigo-600 animate-pulse" />
+          <Brain
+            className="w-5 h-5 text-primary animate-pulse"
+            strokeWidth={1.5}
+          />
           <h2 className="text-lg font-semibold text-gray-900">AI Analysis</h2>
         </div>
         <div className="flex items-center gap-2 mt-1">
-          <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+          <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
           <span className="text-sm text-gray-600">Analyzing contract...</span>
         </div>
       </div>
@@ -63,29 +66,6 @@ export const LoadingSkeleton: React.FC = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
-
-        <div className="flex items-center justify-center py-8">
-          <div className="text-center">
-            <div className="relative">
-              <Sparkles className="w-8 h-8 text-indigo-600 animate-pulse mx-auto mb-4" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-200 to-transparent animate-pulse"></div>
-            </div>
-            <p className="text-sm text-gray-600 mb-2">
-              Lexi is analyzing your contract
-            </p>
-            <div className="flex items-center gap-1 justify-center">
-              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
-              <div
-                className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"
-                style={{ animationDelay: "0.1s" }}
-              ></div>
-              <div
-                className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"
-                style={{ animationDelay: "0.2s" }}
-              ></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

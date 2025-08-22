@@ -9,8 +9,8 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../components/circular-confidence";
 
 interface ObligationCardProps {
-  obligation: Obligation;
   onSelect: () => void;
+  obligation: Obligation;
   onViewInDocument?: (clauseId: string) => void;
 }
 
@@ -54,7 +54,7 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
   const deadlineInfo = obligation.deadline
     ? formatDeadline(obligation.deadline)
     : null;
-  const confidenceScore = Math.round(obligation.confidence * 100);
+  const confidenceScore = obligation.confidence;
 
   const handleViewInDocument = (e: React.MouseEvent) => {
     e.stopPropagation();

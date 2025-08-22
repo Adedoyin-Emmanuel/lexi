@@ -79,8 +79,8 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
   confidence,
   stats,
 }) => {
-  const confidenceScore = Math.round(confidence * 100);
   const isMobile = useIsMobile();
+  const confidenceScore = confidence;
 
   const statItems = [
     {

@@ -150,7 +150,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
           <span
             className={`text-slate-600 ${isMobile ? "text-xs" : "text-sm"}`}
           >
-            {Math.round((validation?.confidenceScore || 0) * 100)}% confidence
+            {validation?.confidenceScore}% confidence
           </span>
         </div>
       </div>
