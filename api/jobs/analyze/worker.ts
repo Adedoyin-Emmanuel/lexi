@@ -4,9 +4,11 @@ import { Job, Worker } from "bullmq";
 import { IJob } from "./../types";
 import { logger } from "./../../utils";
 import DocumentValidator from "./pipeline/validation";
+import DocumentStructurer from "./pipeline/structuring";
 import { redisService } from "./../../services/redis";
 import { IValidationResult } from "./pipeline/validation/types";
 import { documentRepository } from "./../../models/repositories";
+import { IStructuredContract } from "./pipeline/structuring/types";
 import { DOCUMENT_STATUS } from "./../../models/document/interfaces";
 
 export default class AnalyzeWorker implements IJob {
@@ -74,6 +76,9 @@ export default class AnalyzeWorker implements IJob {
 
     /** Start processing */
     await this.validateAndProcessDocument(documentId);
+      await this.structureDocument(documentId);
+      
+      
 
     /**
      * At this stage, validation is done and we have the contract type
@@ -144,6 +149,26 @@ export default class AnalyzeWorker implements IJob {
             * AI Confidence Score
             * Start index, end index
        */
+  }
+
+  private async structureDocument(documentId: Types.ObjectId) {
+    const structurer = new DocumentStructurer();
+
+    const structureResult = await structurer.structure(documentId);
+
+    if (structureResult.isFailure) {
+      throw new Error(structureResult.errors.join(", "));
+    }
+
+    const structuredContract = structureResult.value as IStructuredContract;
+
+    logger(structuredContract);
+
+    await documentRepository.update(documentId, {
+      structuredContract: structuredContract,
+    });
+
+    // Emit to client
   }
 
   private async validateAndProcessDocument(

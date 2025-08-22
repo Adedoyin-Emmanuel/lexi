@@ -1,13 +1,16 @@
+import { Types } from "mongoose";
 import { Result } from "tsfluent";
 
 import { IStructuredContract } from "./types";
 import { aiMlApi, logger } from "../../../../utils";
+import { redisService } from "../../../../services/redis";
 
 export default class DocumentStructurer {
-  public async structure(contract: string) {
+  public async structure(documentId: Types.ObjectId) {
     try {
-      if (!contract) {
-        return Result.fail("Contract is required");
+      const documentContent = await redisService.get(`document:${documentId}`);
+      if (!documentContent) {
+        return Result.fail("Document content not found");
       }
 
       const prompt = this.getStructurePrompt();
@@ -15,7 +18,7 @@ export default class DocumentStructurer {
         model: "gpt-4o-mini",
         messages: [
           { role: "system", content: prompt },
-          { role: "user", content: contract },
+          { role: "user", content: documentContent as string },
         ],
         temperature: 0.1,
         max_tokens: 6000,
@@ -42,7 +45,13 @@ export default class DocumentStructurer {
         metadata: aiMlApiResponse.metadata,
       };
 
-      return this.validateStructure(structuredContract);
+      const isValidStructure = this.validateStructure(structuredContract);
+
+      if (!isValidStructure) {
+        return Result.fail("Invalid structure from structuring model");
+      }
+
+      return Result.ok(structuredContract);
     } catch (error) {
       logger.error(error);
       return Result.fail("Failed to structure contract");

@@ -18,6 +18,7 @@ import {
 } from "./interfaces";
 import { User } from "../user";
 import { Chat } from "../chat";
+import { IStructuredContract } from "../../jobs/analyze/pipeline/structuring/types";
 
 @modelOptions({
   schemaOptions: {
@@ -44,6 +45,9 @@ class Document {
     default: DOCUMENT_STATUS.PENDING,
   })
   status: DOCUMENT_STATUS;
+
+  @prop({ required: false, default: {} })
+  structuredContract?: IStructuredContract;
 
   @prop({ required: false, default: "" })
   failureReason: string;
