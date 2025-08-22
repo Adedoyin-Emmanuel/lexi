@@ -16,35 +16,35 @@ import {
 } from "./types";
 
 import { aiMlApi, logger } from "./../../../../utils";
+import { IUserInfo } from "../../../../models/user";
 
 export default class DocumentDetailsExtractor {
   public async extract(
     contract: string,
     contractType: CONTRACT_TYPE,
-    structuredHTML: string
+    structuredHTML: string,
+    userInfo?: IUserInfo
   ) {
     try {
       const startTime = Date.now();
 
-      const systemPrompt = this.getExtractionPrompt(contractType);
-      let userPrompt = this.buildUserPrompt(contract, structuredHTML);
+      const systemPrompt = this.getExtractionPrompt(contractType, userInfo);
+      let userPrompt = this.buildUserPrompt(contract, structuredHTML, userInfo);
 
-      // Add debugging for content length
       const totalContentLength = systemPrompt.length + userPrompt.length;
       logger(`System prompt length: ${systemPrompt.length}`);
       logger(`User prompt length: ${userPrompt.length}`);
       logger(`Total content length: ${totalContentLength}`);
 
-      // Check if content is too large (OpenAI has limits)
       if (totalContentLength > 100000) {
         logger(
           `Content too large (${totalContentLength} chars), truncating user prompt`
         );
-        userPrompt = userPrompt.substring(0, 50000); // Truncate to reasonable size
+        userPrompt = userPrompt.substring(0, 50000);
       }
 
       const aiMlApiResponse = await aiMlApi.chat.completions.create({
-        model: "gpt-4o-mini", // Use a more reliable model
+        model: "openai/gpt-5-chat-latest",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -101,15 +101,21 @@ export default class DocumentDetailsExtractor {
     }
   }
 
-  private getExtractionPrompt(contractType: CONTRACT_TYPE) {
+  private getExtractionPrompt(
+    contractType: CONTRACT_TYPE,
+    userInfo?: IUserInfo
+  ) {
     const clauseSchema = this.getClauseSchema(contractType);
     const actionableObligations = this.getActionableObligations(contractType);
+    const userContext = userInfo ? this.buildUserContext(userInfo) : "";
 
     const prompt = `
         You are an expert contract extraction AI for Lexi, specializing in ${contractType} analysis for freelancers and creators.
 
+        ${userContext}
+
         ## Your Mission
-        Perform comprehensive extraction of clauses, risks, obligations, and redline suggestions from the contract with precise indexing and actionable intelligence.
+        Perform comprehensive extraction of clauses, risks, obligations, and redline suggestions from the contract with precise indexing and actionable intelligence tailored specifically to the user's profession and expertise areas.
 
         ## Contract Type: ${contractType}
         Expected clause types for this contract:
@@ -117,6 +123,13 @@ export default class DocumentDetailsExtractor {
 
         ## Actionable Obligations to Identify:
         ${actionableObligations}
+
+        ## Personalization Rules
+        ${
+          userInfo
+            ? this.getPersonalizationRules(userInfo)
+            : "- Provide general freelancer/creator focused advice"
+        }
 
         ## Extraction Tasks
 
@@ -126,22 +139,26 @@ export default class DocumentDetailsExtractor {
         - Extract full verbatim text from contract
         - Provide exact character start/end positions
         - Confidence score (1-100) based on clarity and completeness
+        - Include user-friendly description explaining what this clause means for their specific profession and work
 
         ### 2. RISK IDENTIFICATION
         Identify potential risks across the contract:
         - **High Risk**: Severe penalties, unlimited liability, one-sided terms, unclear obligations
         - **Medium Risk**: Moderate concerns, potentially unfavorable terms, missing protections  
         - **Low Risk**: Minor issues, standard terms that could be improved
-        - Focus on freelancer/creator concerns: payment, IP ownership, liability, scope creep
+        - Focus on concerns specific to the user's profession: payment, IP ownership, liability, scope creep, work control, client relationships
+        - Consider industry-specific risks relevant to their specialty areas
+        - Provide user-friendly explanations that explain the real-world impact on their business and work
 
         ### 3. OBLIGATIONS EXTRACTION (Enhanced with Actionable Intelligence)
         Extract actionable items with timelines:
         - Map each obligation to specific actionable types from the list above
-        - Include plain English explanations for users
+        - Include plain English explanations tailored to the user's profession and expertise
         - Specify which clause the obligation comes from
         - Apply abstain logic for low confidence extractions
         - **Confidence < 70**: Set shouldAbstain = true and add uncertainty language
-        - Focus on deadlines, payment terms, deliverables, restrictions
+        - Focus on deadlines, payment terms, deliverables, restrictions relevant to their work
+        - Use terminology and examples familiar to their profession
 
         ### 4. REDLINE SUGGESTIONS (Enhanced with Negotiation Intelligence)
         Generate improvement suggestions based on industry standards:
@@ -149,8 +166,12 @@ export default class DocumentDetailsExtractor {
         - Assign priority levels (HIGH/MEDIUM/LOW) 
         - Quote exact current text that needs improvement
         - Provide specific suggested replacement text
-        - Explain reasoning tied to best practices and fairness
-        - Focus on protecting freelancer/creator interests
+        - Explain reasoning tied to best practices and fairness for their profession
+        - Focus on protecting the user's interests as a ${
+          userInfo?.profession || "freelancer/creator"
+        }
+        - Consider industry-specific best practices for their specialty areas
+        - Include user-friendly explanations that help them understand why this change matters for their business
 
         ## Confidence & Abstain Logic
         - Confidence scores 1-100 for all extractions
@@ -168,7 +189,8 @@ export default class DocumentDetailsExtractor {
             "fullText": "Payment shall be made within 30 days of invoice receipt...",
             "startIndex": 1250,
             "endIndex": 1425,
-            "confidenceScore": 92
+            "confidenceScore": 92,
+            "userFriendlyDescription": "This clause outlines when you'll get paid for your work - crucial for managing your cash flow and business expenses."
             }
         ],
         "risks": [
@@ -178,7 +200,8 @@ export default class DocumentDetailsExtractor {
             "confidenceScore": 88,
             "riskLevel": "High",
             "startIndex": 2100,
-            "endIndex": 2280
+            "endIndex": 2280,
+            "userFriendlyExplanation": "This is a major red flag for your business. If something goes wrong, you could be on the hook for unlimited damages, which could bankrupt your business and put your personal assets at risk. This is especially concerning for freelancers who often have limited resources."
             }
         ],
         "obligations": [
@@ -192,7 +215,7 @@ export default class DocumentDetailsExtractor {
             "actionableType": "Payment Deadline",
             "clauseSource": "Payment Terms",
             "shouldAbstain": false,
-            "userFriendlyExplanation": "You need to send invoices by the 5th of each month to get paid on time"
+            "userFriendlyExplanation": "You need to send invoices by the 5th of each month to get paid on time. This is crucial for maintaining consistent cash flow in your work. Set up a calendar reminder to avoid missing this deadline, as late invoices can delay your payments and impact your business finances."
             }
         ],
         "suggestions": [
@@ -200,12 +223,13 @@ export default class DocumentDetailsExtractor {
             "title": "Add Payment Timeline Protection",
             "currentStatement": "Payment when convenient",
             "suggestedStatement": "Payment shall be made within 30 days of invoice receipt",
-            "reason": "Protects cash flow and sets clear expectations per industry standards",
+            "reason": "Protects cash flow and sets clear expectations per industry standards. This is especially important for freelancers who rely on timely payments to manage their business expenses and maintain financial stability.",
             "confidenceScore": 90,
             "startIndex": 1200,
             "endIndex": 1250,
             "suggestionType": "Payment Terms",
-            "priority": "HIGH"
+            "priority": "HIGH",
+            "userFriendlyExplanation": "This vague payment term puts your cash flow at risk. You should negotiate for a specific payment timeline (like 30 days) to ensure you get paid predictably. This helps you plan your business finances and avoid the stress of wondering when payments will arrive."
             }
         ],
         "overallConfidence": 87
@@ -215,17 +239,119 @@ export default class DocumentDetailsExtractor {
         - Character positions must be exact for span-linked highlighting
         - Quote text verbatim from the original contract
         - Be thorough but honest about confidence levels
-        - Focus on practical freelancer/creator concerns
-        - Provide actionable, specific suggestions with clear priorities
+        - Focus on practical concerns specific to the user's profession and expertise
+        - Provide actionable, specific suggestions with clear priorities relevant to their work
         - Use abstain logic - better to say "uncertain" than be wrong
         - Map obligations to actionable types for better UX
+        - Tailor all explanations and suggestions to their professional context
+        - Use language and examples that resonate with their industry and specialty areas
+        - Address the user directly using "you" and "your" in explanations
+        - Reference their specific profession and specialties when relevant
+        - Explain the real-world business impact of each clause, risk, obligation, and suggestion
         `.trim();
 
     return prompt;
   }
 
-  private buildUserPrompt(contractText: string, structuredHTML?: string) {
-    let prompt = `Extract all clauses, risks, obligations, and suggestions from this contract:\n\n`;
+  private getPersonalizationRules(userInfo: IUserInfo): string {
+    const rules = [
+      `- Address ${userInfo.name} directly in explanations and suggestions`,
+      `- Focus on risks and benefits specific to ${userInfo.profession}s`,
+      `- Personalize clause descriptions to explain relevance to ${userInfo.profession} work`,
+      `- Frame risk explanations in terms of impact on ${userInfo.profession} business`,
+      `- Make obligation explanations actionable for ${userInfo.profession} workflow`,
+      `- Tailor suggestion reasoning to ${userInfo.profession} industry standards`,
+    ];
+
+    if (userInfo.specialities.length > 0) {
+      rules.push(
+        `- Use examples and terminology relevant to ${userInfo.specialities.join(
+          ", "
+        )}`
+      );
+      rules.push(
+        `- Highlight how contract terms affect work in ${userInfo.specialities.join(
+          " and "
+        )}`
+      );
+      rules.push(
+        `- Reference ${userInfo.specialities.join(
+          " and "
+        )} best practices in explanations`
+      );
+    }
+
+    if (userInfo.profession === "freelancer") {
+      rules.push(
+        "- Emphasize payment terms, scope creep protection, and client relationship clauses"
+      );
+      rules.push(
+        "- Focus on work delivery obligations and timeline flexibility"
+      );
+      rules.push(
+        "- Explain how clauses impact freelance business operations and cash flow"
+      );
+    } else if (userInfo.profession === "creator") {
+      rules.push(
+        "- Emphasize intellectual property rights, content usage, and creative control"
+      );
+      rules.push(
+        "- Focus on attribution, licensing terms, and creative freedom limitations"
+      );
+      rules.push(
+        "- Explain how clauses impact creative work, content ownership, and brand building"
+      );
+    }
+
+    return rules.join("\n");
+  }
+
+  private buildUserContext(userInfo: IUserInfo): string {
+    const specialitiesText =
+      userInfo.specialities.length > 0
+        ? `specializing in ${userInfo.specialities.join(", ")}`
+        : "";
+
+    return `
+## User Profile
+You are providing this analysis for ${userInfo.name}, a ${
+      userInfo.profession
+    } ${specialitiesText}.
+
+## Personalization Focus
+- Tailor your analysis to the specific needs and concerns of a ${
+      userInfo.profession
+    }
+- Use examples and terminology relevant to ${
+      userInfo.specialities.length > 0
+        ? userInfo.specialities.join(" and ")
+        : "their field"
+    }
+- Highlight contract terms that specifically impact ${userInfo.profession}s
+- Address common risks and opportunities in ${
+      userInfo.specialities.length > 0
+        ? "their specialty areas"
+        : "their profession"
+    }
+    `;
+  }
+
+  private buildUserPrompt(
+    contractText: string,
+    structuredHTML?: string,
+    userInfo?: IUserInfo
+  ) {
+    let prompt = `Extract all clauses, risks, obligations, and suggestions from this contract`;
+
+    if (userInfo) {
+      const specialitiesText =
+        userInfo.specialities.length > 0
+          ? ` specializing in ${userInfo.specialities.join(", ")}`
+          : "";
+      prompt += ` for ${userInfo.name}, a ${userInfo.profession}${specialitiesText}`;
+    }
+
+    prompt += `:\n\n`;
 
     if (structuredHTML) {
       prompt += `STRUCTURED VERSION (for reference):\n${structuredHTML}\n\n`;

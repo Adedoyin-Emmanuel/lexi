@@ -8,7 +8,7 @@ export enum USER_TYPE {
 }
 export interface IUserInfo {
   name: string;
-  specialties: string[];
+  specialities: string[];
   profession: USER_TYPE;
 }
 

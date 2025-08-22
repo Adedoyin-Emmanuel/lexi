@@ -23,7 +23,8 @@ export default class DocumentSummarizer {
       const userPrompt = this.buildUserPrompt(
         contract,
         contractType,
-        structuredHTML
+        structuredHTML,
+        userInfo
       );
 
       const response = await aiMlApi.chat.completions.create({
@@ -97,29 +98,29 @@ export default class DocumentSummarizer {
   }
 
   private buildUserContext(userInfo: IUserInfo): string {
-    const specialtiesText =
-      userInfo.specialties.length > 0
-        ? `specializing in ${userInfo.specialties.join(", ")}`
+    const specialitiesText =
+      userInfo.specialities.length > 0
+        ? `specializing in ${userInfo.specialities.join(", ")}`
         : "";
 
     return `
 ## User Profile
 You are providing this analysis for ${userInfo.name}, a ${
       userInfo.profession
-    } ${specialtiesText}.
+    } ${specialitiesText}.
 
 ## Personalization Focus
 - Tailor your analysis to the specific needs and concerns of a ${
       userInfo.profession
     }
 - Use examples and analogies relevant to ${
-      userInfo.specialties.length > 0
-        ? userInfo.specialties.join(" and ")
+      userInfo.specialities.length > 0
+        ? userInfo.specialities.join(" and ")
         : "their field"
     }
 - Highlight contract terms that specifically impact ${userInfo.profession}s
 - Address common risks and opportunities in ${
-      userInfo.specialties.length > 0
+      userInfo.specialities.length > 0
         ? "their specialty areas"
         : "their profession"
     }
@@ -219,14 +220,14 @@ You are providing this analysis for ${userInfo.name}, a ${
       `- Focus on risks and benefits specific to ${userInfo.profession}s`,
     ];
 
-    if (userInfo.specialties.length > 0) {
+    if (userInfo.specialities.length > 0) {
       rules.push(
-        `- Use examples and terminology relevant to ${userInfo.specialties.join(
+        `- Use examples and terminology relevant to ${userInfo.specialities.join(
           ", "
         )}`
       );
       rules.push(
-        `- Highlight how contract terms affect work in ${userInfo.specialties.join(
+        `- Highlight how contract terms affect work in ${userInfo.specialities.join(
           " and "
         )}`
       );
@@ -259,12 +260,14 @@ You are providing this analysis for ${userInfo.name}, a ${
   ) {
     let prompt = `Analyze this ${contractType} contract`;
 
+    logger(userInfo);
+
     if (userInfo) {
-      const specialtiesText =
-        userInfo.specialties.length > 0
-          ? ` specializing in ${userInfo.specialties.join(", ")}`
+      const specialitiesText =
+        userInfo.specialities.length > 0
+          ? ` specializing in ${userInfo.specialities.join(", ")}`
           : "";
-      prompt += ` for ${userInfo.name}, a ${userInfo.profession}${specialtiesText}`;
+      prompt += ` for ${userInfo.name}, a ${userInfo.profession}${specialitiesText}`;
     }
 
     prompt += ` and provide both a technical summary and a personalized plain English translation:\n\n`;
