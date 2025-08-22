@@ -24,7 +24,7 @@ interface DocumentPreviewProps {
 }
 
 export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
-  document, // Required by interface but not used in this component
+  document,
   structuredContract,
   plainEnglishSummary,
 }) => {
@@ -35,7 +35,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     if (structuredContract?.html) {
       return structuredContract.html;
     }
-    // Fallback to original document content if structured contract is not available
+
     return document.content;
   }, [structuredContract, document.content]);
 
@@ -75,7 +75,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   );
 
   const renderOriginalMode = () => (
-    <div className={`h-full overflow-auto ${isMobile ? "p-3" : "p-6"}`}>
+    <div className={`h-full overflow-auto ${isMobile ? "p-1" : "p-2"}`}>
       <div className={`${isMobile ? "w-full" : "max-w-4xl mx-auto"}`}>
         <div className={`bg-white rounded-lg shadow-sm`}>
           <div className="text-gray-700 leading-relaxed space-y-1">

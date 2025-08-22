@@ -270,8 +270,6 @@ const Analyze = () => {
     }
   };
 
-
-
   const handleReanalyze = () => {
     if (document) {
       setAnalysisState({
@@ -391,9 +389,7 @@ const Analyze = () => {
             </div>
           ) : (
             <div className="h-full">
-              <InsightsPanel
-                analysisState={analysisState}
-              />
+              <InsightsPanel analysisState={analysisState} />
             </div>
           )}
         </div>
@@ -437,9 +433,7 @@ const Analyze = () => {
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={60} minSize={25}>
-            <InsightsPanel
-              analysisState={analysisState}
-            />
+            <InsightsPanel analysisState={analysisState} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
