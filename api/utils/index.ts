@@ -11,6 +11,7 @@ import redisClient from "./redis";
 import response from "./response";
 import passport from "./passport";
 import corsOptions from "./cors-options";
+import { initSocket, getSocket } from "./socket";
 import { encryptTextWithKey, decryptText } from "./encryption";
 import { connectToDatabase, disconnectFromDatabase } from "./database";
 
@@ -19,6 +20,8 @@ export {
   aiMlApi,
   response,
   passport,
+  getSocket,
+  initSocket,
   verifyToken,
   decryptText,
   redisClient,

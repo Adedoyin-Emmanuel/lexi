@@ -1,4 +1,6 @@
 import "./types/types";
+
+import http from "http";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
@@ -21,6 +23,7 @@ import analyzeRouter from "./features/analyze/route";
 import {
   logger,
   passport,
+  initSocket,
   corsOptions,
   redisClient,
   connectToDatabase,
@@ -129,7 +132,11 @@ class ApiServer {
 
       this.setupBackgroundJobs();
 
-      this.server = this.app.listen(port, () => {
+      this.server = http.createServer(this.app);
+
+      initSocket(this.server);
+
+      this.server.listen(port, () => {
         logger(`Server is running on PORT ${port} 🚀`);
       });
 
