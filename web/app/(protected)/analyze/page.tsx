@@ -8,6 +8,8 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { Axios } from "@/app/config/axios";
+import { useAuth } from "@/hooks/use-auth";
+import { useSocket } from "@/hooks/use-socket";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getTextFromFile } from "@/lib/file-reader";
 import { UploadZone } from "./components/upload-zone";
@@ -103,6 +105,8 @@ const Analyze = () => {
     "document"
   );
   const isMobile = useIsMobile();
+  // const { user } = useAuth();
+  // const socket = useSocket(user.);
 
   const handleDocumentUpload = async (file: File) => {
     try {

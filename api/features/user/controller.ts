@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import { response } from "./../../utils";
+import { redisService } from "./../../services/redis";
 import { userRepository } from "./../../models/repositories";
 import { onboardUserSchema, updateUserDetailsSchema } from "./user.dto";
 export default class UserController {
@@ -60,6 +61,17 @@ export default class UserController {
   static async getMe(req: Request, res: Response) {
     const currentUser = req.user;
 
+    const cachedUser = await redisService.get(`user:${currentUser.userId}`);
+
+    if (cachedUser) {
+      return response(
+        res,
+        200,
+        "User details fetched successfully",
+        JSON.parse(cachedUser as string)
+      );
+    }
+
     const user = await userRepository.findById(currentUser.userId.toString());
 
     if (!user) {
@@ -67,11 +79,14 @@ export default class UserController {
     }
 
     const userDetails = {
+      id: user._id,
       name: user.name,
       avatar: user.avatar,
       displayName: user.displayName,
       hasOnboarded: user.isOnboarded,
     };
+
+    await redisService.set(`user:${user._id}`, userDetails, 60 * 60 * 5);
 
     return response(res, 200, "User details fetched successfully", userDetails);
   }
