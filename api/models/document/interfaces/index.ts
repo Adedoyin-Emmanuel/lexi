@@ -1,7 +1,7 @@
 import {
-  ACTIONABLE_OBLIGATION_TYPE,
   RISK_LEVEL,
   SUGGESTION_TYPE,
+  ACTIONABLE_OBLIGATION_TYPE,
 } from "./../../../jobs/analyze/pipeline/extraction/types";
 
 export enum DOCUMENT_STATUS {
@@ -75,6 +75,7 @@ export interface ISummary {
   jurisdiction: string;
   effectiveDate: string;
   overviewSummary: string;
+  plainEnglishSummary: string;
 
   overallRiskScore: number;
   totalPartiesInvolved: number;

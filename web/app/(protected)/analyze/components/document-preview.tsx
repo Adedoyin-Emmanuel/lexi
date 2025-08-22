@@ -19,12 +19,14 @@ interface DocumentPreviewProps {
   document: ContractDocument;
   onClauseSelect: (clauseId: string) => void;
   structuredContract?: IStructuredContract | null;
+  plainEnglishSummary?: string | null;
 }
 
 export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   document,
   onClauseSelect,
   structuredContract,
+  plainEnglishSummary,
 }) => {
   const [showHighlights, setShowHighlights] = useState(true);
   const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
@@ -39,8 +41,13 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   }, [document.content, structuredContract]);
 
   const plainEnglishContent = useMemo(() => {
+    // Use the plain English summary from the backend if available
+    if (plainEnglishSummary) {
+      return plainEnglishSummary;
+    }
+    // Fallback to dummy text only if no summary is available
     return getPlainEnglishContract();
-  }, []);
+  }, [plainEnglishSummary]);
 
   const highlightedText = useMemo(() => {
     if (!showHighlights || viewMode !== "original") return documentContent;

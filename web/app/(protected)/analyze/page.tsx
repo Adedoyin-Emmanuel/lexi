@@ -17,6 +17,7 @@ import { encryptTextWithNewKey } from "@/lib/encryption";
 import { InsightsPanel } from "./components/insights-panel";
 import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
+import { AnalysisFailureDialog } from "./components/analysis-failure-dialog";
 import {
   IDocumentAnalysisStartedPayload,
   IDocumentAnalysisValidatedPayload,
@@ -292,6 +293,49 @@ const Analyze = () => {
     }
   };
 
+  const handleRetryAnalysis = () => {
+    // Reset analysis state but keep the document
+    setAnalysisState({
+      isAnalyzing: false,
+      currentStep: "idle",
+      documentId: null,
+      validation: null,
+      structuredContract: null,
+      summary: null,
+      extraction: null,
+      error: null,
+    });
+
+    // Re-upload the same document
+    if (document) {
+      handleDocumentUpload(
+        new File([document.content], document.name, {
+          type:
+            document.type === "pdf"
+              ? "application/pdf"
+              : document.type === "docx"
+              ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              : "text/plain",
+        })
+      );
+    }
+  };
+
+  const handleCancelAnalysis = () => {
+    // Reset everything and go back to upload state
+    setAnalysisState({
+      isAnalyzing: false,
+      currentStep: "idle",
+      documentId: null,
+      validation: null,
+      structuredContract: null,
+      summary: null,
+      extraction: null,
+      error: null,
+    });
+    setDocument(null);
+  };
+
   const handleExport = (format: "pdf" | "word" | "markdown") => {
     console.log(`Exporting as ${format}`);
   };
@@ -346,6 +390,7 @@ const Analyze = () => {
                 document={document}
                 onClauseSelect={handleClauseSelect}
                 structuredContract={analysisState.structuredContract}
+                plainEnglishSummary={analysisState.summary?.plainEnglishSummary}
               />
             </div>
           ) : (
@@ -357,6 +402,14 @@ const Analyze = () => {
             </div>
           )}
         </div>
+
+        {/* Analysis Failure Dialog */}
+        <AnalysisFailureDialog
+          isOpen={analysisState.currentStep === "failed"}
+          onClose={handleCancelAnalysis}
+          onRetry={handleRetryAnalysis}
+          failureReason={analysisState.error || "Unknown error occurred"}
+        />
       </div>
     );
   }
@@ -378,6 +431,7 @@ const Analyze = () => {
                 document={document}
                 onClauseSelect={handleClauseSelect}
                 structuredContract={analysisState.structuredContract}
+                plainEnglishSummary={analysisState.summary?.plainEnglishSummary}
               />
             </div>
           </ResizablePanel>
@@ -392,6 +446,14 @@ const Analyze = () => {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
+
+      {/* Analysis Failure Dialog */}
+      <AnalysisFailureDialog
+        isOpen={analysisState.currentStep === "failed"}
+        onClose={handleCancelAnalysis}
+        onRetry={handleRetryAnalysis}
+        failureReason={analysisState.error || "Unknown error occurred"}
+      />
     </div>
   );
 };

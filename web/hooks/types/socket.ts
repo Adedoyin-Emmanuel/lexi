@@ -102,6 +102,7 @@ export interface ISummary {
   jurisdiction: string;
   effectiveDate: string;
   overviewSummary: string;
+  plainEnglishSummary: string;
 
   overallRiskScore: number;
   totalPartiesInvolved: number;

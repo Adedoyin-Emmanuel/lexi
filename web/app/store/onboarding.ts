@@ -33,7 +33,7 @@ const initialState: OnboardingState = {
   isComplete: false,
 };
 
-export const useOnboardingStore = create<OnboardingStore>((set, get) => ({
+export const useOnboardingStore = create<OnboardingStore>((set) => ({
   ...initialState,
 
   updateData: (data: Partial<OnboardingData>) => {
