@@ -101,7 +101,7 @@ Rules:
   * Headings: text-xl/text-2xl/text-3xl, font-bold, text-gray-900, mb-4
   * Paragraphs: text-gray-700, mb-3, leading-relaxed
   * Lists: text-gray-700, mb-1, ml-4
-  * Containers: p-6, bg-white, rounded-lg, shadow-sm
+  * Containers: p-2
 - Keep it simple and fast
 `.trim();
   }

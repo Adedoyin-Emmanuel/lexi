@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
 import { Image, FileText } from "lucide-react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -11,25 +11,36 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 
+import { ContractDocument } from "../page";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { IStructuredContract } from "@/hooks/types/socket";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ContractDocument } from "../page";
 
 interface DocumentPreviewProps {
   document: ContractDocument;
   plainEnglishSummary?: string | null;
   structuredContract?: IStructuredContract | null;
+  preferredViewMode?: "preview" | "original";
+  onViewModeChange?: (mode: "preview" | "original") => void;
 }
 
 export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   document,
   structuredContract,
   plainEnglishSummary,
+  preferredViewMode,
+  onViewModeChange,
 }) => {
   const isMobile = useIsMobile();
   const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
+
+  // Update view mode when preferredViewMode changes
+  useEffect(() => {
+    if (preferredViewMode && preferredViewMode !== viewMode) {
+      setViewMode(preferredViewMode);
+    }
+  }, [preferredViewMode, viewMode]);
 
   const documentContent = useMemo(() => {
     if (structuredContract?.html) {
@@ -48,7 +59,8 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
 
   const handleViewModeChange = useCallback((mode: "preview" | "original") => {
     setViewMode(mode);
-  }, []);
+    onViewModeChange?.(mode);
+  }, [onViewModeChange]);
 
   const renderPreviewMode = () => (
     <div className={`h-full overflow-auto ${isMobile ? "p-3" : "p-6"}`}>

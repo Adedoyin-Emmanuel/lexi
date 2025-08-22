@@ -72,6 +72,7 @@ const Analyze = () => {
   const [activeView, setActiveView] = useState<"document" | "insights">(
     "document"
   );
+  const [preferredViewMode, setPreferredViewMode] = useState<"preview" | "original">("preview");
   const [analysisState, setAnalysisState] = useState<AnalysisState>({
     error: null,
     summary: null,
@@ -127,6 +128,7 @@ const Analyze = () => {
         currentStep: "summarizing",
         structuredContract: data.structuredContract,
       }));
+      setPreferredViewMode("original");
     };
 
     const handleAnalysisSummarized = (
@@ -138,6 +140,7 @@ const Analyze = () => {
         currentStep: "extracting",
         summary: data.summary,
       }));
+      setPreferredViewMode("preview");
     };
 
     const handleAnalysisDetailsExtracted = (
@@ -385,6 +388,8 @@ const Analyze = () => {
                 document={document}
                 structuredContract={analysisState.structuredContract}
                 plainEnglishSummary={analysisState.summary?.plainEnglishSummary}
+                preferredViewMode={preferredViewMode}
+                onViewModeChange={setPreferredViewMode}
               />
             </div>
           ) : (
@@ -426,6 +431,8 @@ const Analyze = () => {
                 document={document}
                 structuredContract={analysisState.structuredContract}
                 plainEnglishSummary={analysisState.summary?.plainEnglishSummary}
+                preferredViewMode={preferredViewMode}
+                onViewModeChange={setPreferredViewMode}
               />
             </div>
           </ResizablePanel>
