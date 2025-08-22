@@ -20,6 +20,7 @@ export const initSocket = (server: HttpServer): IOServer => {
 
     socket.on("joinRoom", (userId: string) => {
       socket.join(userId);
+
       logger(`User ${userId} joined room ${userId}`);
     });
 

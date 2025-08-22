@@ -14,10 +14,9 @@ export const useSocket = (userId: string) => {
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
-    });
 
-    socket.on("pipeline:update", (data) => {
-      console.log("Pipeline update:", data);
+      /** Join our room immediately after connecting */
+      socket.emit("joinRoom", userId);
     });
 
     return () => {
