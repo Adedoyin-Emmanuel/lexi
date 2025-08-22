@@ -3,6 +3,7 @@ import { Job, Worker } from "bullmq";
 
 import { IJob } from "./../types";
 import { logger } from "./../../utils";
+import DocumentSummarizer from "./pipeline/summary";
 import DocumentValidator from "./pipeline/validation";
 import DocumentStructurer from "./pipeline/structuring";
 import { redisService } from "./../../services/redis";
@@ -76,9 +77,8 @@ export default class AnalyzeWorker implements IJob {
 
     /** Start processing */
     await this.validateAndProcessDocument(documentId);
-      await this.structureDocument(documentId);
-      
-      
+
+    await this.structureDocument(documentId);
 
     /**
      * At this stage, validation is done and we have the contract type

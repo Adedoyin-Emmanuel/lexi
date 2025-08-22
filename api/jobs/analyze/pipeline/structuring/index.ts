@@ -53,7 +53,7 @@ export default class DocumentStructurer {
 
       return Result.ok(structuredContract);
     } catch (error) {
-      logger.error(error);
+      logger(error);
       return Result.fail("Failed to structure contract");
     }
   }

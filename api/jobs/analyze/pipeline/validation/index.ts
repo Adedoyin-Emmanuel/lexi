@@ -60,7 +60,7 @@ export default class DocumentValidator {
 
       return this.validateValidationModelResponse(validationResult);
     } catch (error) {
-      logger.error(error);
+      logger(error);
       return Result.fail("Invalid JSON response from validation model");
     }
   }
