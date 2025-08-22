@@ -91,7 +91,7 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700"
+              className="h-6 px-2 text-xs cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsExpanded(!isExpanded);
@@ -99,12 +99,12 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
             >
               {isExpanded ? (
                 <>
-                  <ChevronUp className="w-3 h-3 mr-1" />
+                  <ChevronUp className="w-3 h-3 mr-1" strokeWidth={1.5} />
                   Read less
                 </>
               ) : (
                 <>
-                  <ChevronDown className="w-3 h-3 mr-1" />
+                  <ChevronDown className="w-3 h-3 mr-1" strokeWidth={1.5} />
                   Read more
                 </>
               )}

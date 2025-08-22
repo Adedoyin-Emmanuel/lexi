@@ -1,12 +1,11 @@
 "use client";
 
-import { Calendar, Eye } from "lucide-react";
+import { Eye, Briefcase } from "lucide-react";
 
 import { Obligation } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { CircularConfidence } from "../../components/circular-confidence";
 
 interface ObligationCardProps {
   onSelect: () => void;
@@ -71,7 +70,7 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="flex-shrink-0 pt-1">
-            <Calendar
+            <Briefcase
               className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600"
               strokeWidth={1.5}
             />
@@ -111,7 +110,6 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-100">
           <div className="flex items-center gap-2 text-xs">
-            <CircularConfidence score={confidenceScore} />
             <span className="font-medium">
               AI confidence:{" "}
               <span

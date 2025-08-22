@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { Eye, Image, EyeOff, FileText } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
@@ -49,7 +50,9 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   }, [plainEnglishSummary]);
 
   const highlightedText = useMemo(() => {
-    if (!showHighlights || viewMode !== "original") return documentContent;
+    if (viewMode !== "original") return documentContent;
+
+    if (!showHighlights) return documentContent;
 
     if (selectedClauseId && structuredContract?.tokens) {
       const selectedToken = structuredContract.tokens.find(
@@ -58,15 +61,27 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
 
       if (selectedToken) {
         let highlightedHtml = documentContent;
-        const startTag = `<${selectedToken.elementType} id="${selectedToken.elementId}">`;
+        const startTag = `<${selectedToken.elementType} id="${selectedToken.elementId}"`;
 
-        highlightedHtml = highlightedHtml.replace(
-          startTag,
-          `${startTag.replace(
-            ">",
-            ' class="bg-yellow-200 border-l-4 border-yellow-500 pl-2">'
-          )}`
+        const classRegex = new RegExp(`${startTag}[^>]*class="[^"]*"`, "g");
+        const noClassRegex = new RegExp(
+          `${startTag}(?![^>]*class="[^"]*")`,
+          "g"
         );
+
+        if (classRegex.test(highlightedHtml)) {
+          highlightedHtml = highlightedHtml.replace(classRegex, (match) =>
+            match.replace(
+              'class="',
+              'class="bg-yellow-200 border-l-4 border-yellow-500 pl-2 '
+            )
+          );
+        } else {
+          highlightedHtml = highlightedHtml.replace(
+            noClassRegex,
+            `${startTag} class="bg-yellow-200 border-l-4 border-yellow-500 pl-2"`
+          );
+        }
 
         return highlightedHtml;
       }
@@ -133,9 +148,30 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
         >
           {structuredContract?.html ? (
             <div
-              className={`text-gray-900 leading-relaxed ${
+              className={`text-gray-900 leading-relaxed prose prose-sm max-w-none ${
                 isMobile ? "text-sm" : ""
               }`}
+              style={
+                {
+                  lineHeight: "1.6",
+                  fontSize: isMobile ? "0.875rem" : "1rem",
+                  "--tw-prose-body": "#374151",
+                  "--tw-prose-headings": "#111827",
+                  "--tw-prose-links": "#2563eb",
+                  "--tw-prose-bold": "#111827",
+                  "--tw-prose-counters": "#6b7280",
+                  "--tw-prose-bullets": "#d1d5db",
+                  "--tw-prose-hr": "#e5e7eb",
+                  "--tw-prose-quotes": "#111827",
+                  "--tw-prose-quote-borders": "#e5e7eb",
+                  "--tw-prose-captions": "#6b7280",
+                  "--tw-prose-code": "#111827",
+                  "--tw-prose-pre-code": "#e5e7eb",
+                  "--tw-prose-pre-bg": "#1f2937",
+                  "--tw-prose-th-borders": "#d1d5db",
+                  "--tw-prose-td-borders": "#e5e7eb",
+                } as React.CSSProperties
+              }
               dangerouslySetInnerHTML={{
                 __html: highlightedText,
               }}
@@ -155,12 +191,14 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   );
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden">
+    <Card className="h-full flex flex-col overflow-hidden ">
       <CardHeader
-        className={`pb-4 flex-shrink-0 border-b ${isMobile ? "px-3 py-3" : ""}`}
+        className={`pb-4 flex-shrink-0 border-b border-gray-200 ${
+          isMobile ? "px-3 py-3" : ""
+        }`}
       >
         <div className="flex items-center justify-between">
-          <CardTitle className={isMobile ? "text-base" : ""}>
+          <CardTitle className={cn(isMobile ? "text-base" : "")}>
             {viewMode === "preview"
               ? "Plain English Summary"
               : "Structured Document"}
@@ -173,9 +211,12 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                     variant="ghost"
                     size={isMobile ? "sm" : "sm"}
                     onClick={() => handleViewModeChange("preview")}
-                    className={`${isMobile ? "h-8 w-8 p-0" : ""} ${
-                      viewMode === "preview" ? "bg-blue-100 text-primary" : ""
-                    }`}
+                    className={cn(
+                      `${isMobile ? "h-8 w-8 p-0" : ""} ${
+                        viewMode === "preview" ? "bg-blue-100 text-primary" : ""
+                      }`,
+                      "cursor-pointer"
+                    )}
                   >
                     <Image
                       className={`${isMobile ? "w-3 h-3" : "w-4 h-4"}`}
@@ -193,9 +234,14 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`h-8 px-2 text-xs ${
-                      viewMode === "original" ? "bg-blue-100 text-primary" : ""
-                    }`}
+                    className={cn(
+                      `h-8 px-2 text-xs ${
+                        viewMode === "original"
+                          ? "bg-blue-100 text-primary"
+                          : ""
+                      }`,
+                      "cursor-pointer"
+                    )}
                     onClick={() => setViewMode("original")}
                   >
                     <FileText
@@ -218,7 +264,10 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                       variant="ghost"
                       size={isMobile ? "sm" : "sm"}
                       onClick={handleToggleHighlights}
-                      className={isMobile ? "h-8 w-8 p-0" : ""}
+                      className={cn(
+                        isMobile ? "h-8 w-8 p-0" : "",
+                        "cursor-pointer"
+                      )}
                     >
                       {showHighlights ? (
                         <Eye
