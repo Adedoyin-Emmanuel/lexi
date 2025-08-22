@@ -42,10 +42,8 @@ export const AnalysisStatusIndicator: React.FC<
     );
   }
 
-  // Find the current step index, defaulting to the last step if completed
   let currentStepIndex = steps.findIndex((step) => step.key === currentStep);
 
-  // If analysis is completed, show all steps as completed
   if (currentStep === "completed") {
     currentStepIndex = steps.length - 1;
   }
@@ -70,7 +68,7 @@ export const AnalysisStatusIndicator: React.FC<
                     isCompleted && "bg-primary text-primary-foreground",
                     isActive &&
                       "bg-primary/20 text-primary border border-primary",
-                    isPending && "bg-muted text-muted-foreground"
+                    isPending && "bg-white text-muted-foreground border border-gray-200"
                   )}
                 >
                   {isCompleted ? (

@@ -14,6 +14,7 @@ import {
 import { ContractDocument } from "../page";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Skeleton } from "@/components/ui/skeleton";
 import { IStructuredContract } from "@/hooks/types/socket";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -64,6 +65,73 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     [onViewModeChange]
   );
 
+  const PlainEnglishSkeleton = () => (
+    <div className="space-y-2">
+      <div className="space-y-3">
+        <Skeleton className="h-6 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+      </div>
+
+      <div className="space-y-6">
+        {[1, 2, 3].map((section) => (
+          <div key={section} className="space-y-3">
+            <Skeleton className="h-5 w-1/2" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-4/5" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-3">
+        <Skeleton className="h-5 w-1/3" />
+        <div className="space-y-2">
+          {[1, 2, 3, 4].map((point) => (
+            <div key={point} className="flex items-start gap-2">
+              <Skeleton className="h-2 w-2 rounded-full mt-2 flex-shrink-0" />
+              <Skeleton className="h-4 w-full" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const StructuredDocumentSkeleton = () => (
+    <div className="space-y-2">
+      <div className="space-y-3 border-b border-gray-200 pb-4">
+        <Skeleton className="h-8 w-2/3" />
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+
+      {[1, 2, 3, 4, 5].map((section) => (
+        <div key={section} className="space-y-3">
+          <Skeleton className="h-6 w-1/3" />
+          <div className="space-y-2 pl-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+            {section % 2 === 0 && (
+              <>
+                <Skeleton className="h-4 w-4/5" />
+                <Skeleton className="h-4 w-full" />
+              </>
+            )}
+          </div>
+        </div>
+      ))}
+
+      <div className="space-y-3 border-t border-gray-200 pt-4">
+        <Skeleton className="h-5 w-1/4" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+    </div>
+  );
+
   const renderPreviewMode = () => (
     <div className={`h-full overflow-auto ${isMobile ? "p-3" : "p-6"}`}>
       <div className={`${isMobile ? "w-full" : "max-w-4xl mx-auto"}`}>
@@ -75,11 +143,8 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                 dangerouslySetInnerHTML={{ __html: plainEnglishContent }}
               />
             ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500">
-                  Plain English summary will be available after analysis is
-                  complete.
-                </p>
+              <div className="p-6">
+                <PlainEnglishSkeleton />
               </div>
             )}
           </div>
@@ -101,11 +166,8 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                 }}
               />
             ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500">
-                  Structured document will be available after analysis is
-                  complete.
-                </p>
+              <div className="p-6">
+                <StructuredDocumentSkeleton />
               </div>
             )}
           </div>

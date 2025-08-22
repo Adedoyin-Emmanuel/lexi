@@ -21,6 +21,7 @@ interface AnalysisFailureDialogProps {
 export const AnalysisFailureDialog: React.FC<AnalysisFailureDialogProps> = ({
   isOpen,
   onClose,
+  onRetry,
   failureReason,
 }) => {
   return (
@@ -55,7 +56,7 @@ export const AnalysisFailureDialog: React.FC<AnalysisFailureDialogProps> = ({
             </Button>
           </DialogClose>
           <Button
-            onClick={onClose}
+            onClick={onRetry}
             className="flex items-center gap-2 cursor-pointer"
           >
             <RefreshCw className="h-4 w-4" strokeWidth={1.5} />
