@@ -27,10 +27,24 @@ export default class DocumentDetailsExtractor {
       const startTime = Date.now();
 
       const systemPrompt = this.getExtractionPrompt(contractType);
-      const userPrompt = this.buildUserPrompt(contract, structuredHTML);
+      let userPrompt = this.buildUserPrompt(contract, structuredHTML);
+
+      // Add debugging for content length
+      const totalContentLength = systemPrompt.length + userPrompt.length;
+      logger(`System prompt length: ${systemPrompt.length}`);
+      logger(`User prompt length: ${userPrompt.length}`);
+      logger(`Total content length: ${totalContentLength}`);
+
+      // Check if content is too large (OpenAI has limits)
+      if (totalContentLength > 100000) {
+        logger(
+          `Content too large (${totalContentLength} chars), truncating user prompt`
+        );
+        userPrompt = userPrompt.substring(0, 50000); // Truncate to reasonable size
+      }
 
       const aiMlApiResponse = await aiMlApi.chat.completions.create({
-        model: "gpt-5",
+        model: "gpt-4o-mini", // Use a more reliable model
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -78,7 +92,11 @@ export default class DocumentDetailsExtractor {
 
       return Result.ok(extractionResult);
     } catch (error) {
-      logger(error);
+      logger(`Extraction error details: ${JSON.stringify(error, null, 2)}`);
+      if (error.status === 400) {
+        logger(`400 error - likely content too large or malformed`);
+        return Result.fail("Content too large or malformed for AI processing");
+      }
       return Result.fail("An error occured during extraction process");
     }
   }

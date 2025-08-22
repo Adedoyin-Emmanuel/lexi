@@ -48,6 +48,10 @@ export default class AnalyzeWorker implements IJob {
       throw new Error("Document not found");
     }
 
+    logger(
+      `Starting processing for document ${documentId} with status: ${document.status}`
+    );
+
     /**
      *
      * I am adding the switch check just incase we add a retry on failure logic
@@ -68,28 +72,50 @@ export default class AnalyzeWorker implements IJob {
 
       case DOCUMENT_STATUS.PROCESSING:
         logger(`Document ${documentId} is already being processed`);
-        break;
+        return; // Exit early to avoid duplicate processing
 
       case DOCUMENT_STATUS.COMPLETED:
         logger(`Document ${documentId} is already completed`);
-        break;
+        return; // Exit early
 
       case DOCUMENT_STATUS.FAILED:
         logger(`Document ${documentId} is already failed`);
-        break;
+        return; // Exit early
 
       default:
-        logger(`Document ${documentId} is in an unknown status`);
+        logger(
+          `Document ${documentId} is in an unknown status: ${document.status}`
+        );
         break;
     }
 
-    await this.validateAndProcessDocument(userId, documentId);
+    try {
+      logger(`Step 1: Validating document ${documentId}`);
+      await this.validateAndProcessDocument(userId, documentId);
+      logger(`Step 1 completed: Document validation successful`);
 
-    await this.structureDocument(documentId, userId);
+      logger(`Step 2: Structuring document ${documentId}`);
+      await this.structureDocument(documentId, userId);
+      logger(`Step 2 completed: Document structuring successful`);
 
-    await this.summarizeDocument(documentId, userId);
+      logger(`Step 3: Summarizing document ${documentId}`);
+      await this.summarizeDocument(documentId, userId);
+      logger(`Step 3 completed: Document summarization successful`);
 
-    await this.extractDocumentDetails(documentId, userId);
+      logger(`Step 4: Extracting document details ${documentId}`);
+      await this.extractDocumentDetails(documentId, userId);
+      logger(`Step 4 completed: Document extraction successful`);
+
+      logger(
+        `All processing steps completed successfully for document ${documentId}`
+      );
+    } catch (error) {
+      logger(
+        `Error during processing document ${documentId}: ${error.message}`
+      );
+      logger(`Error stack: ${error.stack}`);
+      throw error; // Re-throw to trigger the failed job handler
+    }
   }
 
   public async extractDocumentDetails(
@@ -101,8 +127,17 @@ export default class AnalyzeWorker implements IJob {
     const contract = await redisService.get(`document:${documentId}`);
     const document = await documentRepository.findById(documentId.toString());
 
+    if (!document.structuredContract || !document.structuredContract.html) {
+      throw new Error(
+        "Document structure not found - structuring step may have failed"
+      );
+    }
+
     const contractType = document.validationMetadata.contractType;
     const contractStructuredHTML = document.structuredContract.html;
+
+    logger(`Extracting details for contract type: ${contractType}`);
+    logger(`Structured HTML length: ${contractStructuredHTML.length}`);
 
     const extractionResult = await extractor.extract(
       contract as string,
@@ -142,8 +177,17 @@ export default class AnalyzeWorker implements IJob {
     const contract = await redisService.get(`document:${documentId}`);
     const document = await documentRepository.findById(documentId.toString());
 
+    if (!document.structuredContract || !document.structuredContract.html) {
+      throw new Error(
+        "Document structure not found - structuring step may have failed"
+      );
+    }
+
     const contractType = document.validationMetadata.contractType;
     const contractStructuredHTML = document.structuredContract.html;
+
+    logger(`Summarizing document for contract type: ${contractType}`);
+    logger(`Structured HTML length: ${contractStructuredHTML.length}`);
 
     const summaryResult = await summarizer.summarize(
       contract as string,
@@ -178,7 +222,8 @@ export default class AnalyzeWorker implements IJob {
     const structureResult = await structurer.structure(documentId);
 
     if (structureResult.isFailure) {
-      throw new Error(structureResult.errors.join(", "));
+      logger(structureResult.errors);
+      throw new Error(structureResult.errors[0].message);
     }
 
     const structuredContract = structureResult.value as IStructuredContract;

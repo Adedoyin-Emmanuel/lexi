@@ -17,6 +17,7 @@ import { encryptTextWithNewKey } from "@/lib/encryption";
 import { InsightsPanel } from "./components/insights-panel";
 import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
+import { AnalysisStatusIndicator } from "./components/analysis-status-indicator";
 import { AnalysisFailureDialog } from "./components/analysis-failure-dialog";
 import {
   IDocumentAnalysisStartedPayload,
@@ -360,6 +361,11 @@ const Analyze = () => {
           onReanalyze={handleReanalyze}
         />
 
+        <AnalysisStatusIndicator
+          currentStep={analysisState.currentStep}
+          isAnalyzing={analysisState.isAnalyzing}
+        />
+
         <div className="flex border-b border-gray-200 bg-white">
           <button
             onClick={() => setActiveView("document")}
@@ -421,6 +427,11 @@ const Analyze = () => {
         onExport={handleExport}
         isAnalyzing={analysisState.isAnalyzing}
         onReanalyze={handleReanalyze}
+      />
+
+      <AnalysisStatusIndicator
+        currentStep={analysisState.currentStep}
+        isAnalyzing={analysisState.isAnalyzing}
       />
 
       <div className="w-full overflow-hidden">

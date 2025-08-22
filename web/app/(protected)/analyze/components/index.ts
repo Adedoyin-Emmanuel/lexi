@@ -8,3 +8,4 @@ export { ObligationCard } from "./obligation-card";
 export { NegotiationCard } from "./negotiation-card";
 export { DocumentPreview } from "./document-preview";
 export { LoadingSkeleton } from "./loading-skeleton";
+export { AnalysisStatusIndicator } from "./analysis-status-indicator";
