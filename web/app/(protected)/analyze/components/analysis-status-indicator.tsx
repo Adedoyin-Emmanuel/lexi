@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CheckCircle, Loader2 } from "lucide-react";
 
 interface AnalysisStatusIndicatorProps {
   currentStep:
@@ -65,9 +65,9 @@ export const AnalysisStatusIndicator: React.FC<
                   )}
                 >
                   {isCompleted ? (
-                    <CheckCircle className="w-3 h-3" />
+                    <CheckCircle className="w-3 h-3" strokeWidth={1.5}/>
                   ) : isActive ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <Loader2 className="w-3 h-3 animate-spin" strokeWidth={1.5}/>
                   ) : (
                     index + 1
                   )}
