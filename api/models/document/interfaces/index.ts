@@ -78,6 +78,6 @@ export interface IValidationMetadata {
   reason: string;
   inScope: boolean;
   confidenceScore: number;
-  contractType: CONTRACT_TYPE;
   isValidContract: boolean;
+  contractType: CONTRACT_TYPE;
 }

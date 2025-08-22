@@ -39,7 +39,7 @@ export default class DocumentValidator {
       const content = response.choices[0].message?.content;
 
       if (!content) {
-        return Result.fail("No response frim validation model");
+        return Result.fail("No response from validation model");
       }
 
       let aiMlApiResponse: any;
@@ -133,7 +133,7 @@ export default class DocumentValidator {
         - Low confidence (1-49) for ambiguous documents or edge cases
         - Focus on core purpose and key clauses, not just keywords
         - Consider the freelancer/creator context when evaluating contractor vs employment relationships
-        `;
+        `.trim();
 
     return prompt;
   }

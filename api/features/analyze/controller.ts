@@ -26,7 +26,7 @@ export default class AnalyzeController {
     await redisService.set(
       `document:${newDocument._id}`,
       decryptedContent,
-      60 * 60 * 24 * 30
+      60 * 60 * 24
     );
 
     await this._analyzeQueue.add(newDocument);
