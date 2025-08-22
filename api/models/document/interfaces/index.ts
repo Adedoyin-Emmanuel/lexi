@@ -6,9 +6,9 @@ export enum DOCUMENT_STATUS {
 }
 
 export enum CONTRACT_TYPE {
-  NDA = "nda",
-  ICA = "ica",
-  LICENSE_AGREEMENT = "license agreement",
+  NDA = "NDA",
+  ICA = "ICA",
+  LICENSE_AGREEMENT = "License Agreement",
 }
 
 export interface IHighlight {

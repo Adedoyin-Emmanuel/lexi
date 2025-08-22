@@ -10,7 +10,11 @@ import DocumentStructurer from "./pipeline/structuring";
 import { IValidationResult } from "./pipeline/validation/types";
 import { documentRepository } from "./../../models/repositories";
 import { IStructuredContract } from "./pipeline/structuring/types";
-import { DOCUMENT_STATUS, ISummary } from "./../../models/document/interfaces";
+import {
+  CONTRACT_TYPE,
+  DOCUMENT_STATUS,
+  ISummary,
+} from "./../../models/document/interfaces";
 
 export default class AnalyzeWorker implements IJob {
   private _worker: Worker;
@@ -234,12 +238,12 @@ export default class AnalyzeWorker implements IJob {
       return;
     }
 
-    const contractType = validationResult.contractType;
+    const contractType = validationResult.contractType.toLocaleLowerCase();
 
     if (
-      contractType !== "nda" &&
-      contractType !== "ica" &&
-      contractType !== "license agreement"
+      contractType !== CONTRACT_TYPE.NDA &&
+      contractType !== CONTRACT_TYPE.ICA &&
+      contractType !== CONTRACT_TYPE.LICENSE_AGREEMENT
     ) {
       await documentRepository.update(documentId, {
         status: DOCUMENT_STATUS.FAILED,
