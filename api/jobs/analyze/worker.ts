@@ -5,12 +5,12 @@ import { IJob } from "./../types";
 import { logger } from "./../../utils";
 import DocumentSummarizer from "./pipeline/summary";
 import DocumentValidator from "./pipeline/validation";
-import DocumentStructurer from "./pipeline/structuring";
 import { redisService } from "./../../services/redis";
+import DocumentStructurer from "./pipeline/structuring";
 import { IValidationResult } from "./pipeline/validation/types";
 import { documentRepository } from "./../../models/repositories";
 import { IStructuredContract } from "./pipeline/structuring/types";
-import { DOCUMENT_STATUS } from "./../../models/document/interfaces";
+import { DOCUMENT_STATUS, ISummary } from "./../../models/document/interfaces";
 
 export default class AnalyzeWorker implements IJob {
   private _worker: Worker;
@@ -79,6 +79,8 @@ export default class AnalyzeWorker implements IJob {
     await this.validateAndProcessDocument(documentId);
 
     await this.structureDocument(documentId);
+
+    await this.summarizeDocument(documentId);
 
     /**
      * At this stage, validation is done and we have the contract type
@@ -149,6 +151,34 @@ export default class AnalyzeWorker implements IJob {
             * AI Confidence Score
             * Start index, end index
        */
+  }
+
+  private async summarizeDocument(documentId: Types.ObjectId) {
+    const summarizer = new DocumentSummarizer();
+
+    const contract = await redisService.get(`document:${documentId}`);
+    const document = await documentRepository.findById(documentId.toString());
+
+    const contractType = document.validationMetadata.contractType;
+    const contractStructuredHTML = document.structuredContract.html;
+
+    const summaryResult = await summarizer.summarize(
+      contract as string,
+      contractType,
+      contractStructuredHTML
+    );
+
+    if (summaryResult.isFailure) {
+      throw new Error(summaryResult.errors.join(", "));
+    }
+
+    const summary = summaryResult.value as ISummary;
+
+    await documentRepository.update(documentId, {
+      summary: summary,
+    });
+
+    // Emit event to client
   }
 
   private async structureDocument(documentId: Types.ObjectId) {
