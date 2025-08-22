@@ -49,7 +49,7 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
             <div className={isMobile ? "w-full" : ""}>
               <h1
                 className={`font-semibold text-gray-900 ${
-                  isMobile ? "text-base" : "text-lg"
+                  isMobile ? "text-base" : "text-[16.5px]"
                 }`}
               >
                 {document.name}
@@ -59,11 +59,15 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
                   isMobile ? "flex-wrap" : ""
                 }`}
               >
-                <span>{document.type.toUpperCase()}</span>
+                <span className="text-[13px]">
+                  {document.type.toUpperCase()}
+                </span>
                 <span>•</span>
-                <span>{formatFileSize(document.content.length)}</span>
+                <span className="text-[13px]">
+                  {formatFileSize(document.content.length)}
+                </span>
                 <span>•</span>
-                <span className={isMobile ? "text-xs" : ""}>
+                <span className={isMobile ? "text-xs" : "text-[13px]"}>
                   {isMobile
                     ? "Uploaded " + document.uploadedAt.toLocaleDateString()
                     : "Uploaded " + document.uploadedAt.toLocaleDateString()}

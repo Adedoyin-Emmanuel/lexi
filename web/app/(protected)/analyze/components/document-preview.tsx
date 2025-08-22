@@ -102,19 +102,8 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   const renderPreviewMode = () => (
     <div className={`h-full overflow-auto ${isMobile ? "p-3" : "p-6"}`}>
       <div className={`${isMobile ? "w-full" : "max-w-4xl mx-auto"}`}>
-        <div
-          className={`bg-white rounded-lg shadow-sm ${
-            isMobile ? "p-4" : "p-6"
-          }`}
-        >
-          <h1
-            className={`font-bold mb-6 text-center text-gray-900 ${
-              isMobile ? "text-xl" : "text-2xl"
-            }`}
-          >
-            Plain English Contract
-          </h1>
-          <div className="text-gray-700 leading-relaxed space-y-4">
+        <div className={`bg-white rounded-lg shadow-sm`}>
+          <div className="text-gray-700 leading-relaxed space-y-1">
             {plainEnglishContent ? (
               <div
                 className="prose prose-sm max-w-none"
