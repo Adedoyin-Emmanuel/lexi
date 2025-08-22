@@ -8,13 +8,13 @@ import { Types } from "mongoose";
 
 import {
   IRisk,
-  IClase,
+  IClause,
   ISummary,
-  IHighlight,
   IObligation,
   ISuggestion,
   DOCUMENT_STATUS,
   IValidationMetadata,
+  IExtractionMetadata,
 } from "./interfaces";
 import { User } from "../user";
 import { Chat } from "../chat";
@@ -53,7 +53,7 @@ class Document {
   failureReason: string;
 
   @prop({ type: () => [Object], default: [] })
-  clauses?: IClase[];
+  clauses?: IClause[];
 
   @prop({ type: () => [Object], default: [] })
   risks?: IRisk[];
@@ -61,8 +61,8 @@ class Document {
   @prop({ type: () => [Object], default: [] })
   obligations?: IObligation[];
 
-  @prop({ required: false, default: [] })
-  highlights?: IHighlight[];
+  @prop({ required: false, default: {} })
+  extractionMetadata?: IExtractionMetadata;
 
   @prop({ required: false, default: [] })
   suggestions?: ISuggestion[];

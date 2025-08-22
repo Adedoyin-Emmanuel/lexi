@@ -1,3 +1,9 @@
+import {
+  ACTIONABLE_OBLIGATION_TYPE,
+  RISK_LEVEL,
+  SUGGESTION_TYPE,
+} from "./../../../jobs/analyze/pipeline/extraction/types";
+
 export enum DOCUMENT_STATUS {
   FAILED = "failed",
   PENDING = "pending",
@@ -11,52 +17,55 @@ export enum CONTRACT_TYPE {
   LICENSE_AGREEMENT = "License Agreement",
 }
 
-export interface IHighlight {
-  id: string;
-  text: string;
-  endIndex: number;
-  startIndex: number;
-  confidenceScore: number;
+export interface IExtractionMetadata {
+  totalRisks: number;
+  totalClauses: number;
+  processingTime: number;
+  totalObligations: number;
+  totalSuggestions: number;
+  overallConfidence: number;
 }
 
 export interface IRisk {
-  id: string;
   title: string;
-  riskScore: number;
+  endIndex: number;
+  startIndex: number;
   description: string;
+  riskLevel: RISK_LEVEL;
   confidenceScore: number;
 }
 
-export interface IClase {
-  id: string;
-  name: string;
+export interface IClause {
+  title: string;
   endIndex: number;
-  isRisky: boolean;
+  fullText: string;
   startIndex: number;
-  description: string;
   confidenceScore: number;
 }
 
 export interface IObligation {
-  id: string;
   title: string;
-  deadline: Date;
+  dueDate?: string;
   endIndex: number;
   startIndex: number;
   description: string;
+  clauseSource: string; // Which clause this obligation comes from
+  shouldAbstain: boolean; // True if confidence < threshold
   confidenceScore: number;
-  dueInDays: number | null;
+  userFriendlyExplanation: string; // Plain English explanation
+  actionableType: ACTIONABLE_OBLIGATION_TYPE;
 }
 
 export interface ISuggestion {
-  id: string;
   title: string;
   reason: string;
   endIndex: number;
   startIndex: number;
-  currentText: string;
-  suggestedText: string;
   confidenceScore: number;
+  currentStatement: string;
+  suggestedStatement: string;
+  suggestionType: SUGGESTION_TYPE;
+  priority: "HIGH" | "MEDIUM" | "LOW";
 }
 
 export interface ISummary {
@@ -72,7 +81,6 @@ export interface ISummary {
   overallConfidenceScore: number;
   terminationClasePresent: boolean;
 }
-
 
 export interface IValidationMetadata {
   reason: string;

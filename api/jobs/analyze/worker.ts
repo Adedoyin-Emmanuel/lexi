@@ -3,18 +3,20 @@ import { Job, Worker } from "bullmq";
 
 import { IJob } from "./../types";
 import { logger } from "./../../utils";
+import {
+  ISummary,
+  CONTRACT_TYPE,
+  DOCUMENT_STATUS,
+} from "./../../models/document/interfaces";
 import DocumentSummarizer from "./pipeline/summary";
 import DocumentValidator from "./pipeline/validation";
 import { redisService } from "./../../services/redis";
 import DocumentStructurer from "./pipeline/structuring";
+import DocumentDetailsExtractor from "./pipeline/extraction";
 import { IValidationResult } from "./pipeline/validation/types";
+import { IExtractionResult } from "./pipeline/extraction/types";
 import { documentRepository } from "./../../models/repositories";
 import { IStructuredContract } from "./pipeline/structuring/types";
-import {
-  CONTRACT_TYPE,
-  DOCUMENT_STATUS,
-  ISummary,
-} from "./../../models/document/interfaces";
 
 export default class AnalyzeWorker implements IJob {
   private _worker: Worker;
@@ -79,82 +81,46 @@ export default class AnalyzeWorker implements IJob {
         break;
     }
 
-    /** Start processing */
     await this.validateAndProcessDocument(documentId);
 
     await this.structureDocument(documentId);
 
     await this.summarizeDocument(documentId);
 
-    /**
-     * At this stage, validation is done and we have the contract type
-     */
+    await this.extractDocumentDetails(documentId);
+  }
 
-    /**
-       *
-       * 1. Validate document if it is a contract or not -> Done
-       * 2. Detect the contract type and check if it is in (NDA, ICA or License Agreement)
-       * 3. Lexical formatting * Convert the text into HTML-like structured format:
-       * Paragraphs <p>
-       * Headings <h1/h2> for clauses
-       * Lists <ul><li> for obligations, definitions
-       * Each token gets indexes (start, end) → important for highlights later.
-       * Emit an event:
-       * structuredContractHTML (frontend can render in real-time).
-       * This ensures span-linked highlights are possible.
-       *
-       * 4. Contract Summary (Global Metadata)
-       * Based on structured contract, AI extracts:
-       * Contract Type (validated again).
-       * Parties involved.
-       * Overall Confidence Score (0–100%).
-       * Jurisdiction.
-       * Contract Duration.
-       * Effective Date.
-       * Termination Clause presence (Yes/No).
-       * Risk Score (global risk measure).
-       * High-level overview/summary → 2–4 sentences.
-       * Each field includes:
-       * value
-       * aiConfidence (0–100%)
-       *
-       *
-       * 5.Clause Extraction
-        * AI parses contract based on schema for that contract type.
-        * For each clause:
-            * Title (mapped to standard clause types, e.g., Confidentiality, Termination).
-            * Full text (verbatim from contract).
-            * Start index, end index.
-            * AI confidence score.
+  public async extractDocumentDetails(documentId: Types.ObjectId) {
+    const extractor = new DocumentDetailsExtractor();
 
-        5. Risk Identification
-        * Extract risks across the contract.
-        * Each Risk includes:
-            * Title
-            * Description (why flagged)
-            * AI Confidence Score
-            * Risk Level → Low / Medium / High
-            * Start index, end index
+    const contract = await redisService.get(`document:${documentId}`);
+    const document = await documentRepository.findById(documentId.toString());
 
-        6. Obligations Extraction
-        * Extract obligations (usually timelines & actionables).
-        * Each obligation includes:
-            * Title (e.g., "Invoice Submission")
-            * Description (what is required)
-            * AI Confidence Score
-            * Date / Due date
-            * Start index, end index
+    const contractType = document.validationMetadata.contractType;
+    const contractStructuredHTML = document.structuredContract.html;
 
-        7. Suggestions / Redlines
-        * Based on clauses + risks, generate suggestions.
-        * Each suggestion includes:
-            * Title
-            * Current Statement (as in contract)
-            * Suggested Statement (improved/industry standard)
-            * Reason (why suggested, tied to industry standards)
-            * AI Confidence Score
-            * Start index, end index
-       */
+    const extractionResult = await extractor.extract(
+      contract as string,
+      contractType,
+      contractStructuredHTML
+    );
+
+    if (extractionResult.isFailure) {
+      throw new Error(extractionResult.errors.join(", "));
+    }
+
+    const extractionDetails = extractionResult.value as IExtractionResult;
+
+    await documentRepository.update(documentId, {
+      risks: extractionDetails.risks,
+      status: DOCUMENT_STATUS.COMPLETED,
+      clauses: extractionDetails.clauses,
+      obligations: extractionDetails.obligations,
+      suggestions: extractionDetails.suggestions,
+      extractionMetadata: extractionDetails.metadata,
+    });
+
+    //Emit event to client
   }
 
   private async summarizeDocument(documentId: Types.ObjectId) {

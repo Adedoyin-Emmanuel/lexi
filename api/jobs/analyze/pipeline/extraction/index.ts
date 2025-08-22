@@ -17,7 +17,7 @@ import {
 
 import { aiMlApi, logger } from "./../../../../utils";
 
-export default class DocumentDetailsExtraction {
+export default class DocumentDetailsExtractor {
   public async extract(
     contract: string,
     contractType: CONTRACT_TYPE,
@@ -73,10 +73,7 @@ export default class DocumentDetailsExtraction {
       };
 
       if (!this.validateExtraction(extractionResult)) {
-        return {
-          success: false,
-          error: "Invalid extraction structure returned by model",
-        };
+        return Result.fail("Invalid extraction structure returned by model");
       }
 
       return Result.ok(extractionResult);
@@ -87,8 +84,8 @@ export default class DocumentDetailsExtraction {
   }
 
   private getExtractionPrompt(contractType: CONTRACT_TYPE) {
-    const clauseSchema = "";
-    const actionableObligations = "";
+    const clauseSchema = this.getClauseSchema(contractType);
+    const actionableObligations = this.getActionableObligations(contractType);
 
     const prompt = `
         You are an expert contract extraction AI for Lexi, specializing in ${contractType} analysis for freelancers and creators.
