@@ -14,6 +14,11 @@ interface ObligationCardProps {
 }
 
 const formatDeadline = (deadline: Date) => {
+  // Check if deadline is a valid date
+  if (!deadline || isNaN(deadline.getTime())) {
+    return null;
+  }
+
   const now = new Date();
   const diffTime = deadline.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -94,7 +99,7 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
               {obligation.description}
             </p>
 
-            {obligation.deadline && (
+            {obligation.deadline && !isNaN(obligation.deadline.getTime()) && (
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs sm:text-sm text-gray-700">
                   {obligation.deadline.toLocaleDateString()} at{" "}

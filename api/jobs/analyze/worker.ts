@@ -73,15 +73,15 @@ export default class AnalyzeWorker implements IJob {
 
       case DOCUMENT_STATUS.PROCESSING:
         logger(`Document ${documentId} is already being processed`);
-        return; // Exit early to avoid duplicate processing
+        return;
 
       case DOCUMENT_STATUS.COMPLETED:
         logger(`Document ${documentId} is already completed`);
-        return; // Exit early
+        return;
 
       case DOCUMENT_STATUS.FAILED:
         logger(`Document ${documentId} is already failed`);
-        return; // Exit early
+        return;
 
       default:
         logger(

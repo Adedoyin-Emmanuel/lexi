@@ -44,7 +44,7 @@ export default class DocumentDetailsExtractor {
       }
 
       const aiMlApiResponse = await aiMlApi.chat.completions.create({
-        model: "openai/gpt-5-chat-latest",
+        model: "gpt-4o", //openai/gpt-5-chat-latest
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
