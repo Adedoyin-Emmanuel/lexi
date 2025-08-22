@@ -35,7 +35,6 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   const isMobile = useIsMobile();
   const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
 
-  // Update view mode when preferredViewMode changes
   useEffect(() => {
     if (preferredViewMode && preferredViewMode !== viewMode) {
       setViewMode(preferredViewMode);
@@ -57,10 +56,13 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     return null;
   }, [plainEnglishSummary]);
 
-  const handleViewModeChange = useCallback((mode: "preview" | "original") => {
-    setViewMode(mode);
-    onViewModeChange?.(mode);
-  }, [onViewModeChange]);
+  const handleViewModeChange = useCallback(
+    (mode: "preview" | "original") => {
+      setViewMode(mode);
+      onViewModeChange?.(mode);
+    },
+    [onViewModeChange]
+  );
 
   const renderPreviewMode = () => (
     <div className={`h-full overflow-auto ${isMobile ? "p-3" : "p-6"}`}>
@@ -164,7 +166,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                       }`,
                       "cursor-pointer"
                     )}
-                    onClick={() => setViewMode("original")}
+                    onClick={() => handleViewModeChange("original")}
                   >
                     <FileText
                       className={`${isMobile ? "w-3 h-3" : "w-4 h-4"}`}

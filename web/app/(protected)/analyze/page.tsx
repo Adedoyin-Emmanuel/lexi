@@ -72,7 +72,9 @@ const Analyze = () => {
   const [activeView, setActiveView] = useState<"document" | "insights">(
     "document"
   );
-  const [preferredViewMode, setPreferredViewMode] = useState<"preview" | "original">("preview");
+  const [preferredViewMode, setPreferredViewMode] = useState<
+    "preview" | "original"
+  >("preview");
   const [analysisState, setAnalysisState] = useState<AnalysisState>({
     error: null,
     summary: null,
