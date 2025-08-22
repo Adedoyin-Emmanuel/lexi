@@ -5,7 +5,7 @@ import { analyzeSchema } from "./analyze.dto";
 import AnalyzeQueue from "./../../jobs/analyze/queue";
 import { redisService } from "./../../services/redis";
 import { response, decryptText, logger } from "./../../utils";
-import { documentRepository } from "models/repositories";
+import { documentRepository } from "./../../models/repositories";
 
 export default class AnalyzeController {
   private static readonly _analyzeQueue: AnalyzeQueue = new AnalyzeQueue();
