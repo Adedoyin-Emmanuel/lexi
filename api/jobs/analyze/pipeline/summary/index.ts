@@ -5,12 +5,14 @@ import {
   CONTRACT_TYPE,
 } from "../../../../models/document/interfaces";
 import { aiMlApi, logger } from "../../../../utils";
+import { IUserInfo } from "../../../../models/user";
 
 export default class DocumentSummarizer {
   public async summarize(
     contract: string,
     contractType: CONTRACT_TYPE,
-    structuredHTML: string
+    structuredHTML: string,
+    userInfo: IUserInfo
   ) {
     try {
       if (!contract) {
@@ -94,12 +96,48 @@ export default class DocumentSummarizer {
     }
   }
 
-  private getSummarizePrompt() {
+  private buildUserContext(userInfo: IUserInfo): string {
+    const specialtiesText =
+      userInfo.specialties.length > 0
+        ? `specializing in ${userInfo.specialties.join(", ")}`
+        : "";
+
+    return `
+## User Profile
+You are providing this analysis for ${userInfo.name}, a ${
+      userInfo.profession
+    } ${specialtiesText}.
+
+## Personalization Focus
+- Tailor your analysis to the specific needs and concerns of a ${
+      userInfo.profession
+    }
+- Use examples and analogies relevant to ${
+      userInfo.specialties.length > 0
+        ? userInfo.specialties.join(" and ")
+        : "their field"
+    }
+- Highlight contract terms that specifically impact ${userInfo.profession}s
+- Address common risks and opportunities in ${
+      userInfo.specialties.length > 0
+        ? "their specialty areas"
+        : "their profession"
+    }
+    `;
+  }
+
+  private getSummarizePrompt(userInfo?: IUserInfo) {
+    const userContext = userInfo
+      ? this.buildUserContext(userInfo)
+      : "You are analyzing this contract for a freelancer/creator.";
+
     const prompt = `
              You are a legal contract analysis expert for Lexi, specializing in contract summaries for freelancers and creators.
 
+            ${userContext}
+
             ## Your Task
-            Analyze the contract and provide both a comprehensive technical summary AND a plain English translation that anyone can understand.
+            Analyze the contract and provide both a comprehensive technical summary AND a personalized plain English translation tailored specifically to the user's profession and expertise areas.
 
             ## Contract Types Context
             - **NDA**: Protects confidential information sharing
@@ -124,17 +162,26 @@ export default class DocumentSummarizer {
 
             ### Summary Guidelines
             - **Raw Summary**: Technical/legal summary with precise terms and conditions
-            - **Plain English Summary**: Convert ALL legal jargon into everyday language that a non-lawyer can easily understand. Explain what each clause actually means in practical terms. Use analogies and simple examples where helpful.
+            - **Plain English Summary**: Convert ALL legal jargon into everyday language specifically tailored to the user's profession and expertise. Use industry-specific examples and analogies relevant to their work. Address concerns specific to their field.
             - **Overview Summary**: Concise 2-3 sentence executive summary for quick understanding
-            - Focus on what matters to freelancers/creators: payment terms, IP rights, liability, termination
-            - Flag unusual or concerning provisions
+            - Focus on what matters to this specific user based on their profession and specialties
+            - Flag provisions that could impact their particular type of work
+            - Use personalized language and examples from their field
+
+            ### Personalization Rules
+            ${
+              userInfo
+                ? this.getPersonalizationRules(userInfo)
+                : "- Provide general freelancer/creator focused advice"
+            }
 
             ### Plain English Translation Rules
             - Replace legal terms with everyday words (e.g., "indemnify" becomes "protect from lawsuits")
-            - Explain obligations in terms of real-world actions
+            - Explain obligations in terms of real-world actions relevant to the user's work
             - Use "you" and "they" instead of "party of the first part"
             - Break down complex clauses into simple cause-and-effect statements
-            - Highlight potential consequences in plain terms
+            - Highlight potential consequences specific to the user's profession
+            - Use industry-specific examples and analogies
             - Format as clean, readable HTML with proper structure
 
             ## Response Format
@@ -143,10 +190,10 @@ export default class DocumentSummarizer {
             {
             "duration": "5 years",
             "rawSummary": "Technical summary with legal terminology and precise contract terms...",
-            "plainEnglishSummary": "<div class='space-y-3'><div class='mb-4'><h3 class='text-xl font-bold text-gray-900 mb-3'>What This Contract Means</h3><p class='text-gray-700 mb-4'>Here's what this contract means in plain English:</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Key Terms</h4><ul class='space-y-2 list-disc list-inside text-gray-700'><li><span class='font-medium'>What you're agreeing to:</span> [Explanation in simple terms]</li><li><span class='font-medium'>What they're agreeing to:</span> [Explanation in simple terms]</li></ul></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Important Details</h4><p class='text-gray-700'>[Detailed explanation using everyday language]</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Things to Watch Out For</h4><div class='bg-yellow-50 p-3'><p class='text-yellow-800'>[Any concerning clauses explained simply]</p></div></div><div><h4 class='text-lg font-semibold text-gray-800 mb-3'>Bottom Line</h4><p class='text-gray-700 font-medium'>[Summary of what this means for you practically]</p></div></div>",
+            "plainEnglishSummary": "<div class='space-y-3'><div class='mb-4'><h3 class='text-xl font-bold text-gray-900 mb-3'>What This Contract Means for You</h3><p class='text-gray-700 mb-4'>Here's what this contract means for you as a [profession] specializing in [specialties]:</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Key Terms for Your Work</h4><ul class='space-y-2 list-disc list-inside text-gray-700'><li><span class='font-medium'>What you're agreeing to:</span> [Explanation with industry-specific examples]</li><li><span class='font-medium'>What they're agreeing to:</span> [Explanation with industry-specific examples]</li></ul></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>How This Affects Your [Specialty] Work</h4><p class='text-gray-700'>[Detailed explanation using field-specific language and examples]</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Red Flags for [Profession]s</h4><div class='bg-red-50 border-red-400 p-4'><p class='text-red-600'>[Concerning clauses explained with profession-specific risks]</p></div></div><div><h4 class='text-lg font-semibold text-gray-800 mb-3'>Bottom Line for You</h4><p class='text-gray-700 font-medium'>[Personalized summary of practical implications]</p></div></div>",
             "jurisdiction": "New York, USA", 
             "effectiveDate": "January 1, 2024",
-            "overviewSummary": "Brief 3-5 sentence executive summary highlighting the core purpose and key terms.",
+            "overviewSummary": "Brief 3-5 sentence executive summary highlighting the core purpose and key terms relevant to the user's work.",
             "overallRiskScore": 65,
             "totalPartiesInvolved": 2,
             "overallConfidenceScore": 87,
@@ -154,28 +201,73 @@ export default class DocumentSummarizer {
             }
 
             ## Important Notes
-            - The plain English summary should be formatted as clean, semantic HTML with Tailwind CSS utility classes
-            - Use Tailwind classes for styling: spacing (space-y-4, mb-3), typography (text-xl, font-bold), colors (text-gray-700, bg-yellow-50), layout (border-l-4, p-4)
-            - Structure content with proper hierarchy: h3 for main heading, h4 for sections
-            - Use warning styling for concerning clauses: 'bg-red-50 border-red-400 p-4' with 'text-red-600'
-            - Make the HTML content significantly longer and more detailed than the raw summary
-            - Use conversational tone in plain English version ("This means..." "In other words..." "Simply put...")
-            - Provide realistic risk scores based on actual contract terms
-            - Be specific about dates, durations, and jurisdictions when available
-            - If information is unclear or missing, note it in summaries
-            - Focus on freelancer/creator concerns: payment, IP ownership, scope creep, liability
-            - Confidence score should reflect how clear and complete the contract analysis is
+            - Tailor all explanations to the user's specific profession and expertise areas
+            - Use industry terminology they would understand while keeping explanations clear
+            - Highlight risks and benefits most relevant to their type of work
+            - Provide actionable advice specific to their field
+            - The plain English summary should be significantly longer and more detailed than the raw summary
+            - Use conversational, personalized tone ("As a [profession]..." "In your line of work..." "For someone with your expertise...")
+            - Focus on profession-specific concerns: IP ownership, work scope, client relationships, payment terms, etc.
         `.trim();
 
     return prompt;
   }
 
+  private getPersonalizationRules(userInfo: IUserInfo): string {
+    const rules = [
+      `- Address ${userInfo.name} directly in the plain English summary`,
+      `- Focus on risks and benefits specific to ${userInfo.profession}s`,
+    ];
+
+    if (userInfo.specialties.length > 0) {
+      rules.push(
+        `- Use examples and terminology relevant to ${userInfo.specialties.join(
+          ", "
+        )}`
+      );
+      rules.push(
+        `- Highlight how contract terms affect work in ${userInfo.specialties.join(
+          " and "
+        )}`
+      );
+    }
+
+    if (userInfo.profession === "freelancer") {
+      rules.push(
+        "- Emphasize payment terms, scope creep protection, and client relationship clauses"
+      );
+      rules.push(
+        "- Focus on work delivery obligations and timeline flexibility"
+      );
+    } else if (userInfo.profession === "creator") {
+      rules.push(
+        "- Emphasize intellectual property rights, content usage, and creative control"
+      );
+      rules.push(
+        "- Focus on attribution, licensing terms, and creative freedom limitations"
+      );
+    }
+
+    return rules.join("\n            ");
+  }
+
   private buildUserPrompt(
     contractText: string,
     contractType: CONTRACT_TYPE,
-    structuredHTML: string
+    structuredHTML: string,
+    userInfo?: IUserInfo
   ) {
-    let prompt = `Analyze this ${contractType} contract and provide both a technical summary and a plain English translation:\n\n`;
+    let prompt = `Analyze this ${contractType} contract`;
+
+    if (userInfo) {
+      const specialtiesText =
+        userInfo.specialties.length > 0
+          ? ` specializing in ${userInfo.specialties.join(", ")}`
+          : "";
+      prompt += ` for ${userInfo.name}, a ${userInfo.profession}${specialtiesText}`;
+    }
+
+    prompt += ` and provide both a technical summary and a personalized plain English translation:\n\n`;
 
     if (structuredHTML) {
       prompt += `STRUCTURED VERSION (for reference):\n${structuredHTML}\n\n`;

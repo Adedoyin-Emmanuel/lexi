@@ -8,6 +8,7 @@ import {
   CONTRACT_TYPE,
   DOCUMENT_STATUS,
 } from "./../../models/document/interfaces";
+import { IUserInfo } from "./../../models/user";
 import DocumentSummarizer from "./pipeline/summary";
 import { SOCKET_EVENTS } from "./../../types/socket";
 import DocumentValidator from "./pipeline/validation";
@@ -189,10 +190,13 @@ export default class AnalyzeWorker implements IJob {
     logger(`Summarizing document for contract type: ${contractType}`);
     logger(`Structured HTML length: ${contractStructuredHTML.length}`);
 
+    const userInfo = await redisService.get(`user:${userId}:onboarding`);
+
     const summaryResult = await summarizer.summarize(
       contract as string,
       contractType,
-      contractStructuredHTML
+      contractStructuredHTML,
+      userInfo as IUserInfo
     );
 
     if (summaryResult.isFailure) {

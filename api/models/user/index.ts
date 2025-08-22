@@ -6,6 +6,11 @@ export enum USER_TYPE {
   FREELANCER = "freelancer",
   NOT_SPECIFIED = "not_specified",
 }
+export interface IUserInfo {
+  name: string;
+  specialties: string[];
+  profession: USER_TYPE;
+}
 
 @modelOptions({
   schemaOptions: {

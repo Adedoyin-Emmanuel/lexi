@@ -1,11 +1,14 @@
 import { Types } from "mongoose";
 import { Request, Response } from "express";
 
+import {
+  userRepository,
+  documentRepository,
+} from "./../../models/repositories";
 import { analyzeSchema } from "./analyze.dto";
 import { SOCKET_EVENTS } from "./../../types/socket";
 import AnalyzeQueue from "./../../jobs/analyze/queue";
 import { redisService } from "./../../services/redis";
-import { documentRepository } from "./../../models/repositories";
 import { response, decryptText, logger, getSocket } from "./../../utils";
 
 export default class AnalyzeController {
@@ -23,6 +26,24 @@ export default class AnalyzeController {
       userId: currentUser.userId as Types.ObjectId,
       title: name,
     } as any);
+
+    const user = await userRepository.findById(currentUser.userId.toString());
+
+    let onboardingDetails = {};
+
+    if (user.isOnboarded) {
+      onboardingDetails = {
+        displayName: user.displayName || user.name,
+        profession: user.userType,
+        specialities: user.specialities,
+      };
+
+      await redisService.set(
+        `user:${currentUser.userId}:onboarding`,
+        JSON.stringify(onboardingDetails),
+        60 * 60 * 24
+      );
+    }
 
     await redisService.set(
       `document:${newDocument._id}`,
