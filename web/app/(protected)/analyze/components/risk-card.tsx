@@ -1,16 +1,10 @@
-import {
-  FileText,
-  TrendingUp,
-  HelpCircle,
-  ExternalLink,
-  AlertTriangle,
-} from "lucide-react";
+import { AlertTriangle, Eye } from "lucide-react";
 
-import { Risk } from "../page";
+import { Risk } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface RiskCardProps {
   risk: Risk;
@@ -50,7 +44,7 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
         <CardContent className={`${isMobile ? "p-4" : "p-6"}`}>
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0 pt-1">
-              <HelpCircle
+              <AlertTriangle
                 className="w-6 h-6 text-amber-600"
                 strokeWidth={1.5}
               />
@@ -151,7 +145,6 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
           }`}
         >
           <div className="flex items-center gap-2 text-xs">
-            <TrendingUp className="w-3 h-3" strokeWidth={1.5} />
             <span className={`font-medium `}>
               AI confidence:{" "}
               <span
@@ -177,7 +170,7 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
                 e.stopPropagation();
               }}
             >
-              <FileText className="w-3 h-3 mr-1" strokeWidth={1.5} />
+              <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
               View suggestions
             </Button>
 
@@ -191,7 +184,7 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
                 e.stopPropagation();
               }}
             >
-              <ExternalLink className="w-3 h-3 mr-1" strokeWidth={1.5} />
+              <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
               View in Document
             </Button>
           </div>

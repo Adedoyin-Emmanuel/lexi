@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 
 import { RiskCard } from "./risk-card";
-import { AnalysisResult } from "../page";
 import { ClauseCard } from "./clause-card";
 import { SummaryCard } from "./summary-card";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -12,27 +11,58 @@ import { LoadingSkeleton } from "./loading-skeleton";
 import { NegotiationCard } from "./negotiation-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AnalysisState } from "../page";
+import {
+  ISummary,
+  IExtractedClause,
+  IExtractedRisk,
+  IExtractedObligation,
+  IExtractedSuggestion,
+} from "@/hooks/types/socket";
 
 interface InsightsPanelProps {
-  isAnalyzing: boolean;
-  selectedClauseId: string | null;
-  analysis: AnalysisResult | null;
+  analysisState: AnalysisState;
   onClauseSelect: (clauseId: string) => void;
 }
 
 export const InsightsPanel: React.FC<InsightsPanelProps> = ({
-  analysis,
-  isAnalyzing,
+  analysisState,
   onClauseSelect,
 }) => {
   const [activeTab, setActiveTab] = useState("summary");
   const isMobile = useIsMobile();
 
+  const { isAnalyzing, validation, summary, extraction, error } = analysisState;
+
   if (isAnalyzing) {
     return <LoadingSkeleton />;
   }
 
-  if (!analysis) {
+  if (error) {
+    return (
+      <div className="h-full flex items-center justify-center text-red-500 bg-white">
+        <div className="text-center p-6">
+          <p className="text-lg font-medium">Analysis Failed</p>
+          <p className="text-sm mt-2">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (validation && !validation.isValidContract) {
+    return (
+      <div className="h-full flex items-center justify-center text-orange-500 bg-white">
+        <div className="text-center p-6">
+          <p className="text-lg font-medium">Invalid Contract</p>
+          <p className="text-sm mt-2">
+            {validation?.reason || "This document is not a valid contract."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!summary || !extraction) {
     return (
       <div className="h-full flex items-center justify-center text-slate-500 bg-white">
         <div className="text-center p-6">
@@ -46,6 +76,63 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
       </div>
     );
   }
+
+  // Convert backend data to frontend format for components
+  const convertClauseToFrontend = (clause: IExtractedClause) => ({
+    id: clause.title,
+    title: clause.title,
+    content: clause.fullText,
+    importance: "high" as const,
+    category: "other" as const,
+    position: { start: clause.startIndex, end: clause.endIndex },
+    confidence: clause.confidenceScore,
+  });
+
+  const convertRiskToFrontend = (risk: IExtractedRisk) => ({
+    id: risk.title,
+    title: risk.title,
+    description: risk.description,
+    severity: risk.riskLevel.toLowerCase() as "low" | "medium" | "high",
+    clauseId: risk.title,
+    confidence: risk.confidenceScore,
+  });
+
+  const convertObligationToFrontend = (obligation: IExtractedObligation) => ({
+    id: obligation.title,
+    title: obligation.title,
+    description: obligation.description,
+    deadline: obligation.dueDate ? new Date(obligation.dueDate) : undefined,
+    clauseId: obligation.title,
+    confidence: obligation.confidenceScore,
+  });
+
+  const convertSuggestionToFrontend = (suggestion: IExtractedSuggestion) => ({
+    id: suggestion.title,
+    title: suggestion.title,
+    reasoning: suggestion.reason,
+    confidence: suggestion.confidenceScore,
+    currentText: suggestion.currentStatement,
+    suggestedText: suggestion.suggestedStatement,
+    clauseId: suggestion.title,
+  });
+
+  const convertSummaryToFrontend = (summary: ISummary) => ({
+    summary: summary.overviewSummary,
+    confidence: summary.overallConfidenceScore,
+    stats: {
+      contractType: summary.type,
+      duration: summary.duration,
+      jurisdiction: summary.jurisdiction,
+      effectiveDate: summary.effectiveDate,
+      partiesInvolved: summary.totalPartiesInvolved,
+      hasTerminationClause: summary.terminationClasePresent,
+      riskLevel: (summary.overallRiskScore > 0.7
+        ? "high"
+        : summary.overallRiskScore > 0.4
+        ? "medium"
+        : "low") as "low" | "medium" | "high",
+    },
+  });
 
   return (
     <div className="h-full flex flex-col bg-white">
@@ -62,7 +149,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
           <span
             className={`text-slate-600 ${isMobile ? "text-xs" : "text-sm"}`}
           >
-            {Math.round(analysis.confidence * 100)}% confidence
+            {Math.round((validation?.confidenceScore || 0) * 100)}% confidence
           </span>
         </div>
       </div>
@@ -99,7 +186,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                     isMobile ? "ml-1" : "ml-1.5"
                   }`}
                 >
-                  {analysis.keyClauses.length}
+                  {extraction.clauses.length}
                 </span>
               </TabsTrigger>
               <TabsTrigger
@@ -114,7 +201,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                     isMobile ? "ml-1" : "ml-1.5"
                   }`}
                 >
-                  {analysis.risks.length}
+                  {extraction.risks.length}
                 </span>
               </TabsTrigger>
               <TabsTrigger
@@ -125,15 +212,15 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
               >
                 <span>Obligations</span>
                 <span
-                  className={`px-1.5 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full font-medium min-w-[20px] h-5 flex items-center justify-center ${
+                  className={`px-1.5 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full font-medium min-w-[20px] h-5 flex items-center justify-center ${
                     isMobile ? "ml-1" : "ml-1.5"
                   }`}
                 >
-                  {analysis.obligations.length}
+                  {extraction.obligations.length}
                 </span>
               </TabsTrigger>
               <TabsTrigger
-                value="negotiation"
+                value="suggestions"
                 className={`py-2 cursor-pointer ${
                   isMobile ? "text-xs px-3 whitespace-nowrap" : "text-xs"
                 }`}
@@ -144,105 +231,67 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                     isMobile ? "ml-1" : "ml-1.5"
                   }`}
                 >
-                  {analysis.negotiationSuggestions.length}
+                  {extraction.suggestions.length}
                 </span>
               </TabsTrigger>
             </TabsList>
           </div>
         </div>
 
-        <ScrollArea className={`flex-1 ${isMobile ? "px-3" : "px-4"} pb-4`}>
-          <TabsContent
-            value="summary"
-            className={`space-y-4 ${isMobile ? "mt-3" : "mt-4"}`}
-          >
-            <SummaryCard
-              summary={analysis.summary}
-              confidence={analysis.confidence}
-              stats={analysis.stats}
-            />
-          </TabsContent>
+        <ScrollArea className="flex-1">
+          <div className={`${isMobile ? "p-3" : "p-4"}`}>
+            <TabsContent value="summary" className="mt-0">
+              <SummaryCard {...convertSummaryToFrontend(summary)} />
+            </TabsContent>
 
-          <TabsContent
-            value="clauses"
-            className={`space-y-3 ${isMobile ? "mt-3" : "mt-4"}`}
-          >
-            {analysis.keyClauses.map((clause) => (
-              <ClauseCard
-                key={clause.id}
-                clause={clause}
-                risks={analysis.risks}
-                onViewRisk={(clauseId: string) => {
-                  setActiveTab("risks");
-                  onClauseSelect(clauseId);
-                }}
-              />
-            ))}
-          </TabsContent>
-
-          <TabsContent
-            value="risks"
-            className={`space-y-3 ${isMobile ? "mt-3" : "mt-4"}`}
-          >
-            {analysis.risks.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
-                <p className="font-medium">No significant risks detected</p>
-                <p className="text-sm mt-1">Your contract looks good!</p>
+            <TabsContent value="clauses" className="mt-0">
+              <div className="space-y-4">
+                {extraction.clauses.map((clause, index) => (
+                  <ClauseCard
+                    key={`${clause.title}-${index}`}
+                    clause={convertClauseToFrontend(clause)}
+                    onViewRisk={() => onClauseSelect(clause.title)}
+                  />
+                ))}
               </div>
-            ) : (
-              analysis.risks.map((risk) => (
-                <RiskCard
-                  key={risk.id}
-                  risk={risk}
-                  onSelect={() => onClauseSelect(risk.clauseId)}
-                />
-              ))
-            )}
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent
-            value="obligations"
-            className={`space-y-3 ${isMobile ? "mt-3" : "mt-4"}`}
-          >
-            {analysis.obligations.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
-                <p className="font-medium">No specific obligations found</p>
-                <p className="text-sm mt-1">
-                  Check the contract terms for deadlines
-                </p>
+            <TabsContent value="risks" className="mt-0">
+              <div className="space-y-4">
+                {extraction.risks.map((risk, index) => (
+                  <RiskCard
+                    key={`${risk.title}-${index}`}
+                    risk={convertRiskToFrontend(risk)}
+                    onSelect={() => onClauseSelect(risk.title)}
+                  />
+                ))}
               </div>
-            ) : (
-              analysis.obligations.map((obligation) => (
-                <ObligationCard
-                  key={obligation.id}
-                  obligation={obligation}
-                  onSelect={() => onClauseSelect(obligation.clauseId)}
-                />
-              ))
-            )}
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent
-            value="negotiation"
-            className={`space-y-3 ${isMobile ? "mt-3" : "mt-4"}`}
-          >
-            {analysis.negotiationSuggestions.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
-                <p className="font-medium">No negotiation suggestions</p>
-                <p className="text-sm mt-1">
-                  Your contract terms are well-balanced
-                </p>
+            <TabsContent value="obligations" className="mt-0">
+              <div className="space-y-4">
+                {extraction.obligations.map((obligation, index) => (
+                  <ObligationCard
+                    key={`${obligation.title}-${index}`}
+                    obligation={convertObligationToFrontend(obligation)}
+                    onSelect={() => onClauseSelect(obligation.title)}
+                  />
+                ))}
               </div>
-            ) : (
-              analysis.negotiationSuggestions.map((suggestion) => (
-                <NegotiationCard
-                  key={suggestion.id}
-                  suggestion={suggestion}
-                  onSelect={() => onClauseSelect(suggestion.clauseId)}
-                />
-              ))
-            )}
-          </TabsContent>
+            </TabsContent>
+
+            <TabsContent value="suggestions" className="mt-0">
+              <div className="space-y-4">
+                {extraction.suggestions.map((suggestion, index) => (
+                  <NegotiationCard
+                    key={`${suggestion.title}-${index}`}
+                    suggestion={convertSuggestionToFrontend(suggestion)}
+                    onSelect={() => onClauseSelect(suggestion.title)}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+          </div>
         </ScrollArea>
       </Tabs>
     </div>

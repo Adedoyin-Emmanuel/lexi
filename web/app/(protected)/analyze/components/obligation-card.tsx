@@ -1,18 +1,12 @@
 "use client";
 
-import {
-  Clock,
-  FileText,
-  Calendar,
-  TrendingUp,
-  ExternalLink,
-} from "lucide-react";
-import React from "react";
+import { Calendar, Eye } from "lucide-react";
 
-import { Obligation } from "../page";
+import { Obligation } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { CircularConfidence } from "../../dashboard/components/circular-confidence";
 
 interface ObligationCardProps {
   obligation: Obligation;
@@ -94,10 +88,6 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
 
             {obligation.deadline && (
               <div className="flex items-center gap-2 mb-3">
-                <Clock
-                  className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500"
-                  strokeWidth={1.5}
-                />
                 <span className="text-xs sm:text-sm text-gray-700">
                   {obligation.deadline.toLocaleDateString()} at{" "}
                   {obligation.deadline.toLocaleTimeString([], {
@@ -112,7 +102,7 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-100">
           <div className="flex items-center gap-2 text-xs">
-            <TrendingUp className="w-3 h-3" strokeWidth={1.5} />
+            <CircularConfidence score={confidenceScore} />
             <span className="font-medium">
               AI confidence:{" "}
               <span
@@ -132,7 +122,7 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
                 e.stopPropagation();
               }}
             >
-              <FileText className="w-3 h-3 mr-1" strokeWidth={1.5} />
+              <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
               <span className="hidden sm:inline">View suggestions</span>
               <span className="sm:hidden">Suggestions</span>
             </Button>
@@ -145,7 +135,7 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
                 e.stopPropagation();
               }}
             >
-              <ExternalLink className="w-3 h-3 mr-1" strokeWidth={1.5} />
+              <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
               <span className="hidden sm:inline">View in Document</span>
               <span className="sm:hidden">Document</span>
             </Button>

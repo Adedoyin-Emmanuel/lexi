@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Eye, AlertTriangle } from "lucide-react";
 
-import { Clause, Risk } from "../page";
+import { Clause, Risk } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

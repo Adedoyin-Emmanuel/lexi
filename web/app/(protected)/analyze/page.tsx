@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   ResizablePanel,
@@ -19,7 +19,17 @@ import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
 import {
   IDocumentAnalysisStartedPayload,
+  IDocumentAnalysisValidatedPayload,
+  IDocumentAnalysisStructuredPayload,
+  IDocumentAnalysisSummarizedPayload,
+  IDocumentAnalysisDetailsExtractedPayload,
+  IDocumentAnalysisFailedPayload,
+  IDocumentAnalysisCompletedPayload,
   SOCKET_EVENTS,
+  IExtractionResult,
+  ISummary,
+  IStructuredContract,
+  CONTRACT_TYPE,
 } from "@/hooks/types/socket";
 
 export interface ContractDocument {
@@ -30,95 +40,189 @@ export interface ContractDocument {
   type: "pdf" | "text" | "docx";
 }
 
-export interface ContractStats {
-  contractType:
-    | "NDA"
-    | "ICA"
-    | "License Agreement"
-    | "Service Agreement"
-    | "Employment Contract"
-    | "Other";
-  duration: string;
-  jurisdiction: string;
-  effectiveDate: string;
-  partiesInvolved: number;
-  hasTerminationClause: boolean;
-  riskLevel: "low" | "medium" | "high";
-}
-
-export interface AnalysisResult {
-  risks: Risk[];
-  summary: string;
-  confidence: number;
-  keyClauses: Clause[];
-  obligations: Obligation[];
-  negotiationSuggestions: NegotiationSuggestion[];
-  stats: ContractStats;
-}
-
-export interface Clause {
-  id: string;
-  title: string;
-  content: string;
-  category:
-    | "termination"
-    | "liability"
-    | "ip"
-    | "payment"
-    | "confidentiality"
-    | "other";
-  confidence: number;
-  importance: "high" | "medium" | "low";
-  position: { start: number; end: number };
-}
-
-export interface Risk {
-  id: string;
-  title: string;
-  clauseId: string;
-  description: string;
-  confidence: number;
-  severity: "low" | "medium" | "high";
-}
-
-export interface Obligation {
-  id: string;
-  title: string;
-  deadline?: Date;
-  clauseId: string;
-  confidence: number;
-  description: string;
-}
-
-export interface NegotiationSuggestion {
-  id: string;
-  title: string;
-  clauseId: string;
-  reasoning: string;
-  confidence: number;
-  currentText: string;
-  suggestedText: string;
+export interface AnalysisState {
+  isAnalyzing: boolean;
+  currentStep:
+    | "idle"
+    | "validating"
+    | "structuring"
+    | "summarizing"
+    | "extracting"
+    | "completed"
+    | "failed";
+  documentId: string | null;
+  validation: {
+    isValidContract: boolean;
+    contractType: CONTRACT_TYPE | null;
+    confidenceScore: number;
+    reason: string;
+    inScope: boolean;
+  } | null;
+  structuredContract: IStructuredContract | null;
+  summary: ISummary | null;
+  extraction: IExtractionResult | null;
+  error: string | null;
 }
 
 const Analyze = () => {
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [document, setDocument] = useState<ContractDocument | null>(null);
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [selectedClauseId, setSelectedClauseId] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<"document" | "insights">(
     "document"
   );
-  const isMobile = useIsMobile();
+  const [analysisState, setAnalysisState] = useState<AnalysisState>({
+    isAnalyzing: false,
+    currentStep: "idle",
+    documentId: null,
+    validation: null,
+    structuredContract: null,
+    summary: null,
+    extraction: null,
+    error: null,
+  });
 
+  const isMobile = useIsMobile();
   const { user } = useAuth();
   const socket = useSocket(user?.id as string);
 
-  socket?.on(
-    SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED,
-    (data: IDocumentAnalysisStartedPayload) => {
+  // Socket event handlers
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleAnalysisStarted = (data: IDocumentAnalysisStartedPayload) => {
       console.log("Document analysis started", data);
-    }
-  );
+      setAnalysisState((prev) => ({
+        ...prev,
+        isAnalyzing: true,
+        currentStep: "validating",
+        documentId: data.documentId,
+        error: null,
+      }));
+    };
+
+    const handleAnalysisValidated = (
+      data: IDocumentAnalysisValidatedPayload
+    ) => {
+      console.log("Document validated", data);
+      setAnalysisState((prev) => ({
+        ...prev,
+        currentStep: "structuring",
+        validation: {
+          isValidContract: data.isValidContract,
+          contractType: data.contractType,
+          confidenceScore: data.confidenceScore,
+          reason: data.reason,
+          inScope: data.inScope,
+        },
+      }));
+    };
+
+    const handleAnalysisStructured = (
+      data: IDocumentAnalysisStructuredPayload
+    ) => {
+      console.log("Document structured", data);
+      setAnalysisState((prev) => ({
+        ...prev,
+        currentStep: "summarizing",
+        structuredContract: data.structuredContract,
+      }));
+    };
+
+    const handleAnalysisSummarized = (
+      data: IDocumentAnalysisSummarizedPayload
+    ) => {
+      console.log("Document summarized", data);
+      setAnalysisState((prev) => ({
+        ...prev,
+        currentStep: "extracting",
+        summary: data.summary,
+      }));
+    };
+
+    const handleAnalysisDetailsExtracted = (
+      data: IDocumentAnalysisDetailsExtractedPayload
+    ) => {
+      console.log("Document details extracted", data);
+      setAnalysisState((prev) => ({
+        ...prev,
+        currentStep: "completed",
+        extraction: data.extractionDetails,
+      }));
+    };
+
+    const handleAnalysisCompleted = (
+      data: IDocumentAnalysisCompletedPayload
+    ) => {
+      console.log("Document analysis completed", data);
+      setAnalysisState((prev) => ({
+        ...prev,
+        isAnalyzing: false,
+        currentStep: "completed",
+      }));
+    };
+
+    const handleAnalysisFailed = (data: IDocumentAnalysisFailedPayload) => {
+      console.log("Document analysis failed", data);
+      setAnalysisState((prev) => ({
+        ...prev,
+        isAnalyzing: false,
+        currentStep: "failed",
+        error: data.failureReason,
+      }));
+    };
+
+    // Register event listeners
+    socket.on(SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED, handleAnalysisStarted);
+    socket.on(
+      SOCKET_EVENTS.DOCUMENT_ANALYSIS_VALIDATED,
+      handleAnalysisValidated
+    );
+    socket.on(
+      SOCKET_EVENTS.DOCUMENT_ANALYSIS_STRUCTURED,
+      handleAnalysisStructured
+    );
+    socket.on(
+      SOCKET_EVENTS.DOCUMENT_ANALYSIS_SUMMARIZED,
+      handleAnalysisSummarized
+    );
+    socket.on(
+      SOCKET_EVENTS.DOCUMENT_ANALYSIS_DETAILS_EXTRACTED,
+      handleAnalysisDetailsExtracted
+    );
+    socket.on(
+      SOCKET_EVENTS.DOCUMENT_ANALYSIS_COMPLETED,
+      handleAnalysisCompleted
+    );
+    socket.on(SOCKET_EVENTS.DOCUMENT_ANALYSIS_FAILED, handleAnalysisFailed);
+
+    // Cleanup event listeners
+    return () => {
+      socket.off(
+        SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED,
+        handleAnalysisStarted
+      );
+      socket.off(
+        SOCKET_EVENTS.DOCUMENT_ANALYSIS_VALIDATED,
+        handleAnalysisValidated
+      );
+      socket.off(
+        SOCKET_EVENTS.DOCUMENT_ANALYSIS_STRUCTURED,
+        handleAnalysisStructured
+      );
+      socket.off(
+        SOCKET_EVENTS.DOCUMENT_ANALYSIS_SUMMARIZED,
+        handleAnalysisSummarized
+      );
+      socket.off(
+        SOCKET_EVENTS.DOCUMENT_ANALYSIS_DETAILS_EXTRACTED,
+        handleAnalysisDetailsExtracted
+      );
+      socket.off(
+        SOCKET_EVENTS.DOCUMENT_ANALYSIS_COMPLETED,
+        handleAnalysisCompleted
+      );
+      socket.off(SOCKET_EVENTS.DOCUMENT_ANALYSIS_FAILED, handleAnalysisFailed);
+    };
+  }, [socket]);
 
   const handleDocumentUpload = async (file: File) => {
     try {
@@ -156,129 +260,35 @@ const Analyze = () => {
       };
 
       const response = await Axios.post("/analyze", dataToSend);
-
-      console.log(response);
-
-      await analyzeDocument();
+      console.log("Analysis request sent:", response.data);
     } catch (error) {
       console.error("Error processing file:", error);
+      setAnalysisState((prev) => ({
+        ...prev,
+        error: "Failed to upload document. Please try again.",
+      }));
     }
   };
 
-  const analyzeDocument = async () => {
-    setIsAnalyzing(true);
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    const mockAnalysis: AnalysisResult = {
-      summary:
-        "This is a standard freelance contract with typical terms for content creation services. The contract includes standard payment terms, intellectual property clauses, and termination conditions.",
-      keyClauses: [
-        {
-          id: "1",
-          title: "Payment Terms",
-          content: "Payment shall be made within 60 days of invoice submission",
-          importance: "high",
-          category: "payment",
-          position: { start: 150, end: 200 },
-          confidence: 0.95,
-        },
-        {
-          id: "2",
-          title: "Intellectual Property",
-          content: "All work product shall remain the property of the client",
-          importance: "high",
-          category: "ip",
-          position: { start: 300, end: 350 },
-          confidence: 0.92,
-        },
-        {
-          id: "3",
-          title: "Termination Clause",
-          content:
-            "Either party may terminate this agreement with 30 days written notice",
-          importance: "medium",
-          category: "termination",
-          position: { start: 450, end: 500 },
-          confidence: 0.88,
-        },
-      ],
-      risks: [
-        {
-          id: "1",
-          title: "Long Payment Window",
-          description: "60-day payment terms are longer than industry standard",
-          severity: "medium",
-          clauseId: "1",
-          confidence: 0.85,
-        },
-        {
-          id: "2",
-          title: "IP Assignment",
-          description:
-            "Complete IP transfer may limit future work opportunities",
-          severity: "high",
-          clauseId: "2",
-          confidence: 0.9,
-        },
-      ],
-      obligations: [
-        {
-          id: "1",
-          title: "Invoice Submission",
-          description: "Submit invoices within 5 days of project completion",
-          deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-          clauseId: "1",
-          confidence: 0.87,
-        },
-      ],
-      negotiationSuggestions: [
-        {
-          id: "1",
-          title: "Reduce Payment Window",
-          currentText: "Payment shall be made within 60 days",
-          suggestedText: "Payment shall be made within 30 days",
-          reasoning:
-            "Industry standard is 30 days, faster payment improves cash flow",
-          clauseId: "1",
-          confidence: 0.82,
-        },
-        {
-          id: "2",
-          title: "Modify IP Terms",
-          currentText:
-            "All work product shall remain the property of the client",
-          suggestedText:
-            "Client receives license to use work product, creator retains portfolio rights",
-          reasoning:
-            "Allows you to showcase work while giving client usage rights",
-          clauseId: "2",
-          confidence: 0.78,
-        },
-      ],
-      stats: {
-        contractType: "Service Agreement",
-        partiesInvolved: 2,
-        jurisdiction: "California, USA",
-        duration: "12 months",
-        effectiveDate: "2024-01-15",
-        hasTerminationClause: true,
-        riskLevel: "medium",
-      },
-      confidence: 0.89,
-    };
-
-    setAnalysis(mockAnalysis);
-    setIsAnalyzing(false);
-  };
-
   const handleClauseSelect = (clauseId: string) => {
-    setSelectedClauseId(clauseId);
+    // TODO: Implement clause selection functionality
+    console.log("Clause selected:", clauseId);
   };
 
   const handleReanalyze = () => {
     if (document) {
-      analyzeDocument();
+      // Reset analysis state and trigger re-upload
+      setAnalysisState({
+        isAnalyzing: false,
+        currentStep: "idle",
+        documentId: null,
+        validation: null,
+        structuredContract: null,
+        summary: null,
+        extraction: null,
+        error: null,
+      });
+      setDocument(null);
     }
   };
 
@@ -302,7 +312,7 @@ const Analyze = () => {
         <AnalyzeToolbar
           document={document}
           onExport={handleExport}
-          isAnalyzing={isAnalyzing}
+          isAnalyzing={analysisState.isAnalyzing}
           onReanalyze={handleReanalyze}
         />
 
@@ -334,16 +344,14 @@ const Analyze = () => {
             <div className="h-full">
               <DocumentPreview
                 document={document}
-                selectedClauseId={selectedClauseId}
                 onClauseSelect={handleClauseSelect}
+                structuredContract={analysisState.structuredContract}
               />
             </div>
           ) : (
             <div className="h-full">
               <InsightsPanel
-                analysis={analysis}
-                isAnalyzing={isAnalyzing}
-                selectedClauseId={selectedClauseId}
+                analysisState={analysisState}
                 onClauseSelect={handleClauseSelect}
               />
             </div>
@@ -358,7 +366,7 @@ const Analyze = () => {
       <AnalyzeToolbar
         document={document}
         onExport={handleExport}
-        isAnalyzing={isAnalyzing}
+        isAnalyzing={analysisState.isAnalyzing}
         onReanalyze={handleReanalyze}
       />
 
@@ -368,8 +376,8 @@ const Analyze = () => {
             <div className="h-full overflow-hidden">
               <DocumentPreview
                 document={document}
-                selectedClauseId={selectedClauseId}
                 onClauseSelect={handleClauseSelect}
+                structuredContract={analysisState.structuredContract}
               />
             </div>
           </ResizablePanel>
@@ -378,9 +386,7 @@ const Analyze = () => {
 
           <ResizablePanel defaultSize={60} minSize={25}>
             <InsightsPanel
-              analysis={analysis}
-              isAnalyzing={isAnalyzing}
-              selectedClauseId={selectedClauseId}
+              analysisState={analysisState}
               onClauseSelect={handleClauseSelect}
             />
           </ResizablePanel>

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Copy, Check, ArrowDown, TrendingUp, ExternalLink } from "lucide-react";
 
+import { NegotiationSuggestion } from "../types";
 import { Button } from "@/components/ui/button";
-import { NegotiationSuggestion } from "../page";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../dashboard/components/circular-confidence";

@@ -24,7 +24,7 @@ export default class AnalyzeWorker implements IJob {
 
   constructor() {
     this._worker = new Worker(
-      "uploads",
+      "contract-analysis",
       async (job) => {
         logger(`Processing job ${job.id}`);
         logger(`Job data: ${JSON.stringify(job.data)}`);
@@ -83,7 +83,7 @@ export default class AnalyzeWorker implements IJob {
         break;
     }
 
-    await this.validateAndProcessDocument(documentId, userId);
+    await this.validateAndProcessDocument(userId, documentId);
 
     await this.structureDocument(documentId, userId);
 

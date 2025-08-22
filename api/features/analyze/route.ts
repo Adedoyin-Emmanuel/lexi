@@ -5,6 +5,6 @@ import { useAuth } from "./../../middlewares";
 
 const router = Router();
 
-router.post("/", [useAuth], AnalyzeController.analyze);
+router.post("/", [useAuth], (req, res) => AnalyzeController.analyze(req, res));
 
 export default router;

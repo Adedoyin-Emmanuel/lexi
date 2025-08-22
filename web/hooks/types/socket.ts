@@ -235,3 +235,7 @@ export interface IDocumentAnalysisDetailsExtractedPayload {
   documentId: string;
   extractionDetails: IExtractionResult;
 }
+
+export interface IDocumentAnalysisCompletedPayload {
+  documentId: string;
+}

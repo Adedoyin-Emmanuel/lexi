@@ -11,64 +11,32 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ContractDocument, Clause } from "../page";
+import { ContractDocument } from "../page";
+import { IStructuredContract } from "@/hooks/types/socket";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface DocumentPreviewProps {
   document: ContractDocument;
-  selectedClauseId: string | null;
   onClauseSelect: (clauseId: string) => void;
+  structuredContract?: IStructuredContract | null;
 }
 
 export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   document,
-  selectedClauseId,
   onClauseSelect,
+  structuredContract,
 }) => {
   const [showHighlights, setShowHighlights] = useState(true);
   const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
   const isMobile = useIsMobile();
 
-  const mockClauses: Clause[] = useMemo(
-    () => [
-      {
-        id: "1",
-        title: "Payment Terms",
-        content: "Payment shall be made within 60 days of invoice submission",
-        importance: "high",
-        category: "payment",
-        position: { start: 150, end: 200 },
-        confidence: 0.95,
-      },
-      {
-        id: "2",
-        title: "Intellectual Property",
-        content: "All work product shall remain the property of the client",
-        importance: "high",
-        category: "ip",
-        position: { start: 300, end: 350 },
-        confidence: 0.92,
-      },
-      {
-        id: "3",
-        title: "Termination Clause",
-        content:
-          "Either party may terminate this agreement with 30 days written notice",
-        importance: "medium",
-        category: "termination",
-        position: { start: 450, end: 500 },
-        confidence: 0.88,
-      },
-    ],
-    []
-  );
-
   const documentContent = useMemo(() => {
-    if (document.content) {
-      return document.content;
+    // Use structured HTML if available, otherwise fall back to original content
+    if (structuredContract?.html) {
+      return structuredContract.html;
     }
-    return getMockContractText();
-  }, [document.content]);
+    return document.content || getMockContractText();
+  }, [document.content, structuredContract]);
 
   const plainEnglishContent = useMemo(() => {
     return getPlainEnglishContract();
@@ -77,32 +45,17 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   const highlightedText = useMemo(() => {
     if (!showHighlights || viewMode !== "original") return documentContent;
 
-    let highlightedText = documentContent;
-    mockClauses.forEach((clause) => {
-      const isSelected = selectedClauseId === clause.id;
-      const highlightClass = isSelected
-        ? "bg-blue-200 border-b-2 border-blue-500"
-        : "bg-yellow-100 hover:bg-yellow-200 cursor-pointer";
+    // For now, we'll use the original highlighting logic
+    // In the future, we can enhance this to work with structured HTML
+    const result = documentContent;
 
-      // Use a more robust approach to find and highlight text
-      const clauseText = clause.content.trim();
-      if (highlightedText.includes(clauseText)) {
-        const escapedText = clauseText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const regex = new RegExp(`(${escapedText})`, "gi");
-        highlightedText = highlightedText.replace(regex, (match) => {
-          return `<span class="${highlightClass} px-1 rounded" data-clause-id="${clause.id}">${match}</span>`;
-        });
-      }
-    });
+    // If we have structured contract with tokens, we can use those for highlighting
+    if (structuredContract?.tokens) {
+      // TODO: Implement token-based highlighting
+    }
 
-    return highlightedText;
-  }, [
-    documentContent,
-    showHighlights,
-    viewMode,
-    mockClauses,
-    selectedClauseId,
-  ]);
+    return result;
+  }, [documentContent, showHighlights, viewMode, structuredContract]);
 
   const handleTextClick = useCallback(
     (event: React.MouseEvent) => {
@@ -210,11 +163,9 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    size={isMobile ? "sm" : "sm"}
-                    onClick={() => handleViewModeChange("original")}
-                    className={`${isMobile ? "h-8 w-8 p-0" : ""} ${
-                      viewMode === "original" ? "bg-blue-100 text-primary" : ""
-                    }`}
+                    size="sm"
+                    className="h-8 px-2 text-xs"
+                    onClick={() => setViewMode("original")}
                   >
                     <FileText
                       className={`${isMobile ? "w-3 h-3" : "w-4 h-4"}`}
