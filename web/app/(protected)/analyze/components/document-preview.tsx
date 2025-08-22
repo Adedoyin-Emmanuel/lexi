@@ -20,6 +20,7 @@ interface DocumentPreviewProps {
   onClauseSelect: (clauseId: string) => void;
   structuredContract?: IStructuredContract | null;
   plainEnglishSummary?: string | null;
+  selectedClauseId?: string | null;
 }
 
 export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
@@ -27,6 +28,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   onClauseSelect,
   structuredContract,
   plainEnglishSummary,
+  selectedClauseId,
 }) => {
   const [showHighlights, setShowHighlights] = useState(true);
   const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
@@ -52,17 +54,30 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   const highlightedText = useMemo(() => {
     if (!showHighlights || viewMode !== "original") return documentContent;
 
-    // For now, we'll use the original highlighting logic
-    // In the future, we can enhance this to work with structured HTML
-    const result = documentContent;
-
-    // If we have structured contract with tokens, we can use those for highlighting
-    if (structuredContract?.tokens) {
-      // TODO: Implement token-based highlighting
+    // If we have a selected clause, highlight it
+    if (selectedClauseId && structuredContract?.tokens) {
+      // Find the token that matches the selected clause
+      const selectedToken = structuredContract.tokens.find(
+        (token) => token.elementId === selectedClauseId
+      );
+      
+      if (selectedToken) {
+        // Create a highlighted version of the HTML
+        let highlightedHtml = documentContent;
+        const startTag = `<${selectedToken.elementType} id="${selectedToken.elementId}">`;
+        
+        // Add highlighting class to the selected element
+        highlightedHtml = highlightedHtml.replace(
+          startTag,
+          `${startTag.replace('>', ' class="bg-yellow-200 border-l-4 border-yellow-500 pl-2">')}`
+        );
+        
+        return highlightedHtml;
+      }
     }
 
-    return result;
-  }, [documentContent, showHighlights, viewMode, structuredContract]);
+    return documentContent;
+  }, [documentContent, showHighlights, viewMode, structuredContract, selectedClauseId]);
 
   const handleTextClick = useCallback(
     (event: React.MouseEvent) => {
@@ -99,14 +114,10 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
           </h1>
           <div className="text-gray-700 leading-relaxed space-y-4">
             {plainEnglishContent ? (
-              plainEnglishContent.split("\n\n").map((paragraph, index) => (
-                <p
-                  key={index}
-                  className={`leading-7 ${isMobile ? "text-sm" : "text-base"}`}
-                >
-                  {paragraph}
-                </p>
-              ))
+              <div
+                className="prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: plainEnglishContent }}
+              />
             ) : (
               <div className="text-center py-8">
                 <p className="text-gray-500">
@@ -134,7 +145,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
               isMobile ? "text-sm" : ""
             }`}
             dangerouslySetInnerHTML={{
-              __html: highlightedText.replace(/\n/g, "<br>"),
+              __html: highlightedText,
             }}
             onClick={handleTextClick}
           />

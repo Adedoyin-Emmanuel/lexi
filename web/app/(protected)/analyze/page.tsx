@@ -64,6 +64,7 @@ export interface AnalysisState {
   summary: ISummary | null;
   extraction: IExtractionResult | null;
   error: string | null;
+  selectedClauseId: string | null;
 }
 
 const Analyze = () => {
@@ -80,6 +81,7 @@ const Analyze = () => {
     summary: null,
     extraction: null,
     error: null,
+    selectedClauseId: null,
   });
 
   const isMobile = useIsMobile();
@@ -273,8 +275,13 @@ const Analyze = () => {
   };
 
   const handleClauseSelect = (clauseId: string) => {
-    // TODO: Implement clause selection functionality
     console.log("Clause selected:", clauseId);
+    setAnalysisState((prev) => ({
+      ...prev,
+      selectedClauseId: clauseId,
+    }));
+    // Switch to document view to show the highlighted clause
+    setActiveView("document");
   };
 
   const handleReanalyze = () => {
@@ -289,6 +296,7 @@ const Analyze = () => {
         summary: null,
         extraction: null,
         error: null,
+        selectedClauseId: null,
       });
       setDocument(null);
     }
@@ -305,6 +313,7 @@ const Analyze = () => {
       summary: null,
       extraction: null,
       error: null,
+      selectedClauseId: null,
     });
 
     // Re-upload the same document
@@ -333,6 +342,7 @@ const Analyze = () => {
       summary: null,
       extraction: null,
       error: null,
+      selectedClauseId: null,
     });
     setDocument(null);
   };
@@ -397,6 +407,7 @@ const Analyze = () => {
                 onClauseSelect={handleClauseSelect}
                 structuredContract={analysisState.structuredContract}
                 plainEnglishSummary={analysisState.summary?.plainEnglishSummary}
+                selectedClauseId={analysisState.selectedClauseId}
               />
             </div>
           ) : (
@@ -404,6 +415,7 @@ const Analyze = () => {
               <InsightsPanel
                 analysisState={analysisState}
                 onClauseSelect={handleClauseSelect}
+                onViewInDocument={handleClauseSelect}
               />
             </div>
           )}
@@ -443,6 +455,7 @@ const Analyze = () => {
                 onClauseSelect={handleClauseSelect}
                 structuredContract={analysisState.structuredContract}
                 plainEnglishSummary={analysisState.summary?.plainEnglishSummary}
+                selectedClauseId={analysisState.selectedClauseId}
               />
             </div>
           </ResizablePanel>
@@ -453,6 +466,7 @@ const Analyze = () => {
             <InsightsPanel
               analysisState={analysisState}
               onClauseSelect={handleClauseSelect}
+              onViewInDocument={handleClauseSelect}
             />
           </ResizablePanel>
         </ResizablePanelGroup>

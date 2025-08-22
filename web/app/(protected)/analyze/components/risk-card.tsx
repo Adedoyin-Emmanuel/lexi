@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface RiskCardProps {
   risk: Risk;
   onSelect: () => void;
+  onViewInDocument?: (clauseId: string) => void;
 }
 
 const getSeverityColor = (severity: Risk["severity"]) => {
@@ -33,10 +34,17 @@ const shouldAbstain = (confidence: number) => {
   return confidence < 0.6;
 };
 
-export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
+export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect, onViewInDocument }) => {
   const confidenceScore = Math.round(risk.confidence * 100);
   const abstain = shouldAbstain(risk.confidence);
   const isMobile = useIsMobile();
+
+  const handleViewInDocument = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onViewInDocument) {
+      onViewInDocument(risk.clauseId);
+    }
+  };
 
   if (abstain) {
     return (
@@ -166,23 +174,7 @@ export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect }) => {
               className={`text-xs cursor-pointer ${
                 isMobile ? "h-8 px-2" : "h-8 px-2"
               }`}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
-              View suggestions
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`text-xs cursor-pointer ${
-                isMobile ? "h-8 px-2" : "h-8 px-2"
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
+              onClick={handleViewInDocument}
             >
               <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
               View in Document

@@ -13,12 +13,14 @@ interface ClauseCardProps {
   clause: Clause;
   risks?: Risk[];
   onViewRisk?: (clauseId: string) => void;
+  onViewInDocument?: (clauseId: string) => void;
 }
 
 export const ClauseCard: React.FC<ClauseCardProps> = ({
   clause,
   risks = [],
   onViewRisk,
+  onViewInDocument,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const confidenceScore = Math.round(clause.confidence * 100);
@@ -29,7 +31,9 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
 
   const handleViewInDocument = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log("View clause in document:", clause.id);
+    if (onViewInDocument) {
+      onViewInDocument(clause.id);
+    }
   };
 
   const handleViewRisk = (e: React.MouseEvent) => {

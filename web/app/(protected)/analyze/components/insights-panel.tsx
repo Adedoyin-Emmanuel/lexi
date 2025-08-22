@@ -23,11 +23,13 @@ import {
 interface InsightsPanelProps {
   analysisState: AnalysisState;
   onClauseSelect: (clauseId: string) => void;
+  onViewInDocument?: (clauseId: string) => void;
 }
 
 export const InsightsPanel: React.FC<InsightsPanelProps> = ({
   analysisState,
   onClauseSelect,
+  onViewInDocument,
 }) => {
   const [activeTab, setActiveTab] = useState("summary");
   const isMobile = useIsMobile();
@@ -251,6 +253,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                     key={`${clause.title}-${index}`}
                     clause={convertClauseToFrontend(clause)}
                     onViewRisk={() => onClauseSelect(clause.title)}
+                    onViewInDocument={onViewInDocument}
                   />
                 ))}
               </div>
@@ -263,6 +266,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                     key={`${risk.title}-${index}`}
                     risk={convertRiskToFrontend(risk)}
                     onSelect={() => onClauseSelect(risk.title)}
+                    onViewInDocument={onViewInDocument}
                   />
                 ))}
               </div>
@@ -275,6 +279,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                     key={`${obligation.title}-${index}`}
                     obligation={convertObligationToFrontend(obligation)}
                     onSelect={() => onClauseSelect(obligation.title)}
+                    onViewInDocument={onViewInDocument}
                   />
                 ))}
               </div>
@@ -287,6 +292,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
                     key={`${suggestion.title}-${index}`}
                     suggestion={convertSuggestionToFrontend(suggestion)}
                     onSelect={() => onClauseSelect(suggestion.title)}
+                    onViewInDocument={onViewInDocument}
                   />
                 ))}
               </div>

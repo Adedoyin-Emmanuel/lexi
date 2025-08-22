@@ -11,6 +11,7 @@ import { CircularConfidence } from "../../dashboard/components/circular-confiden
 interface ObligationCardProps {
   obligation: Obligation;
   onSelect: () => void;
+  onViewInDocument?: (clauseId: string) => void;
 }
 
 const formatDeadline = (deadline: Date) => {
@@ -48,11 +49,19 @@ const getConfidenceColor = (confidence: number) => {
 export const ObligationCard: React.FC<ObligationCardProps> = ({
   obligation,
   onSelect,
+  onViewInDocument,
 }) => {
   const deadlineInfo = obligation.deadline
     ? formatDeadline(obligation.deadline)
     : null;
   const confidenceScore = Math.round(obligation.confidence * 100);
+
+  const handleViewInDocument = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onViewInDocument) {
+      onViewInDocument(obligation.clauseId);
+    }
+  };
 
   return (
     <Card
@@ -118,22 +127,7 @@ export const ObligationCard: React.FC<ObligationCardProps> = ({
               variant="ghost"
               size="sm"
               className="h-8 px-2 text-xs cursor-pointer flex-1 sm:flex-none"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
-              <span className="hidden sm:inline">View suggestions</span>
-              <span className="sm:hidden">Suggestions</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 px-2 text-xs cursor-pointer flex-1 sm:flex-none"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
+              onClick={handleViewInDocument}
             >
               <Eye className="w-3 h-3 mr-1" strokeWidth={1.5} />
               <span className="hidden sm:inline">View in Document</span>

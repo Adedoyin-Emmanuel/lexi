@@ -12,11 +12,13 @@ import { CircularConfidence } from "../../dashboard/components/circular-confiden
 interface NegotiationCardProps {
   onSelect: () => void;
   suggestion: NegotiationSuggestion;
+  onViewInDocument?: (clauseId: string) => void;
 }
 
 export const NegotiationCard: React.FC<NegotiationCardProps> = ({
   suggestion,
   onSelect,
+  onViewInDocument,
 }) => {
   const [copied, setCopied] = useState(false);
   const confidenceScore = Math.round(suggestion.confidence * 100);
@@ -28,6 +30,13 @@ export const NegotiationCard: React.FC<NegotiationCardProps> = ({
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy text: ", err);
+    }
+  };
+
+  const handleViewInDocument = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onViewInDocument) {
+      onViewInDocument(suggestion.clauseId);
     }
   };
 
@@ -134,9 +143,7 @@ export const NegotiationCard: React.FC<NegotiationCardProps> = ({
             variant="ghost"
             size="sm"
             className="h-8 px-2 text-xs cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            onClick={handleViewInDocument}
           >
             <ExternalLink className="w-3 h-3 mr-1" strokeWidth={1.5} />
             View in Document
