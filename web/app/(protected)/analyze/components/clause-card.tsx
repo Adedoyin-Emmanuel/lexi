@@ -4,10 +4,10 @@ import { ChevronDown, ChevronUp, Eye, AlertTriangle } from "lucide-react";
 import { Clause, Risk } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CircularConfidence } from "../../dashboard/components/circular-confidence";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { CircularConfidence } from "../../components/circular-confidence";
 
 interface ClauseCardProps {
   clause: Clause;
@@ -22,9 +22,9 @@ export const ClauseCard: React.FC<ClauseCardProps> = ({
   onViewRisk,
   onViewInDocument,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const confidenceScore = Math.round(clause.confidence * 100);
   const isMobile = useIsMobile();
+  const confidenceScore = clause.confidence;
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const clauseRisks = risks.filter((risk) => risk.clauseId === clause.id);
   const hasRisks = clauseRisks.length > 0;

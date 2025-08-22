@@ -20,8 +20,7 @@ export const CircularConfidence = ({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 
-  // Ensure score is within bounds (0-100)
-  const normalizedScore = Math.max(0, Math.min(100, score));
+  const normalizedScore = score;
 
   const getColor = (score: number) => {
     if (score >= 80) return "#22c55e";
@@ -33,25 +32,22 @@ export const CircularConfidence = ({
     if (circleRef.current) {
       const circle = circleRef.current;
 
-      // Kill any existing animations
       gsap.killTweensOf(circle);
 
-      // Set initial state
       gsap.set(circle, {
         strokeDasharray: circumference,
         strokeDashoffset: circumference,
       });
 
-      // Animate to target value
       gsap.to(circle, {
-        strokeDashoffset: circumference - (normalizedScore / 100) * circumference,
+        strokeDashoffset:
+          circumference - (normalizedScore / 100) * circumference,
         duration: 1.5,
         ease: "power2.out",
         delay: 0.3,
       });
     }
 
-    // Cleanup function
     return () => {
       if (circleRef.current) {
         gsap.killTweensOf(circleRef.current);
@@ -84,7 +80,9 @@ export const CircularConfidence = ({
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-[11px] font-semibold">{Math.round(normalizedScore)}%</span>
+        <span className="text-[11px] font-semibold">
+          {Math.round(normalizedScore)}%
+        </span>
       </div>
     </div>
   );

@@ -9,18 +9,18 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
+import { ContractDocument } from "../page";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ContractDocument } from "../page";
 import { IStructuredContract } from "@/hooks/types/socket";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface DocumentPreviewProps {
   document: ContractDocument;
+  selectedClauseId?: string | null;
+  plainEnglishSummary?: string | null;
   onClauseSelect: (clauseId: string) => void;
   structuredContract?: IStructuredContract | null;
-  plainEnglishSummary?: string | null;
-  selectedClauseId?: string | null;
 }
 
 export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
@@ -30,54 +30,56 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   plainEnglishSummary,
   selectedClauseId,
 }) => {
+  const isMobile = useIsMobile();
   const [showHighlights, setShowHighlights] = useState(true);
   const [viewMode, setViewMode] = useState<"preview" | "original">("preview");
-  const isMobile = useIsMobile();
 
   const documentContent = useMemo(() => {
-    // Use structured HTML if available, otherwise fall back to original content
     if (structuredContract?.html) {
       return structuredContract.html;
     }
-    return document.content || getMockContractText();
+    return document.content;
   }, [document.content, structuredContract]);
 
   const plainEnglishContent = useMemo(() => {
-    // Use the plain English summary from the backend if available
     if (plainEnglishSummary) {
       return plainEnglishSummary;
     }
-    // Show loading state when no summary is available
     return null;
   }, [plainEnglishSummary]);
 
   const highlightedText = useMemo(() => {
     if (!showHighlights || viewMode !== "original") return documentContent;
 
-    // If we have a selected clause, highlight it
     if (selectedClauseId && structuredContract?.tokens) {
-      // Find the token that matches the selected clause
       const selectedToken = structuredContract.tokens.find(
         (token) => token.elementId === selectedClauseId
       );
-      
+
       if (selectedToken) {
-        // Create a highlighted version of the HTML
         let highlightedHtml = documentContent;
         const startTag = `<${selectedToken.elementType} id="${selectedToken.elementId}">`;
-        
-        // Add highlighting class to the selected element
+
         highlightedHtml = highlightedHtml.replace(
           startTag,
-          `${startTag.replace('>', ' class="bg-yellow-200 border-l-4 border-yellow-500 pl-2">')}`
+          `${startTag.replace(
+            ">",
+            ' class="bg-yellow-200 border-l-4 border-yellow-500 pl-2">'
+          )}`
         );
-        
+
         return highlightedHtml;
       }
     }
 
     return documentContent;
-  }, [documentContent, showHighlights, viewMode, structuredContract, selectedClauseId]);
+  }, [
+    documentContent,
+    showHighlights,
+    viewMode,
+    structuredContract,
+    selectedClauseId,
+  ]);
 
   const handleTextClick = useCallback(
     (event: React.MouseEvent) => {
@@ -140,15 +142,24 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
             isMobile ? "p-4" : "p-6"
           }`}
         >
-          <div
-            className={`text-gray-900 leading-relaxed whitespace-pre-wrap break-words ${
-              isMobile ? "text-sm" : ""
-            }`}
-            dangerouslySetInnerHTML={{
-              __html: highlightedText,
-            }}
-            onClick={handleTextClick}
-          />
+          {structuredContract?.html ? (
+            <div
+              className={`text-gray-900 leading-relaxed ${
+                isMobile ? "text-sm" : ""
+              }`}
+              dangerouslySetInnerHTML={{
+                __html: highlightedText,
+              }}
+              onClick={handleTextClick}
+            />
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">
+                Structured document will be available after analysis is
+                complete.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -161,7 +172,9 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
       >
         <div className="flex items-center justify-between">
           <CardTitle className={isMobile ? "text-base" : ""}>
-            Document Preview
+            {viewMode === "preview"
+              ? "Plain English Summary"
+              : "Structured Document"}
           </CardTitle>
           <div className={`flex items-center gap-2 ${isMobile ? "gap-1" : ""}`}>
             <TooltipProvider>
@@ -191,7 +204,9 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 px-2 text-xs"
+                    className={`h-8 px-2 text-xs ${
+                      viewMode === "original" ? "bg-blue-100 text-primary" : ""
+                    }`}
                     onClick={() => setViewMode("original")}
                   >
                     <FileText
@@ -201,7 +216,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Original document</p>
+                  <p>Structured document</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -247,37 +262,3 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     </Card>
   );
 };
-
-const getMockContractText = () => `FREELANCE CONTRACT AGREEMENT
-
-This Freelance Contract Agreement (the "Agreement") is entered into as of [Date] by and between [Client Name] ("Client") and [Freelancer Name] ("Freelancer").
-
-1. SERVICES
-Freelancer agrees to provide content creation services including but not limited to blog posts, social media content, and marketing copy as outlined in the project brief.
-
-2. PAYMENT TERMS
-Payment shall be made within 60 days of invoice submission. All invoices must be submitted within 5 days of project completion.
-
-3. INTELLECTUAL PROPERTY
-All work product shall remain the property of the client upon full payment. Freelancer retains the right to include work in their portfolio.
-
-4. TERMINATION
-Either party may terminate this agreement with 30 days written notice. Client shall pay for all work completed up to the termination date.
-
-5. CONFIDENTIALITY
-Freelancer agrees to maintain confidentiality of all client information and trade secrets disclosed during the course of this agreement.
-
-6. INDEPENDENT CONTRACTOR
-Freelancer is an independent contractor and not an employee of Client. Freelancer is responsible for their own taxes and benefits.
-
-7. LIMITATION OF LIABILITY
-Neither party shall be liable for any indirect, incidental, or consequential damages arising from this agreement.
-
-8. GOVERNING LAW
-This agreement shall be governed by the laws of [State/Country].
-
-IN WITNESS WHEREOF, the parties have executed this agreement as of the date first written above.
-
-[Client Signature]                    [Freelancer Signature]
-[Client Name]                        [Freelancer Name]
-[Date]                               [Date]`;

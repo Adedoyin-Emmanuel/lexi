@@ -6,7 +6,7 @@ import { Obligation } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { CircularConfidence } from "../../dashboard/components/circular-confidence";
+import { CircularConfidence } from "../../components/circular-confidence";
 
 interface ObligationCardProps {
   obligation: Obligation;

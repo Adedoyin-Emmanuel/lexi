@@ -3,8 +3,8 @@ import { AlertTriangle, Eye } from "lucide-react";
 import { Risk } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 interface RiskCardProps {
   risk: Risk;
@@ -34,10 +34,14 @@ const shouldAbstain = (confidence: number) => {
   return confidence < 0.6;
 };
 
-export const RiskCard: React.FC<RiskCardProps> = ({ risk, onSelect, onViewInDocument }) => {
-  const confidenceScore = Math.round(risk.confidence * 100);
-  const abstain = shouldAbstain(risk.confidence);
+export const RiskCard: React.FC<RiskCardProps> = ({
+  risk,
+  onSelect,
+  onViewInDocument,
+}) => {
   const isMobile = useIsMobile();
+  const confidenceScore = risk.confidence;
+  const abstain = shouldAbstain(confidenceScore);
 
   const handleViewInDocument = (e: React.MouseEvent) => {
     e.stopPropagation();

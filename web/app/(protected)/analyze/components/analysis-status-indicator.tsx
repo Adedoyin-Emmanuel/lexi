@@ -44,7 +44,7 @@ export const AnalysisStatusIndicator: React.FC<
 
   // Find the current step index, defaulting to the last step if completed
   let currentStepIndex = steps.findIndex((step) => step.key === currentStep);
-  
+
   // If analysis is completed, show all steps as completed
   if (currentStep === "completed") {
     currentStepIndex = steps.length - 1;
@@ -54,9 +54,12 @@ export const AnalysisStatusIndicator: React.FC<
     <div className="w-full px-4 py-3 mb-4">
       <div className="flex items-center gap-2">
         {steps.map((step, index) => {
-          const isActive = index === currentStepIndex && currentStep !== "completed";
-          const isCompleted = index < currentStepIndex || currentStep === "completed";
-          const isPending = index > currentStepIndex && currentStep !== "completed";
+          const isActive =
+            index === currentStepIndex && currentStep !== "completed";
+          const isCompleted =
+            index < currentStepIndex || currentStep === "completed";
+          const isPending =
+            index > currentStepIndex && currentStep !== "completed";
 
           return (
             <React.Fragment key={step.key}>
@@ -71,9 +74,12 @@ export const AnalysisStatusIndicator: React.FC<
                   )}
                 >
                   {isCompleted ? (
-                    <CheckCircle className="w-3 h-3" strokeWidth={1.5}/>
+                    <CheckCircle className="w-3 h-3" strokeWidth={1.5} />
                   ) : isActive ? (
-                    <Loader2 className="w-3 h-3 animate-spin" strokeWidth={1.5}/>
+                    <Loader2
+                      className="w-3 h-3 animate-spin"
+                      strokeWidth={1.5}
+                    />
                   ) : (
                     index + 1
                   )}

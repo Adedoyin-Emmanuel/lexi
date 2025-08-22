@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CircularConfidence } from "./circular-confidence";
+import { CircularConfidence } from "../../components/circular-confidence";
 import {
   Tooltip,
   TooltipContent,

@@ -2,7 +2,15 @@
 
 import React, { useState } from "react";
 
+import {
+  ISummary,
+  IExtractedRisk,
+  IExtractedClause,
+  IExtractedSuggestion,
+  IExtractedObligation,
+} from "@/hooks/types/socket";
 import { RiskCard } from "./risk-card";
+import { AnalysisState } from "../page";
 import { ClauseCard } from "./clause-card";
 import { SummaryCard } from "./summary-card";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,14 +19,6 @@ import { LoadingSkeleton } from "./loading-skeleton";
 import { NegotiationCard } from "./negotiation-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AnalysisState } from "../page";
-import {
-  ISummary,
-  IExtractedClause,
-  IExtractedRisk,
-  IExtractedObligation,
-  IExtractedSuggestion,
-} from "@/hooks/types/socket";
 
 interface InsightsPanelProps {
   analysisState: AnalysisState;
@@ -79,7 +79,6 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
     );
   }
 
-  // Convert backend data to frontend format for components
   const convertClauseToFrontend = (clause: IExtractedClause) => ({
     id: clause.title,
     title: clause.title,

@@ -3,6 +3,21 @@
 import React, { useState, useEffect } from "react";
 
 import {
+  ISummary,
+  CONTRACT_TYPE,
+  SOCKET_EVENTS,
+  IExtractionResult,
+  IStructuredContract,
+  IDocumentAnalysisFailedPayload,
+  IDocumentAnalysisStartedPayload,
+  IDocumentAnalysisCompletedPayload,
+  IDocumentAnalysisValidatedPayload,
+  IDocumentAnalysisStructuredPayload,
+  IDocumentAnalysisSummarizedPayload,
+  IDocumentAnalysisDetailsExtractedPayload,
+} from "@/hooks/types/socket";
+
+import {
   ResizablePanel,
   ResizableHandle,
   ResizablePanelGroup,
@@ -19,20 +34,6 @@ import { AnalyzeToolbar } from "./components/analyze-toolbar";
 import { DocumentPreview } from "./components/document-preview";
 import { AnalysisStatusIndicator } from "./components/analysis-status-indicator";
 import { AnalysisFailureDialog } from "./components/analysis-failure-dialog";
-import {
-  IDocumentAnalysisStartedPayload,
-  IDocumentAnalysisValidatedPayload,
-  IDocumentAnalysisStructuredPayload,
-  IDocumentAnalysisSummarizedPayload,
-  IDocumentAnalysisDetailsExtractedPayload,
-  IDocumentAnalysisFailedPayload,
-  IDocumentAnalysisCompletedPayload,
-  SOCKET_EVENTS,
-  IExtractionResult,
-  ISummary,
-  IStructuredContract,
-  CONTRACT_TYPE,
-} from "@/hooks/types/socket";
 
 export interface ContractDocument {
   id: string;
@@ -54,17 +55,17 @@ export interface AnalysisState {
     | "failed";
   documentId: string | null;
   validation: {
-    isValidContract: boolean;
-    contractType: CONTRACT_TYPE | null;
-    confidenceScore: number;
     reason: string;
     inScope: boolean;
+    confidenceScore: number;
+    isValidContract: boolean;
+    contractType: CONTRACT_TYPE | null;
   } | null;
-  structuredContract: IStructuredContract | null;
-  summary: ISummary | null;
-  extraction: IExtractionResult | null;
   error: string | null;
+  summary: ISummary | null;
   selectedClauseId: string | null;
+  extraction: IExtractionResult | null;
+  structuredContract: IStructuredContract | null;
 }
 
 const Analyze = () => {
@@ -73,22 +74,21 @@ const Analyze = () => {
     "document"
   );
   const [analysisState, setAnalysisState] = useState<AnalysisState>({
+    error: null,
+    summary: null,
+    documentId: null,
+    extraction: null,
+    validation: null,
     isAnalyzing: false,
     currentStep: "idle",
-    documentId: null,
-    validation: null,
-    structuredContract: null,
-    summary: null,
-    extraction: null,
-    error: null,
     selectedClauseId: null,
+    structuredContract: null,
   });
 
   const isMobile = useIsMobile();
   const { user } = useAuth();
   const socket = useSocket(user?.id as string);
 
-  // Socket event handlers
   useEffect(() => {
     if (!socket) return;
 
@@ -174,7 +174,6 @@ const Analyze = () => {
       }));
     };
 
-    // Register event listeners
     socket.on(SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED, handleAnalysisStarted);
     socket.on(
       SOCKET_EVENTS.DOCUMENT_ANALYSIS_VALIDATED,
@@ -198,7 +197,6 @@ const Analyze = () => {
     );
     socket.on(SOCKET_EVENTS.DOCUMENT_ANALYSIS_FAILED, handleAnalysisFailed);
 
-    // Cleanup event listeners
     return () => {
       socket.off(
         SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED,
@@ -280,13 +278,11 @@ const Analyze = () => {
       ...prev,
       selectedClauseId: clauseId,
     }));
-    // Switch to document view to show the highlighted clause
     setActiveView("document");
   };
 
   const handleReanalyze = () => {
     if (document) {
-      // Reset analysis state and trigger re-upload
       setAnalysisState({
         isAnalyzing: false,
         currentStep: "idle",
@@ -303,7 +299,6 @@ const Analyze = () => {
   };
 
   const handleRetryAnalysis = () => {
-    // Reset analysis state but keep the document
     setAnalysisState({
       isAnalyzing: false,
       currentStep: "idle",
@@ -316,7 +311,6 @@ const Analyze = () => {
       selectedClauseId: null,
     });
 
-    // Re-upload the same document
     if (document) {
       handleDocumentUpload(
         new File([document.content], document.name, {
@@ -332,7 +326,6 @@ const Analyze = () => {
   };
 
   const handleCancelAnalysis = () => {
-    // Reset everything and go back to upload state
     setAnalysisState({
       isAnalyzing: false,
       currentStep: "idle",
@@ -421,7 +414,6 @@ const Analyze = () => {
           )}
         </div>
 
-        {/* Analysis Failure Dialog */}
         <AnalysisFailureDialog
           isOpen={analysisState.currentStep === "failed"}
           onClose={handleCancelAnalysis}
@@ -472,7 +464,6 @@ const Analyze = () => {
         </ResizablePanelGroup>
       </div>
 
-      {/* Analysis Failure Dialog */}
       <AnalysisFailureDialog
         isOpen={analysisState.currentStep === "failed"}
         onClose={handleCancelAnalysis}

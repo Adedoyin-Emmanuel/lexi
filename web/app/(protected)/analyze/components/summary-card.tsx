@@ -14,7 +14,7 @@ import { ContractStats } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CircularConfidence } from "../../dashboard/components/circular-confidence";
+import { CircularConfidence } from "../../components/circular-confidence";
 
 interface SummaryCardProps {
   summary: string;
