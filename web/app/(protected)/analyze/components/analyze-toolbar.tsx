@@ -14,12 +14,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { downloadContract } from "@/lib/download-contract";
 
 interface AnalyzeToolbarProps {
+  documentId: string;
   isAnalyzing: boolean;
   onReanalyze: () => void;
   document: ContractDocument;
 }
 
 export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
+  documentId,
   document,
   onReanalyze,
   isAnalyzing,
@@ -108,7 +110,7 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => downloadContract(document.id)}
+                onClick={() => downloadContract(documentId)}
                 className="cursor-pointer"
               >
                 Download as PDF

@@ -358,8 +358,9 @@ const Analyze = () => {
       <div className="w-full flex flex-col overflow-hidden">
         <AnalyzeToolbar
           document={document}
-          isAnalyzing={analysisState.isAnalyzing}
           onReanalyze={handleReanalyze}
+          isAnalyzing={analysisState.isAnalyzing}
+          documentId={analysisState && (analysisState.documentId as string)}
         />
 
         <AnalysisStatusIndicator
@@ -422,8 +423,9 @@ const Analyze = () => {
     <div className="w-full flex flex-col overflow-hidden">
       <AnalyzeToolbar
         document={document}
-        isAnalyzing={analysisState.isAnalyzing}
         onReanalyze={handleReanalyze}
+        isAnalyzing={analysisState.isAnalyzing}
+        documentId={analysisState.documentId as string}
       />
 
       <AnalysisStatusIndicator
