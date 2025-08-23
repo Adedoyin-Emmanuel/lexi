@@ -17,9 +17,9 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { Axios } from "@/app/config/axios";
+import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ContractDetailSkeleton } from "@/components/loading-skeleton";
 
 interface ChatMessage {
@@ -181,9 +181,9 @@ const ContractDetail = () => {
         </ResizablePanelGroup>
       </div>
 
-      <ContractChatFab 
-        contractName={contract.title} 
-        contractId={contractId} 
+      <ContractChatFab
+        contractName={contract.title}
+        contractId={contractId}
         chats={contract.chats}
       />
     </div>
