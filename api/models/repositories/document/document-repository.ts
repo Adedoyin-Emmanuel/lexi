@@ -28,10 +28,10 @@ class DocumentRepository
       .exec();
   }
 
-  getUserContractsByFilters(
+  async getUserContractsByFilters(
     userId: string,
     filters: IContractFilters
-  ): Promise<Document[]> {
+  ): Promise<{ documents: Document[]; total: number }> {
     const { sort, take, skip, sortOrder, statusFilter } = filters;
 
     const filter: any = { userId };
@@ -54,11 +54,12 @@ class DocumentRepository
       sortObj = { createdAt: sortOrder === "asc" ? 1 : -1 };
     }
 
-    return DocumentModel.find(filter)
-      .sort(sortObj)
-      .skip(skip)
-      .limit(take)
-      .exec();
+    const [documents, total] = await Promise.all([
+      DocumentModel.find(filter).sort(sortObj).skip(skip).limit(take).exec(),
+      DocumentModel.countDocuments(filter).exec(),
+    ]);
+
+    return { documents, total };
   }
 
   getContractById(

@@ -8,7 +8,7 @@ export interface IDocumentRepository extends IRepository<Document> {
   getUserContractsByFilters(
     userId: string,
     filters: IContractFilters
-  ): Promise<Document[]>;
+  ): Promise<{ documents: Document[]; total: number }>;
 
   getContractById(contractId: string, userId: string): Promise<Document | null>;
 }

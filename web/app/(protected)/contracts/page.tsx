@@ -1,144 +1,320 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { AlertCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
+import {
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationContent,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Axios } from "@/app/config/axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContractCard, ContractFilters } from "./components";
+import { ContractCardSkeleton } from "@/components/ui/loading-skeleton";
 
-const mockContracts = [
-  {
-    id: "1",
-    name: "Employment Agreement - John Smith",
-    uploadedAt: "2024-01-15",
-    confidenceScore: 85,
-    status: "Safe" as const,
-    riskType: "Low" as const,
-    contractType: "Employment",
-  },
-  {
-    id: "2",
-    name: "Service Contract - TechCorp Inc",
-    uploadedAt: "2024-01-14",
-    confidenceScore: 72,
-    status: "Needs Review" as const,
-    riskType: "Medium" as const,
-    contractType: "Service",
-  },
-  {
-    id: "3",
-    name: "NDA Agreement - StartupXYZ",
-    uploadedAt: "2024-01-13",
-    confidenceScore: 45,
-    status: "Risky" as const,
-    riskType: "High" as const,
-    contractType: "NDA",
-  },
-  {
-    id: "4",
-    name: "Lease Agreement - Office Space",
-    uploadedAt: "2024-01-12",
-    confidenceScore: 91,
-    status: "Safe" as const,
-    riskType: "Low" as const,
-    contractType: "Lease",
-  },
-  {
-    id: "5",
-    name: "Partnership Agreement - Joint Venture",
-    uploadedAt: "2024-01-11",
-    confidenceScore: 68,
-    status: "Processing" as const,
-    riskType: "Medium" as const,
-    contractType: "Partnership",
-  },
-  {
-    id: "6",
-    name: "Purchase Agreement - Equipment",
-    uploadedAt: "2024-01-10",
-    confidenceScore: 78,
-    status: "Safe" as const,
-    riskType: "Low" as const,
-    contractType: "Purchase",
-  },
-];
+interface Contract {
+  id: string;
+  title: string;
+  createdAt: string;
+  riskScore: number;
+  confidenceScore: number;
+}
+
+interface ContractsResponse {
+  skip: number;
+  take: number;
+  total: number;
+  contracts: Contract[];
+}
+
+interface ContractFilters {
+  statusFilter: string;
+  sort: string;
+  sortOrder: string;
+}
 
 const Contracts = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [riskTypeFilter, setRiskTypeFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [confidenceFilter, setConfidenceFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState<ContractFilters>({
+    statusFilter: "ALL",
+    sort: "createdAt",
+    sortOrder: "desc",
+  });
 
-  const filteredContracts = useMemo(() => {
-    return mockContracts.filter((contract) => {
-      const matchesSearch = contract.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+  const pageSize = 10;
+  const skip = (currentPage - 1) * pageSize;
 
-      const matchesRiskType =
-        riskTypeFilter === "all" || contract.riskType === riskTypeFilter;
+  const {
+    data: contractsData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["contracts", skip, pageSize, filters],
+    queryFn: async (): Promise<ContractsResponse> => {
+      const params = new URLSearchParams({
+        skip: skip.toString(),
+        take: pageSize.toString(),
+        sort: filters.sort,
+        sortOrder: filters.sortOrder,
+      });
 
-      const matchesStatus =
-        statusFilter === "all" || contract.status === statusFilter;
+      if (filters.statusFilter !== "ALL") {
+        params.append("statusFilter", filters.statusFilter);
+      }
 
-      const matchesConfidence =
-        confidenceFilter === "all" ||
-        (confidenceFilter === "high" && contract.confidenceScore >= 80) ||
-        (confidenceFilter === "medium" &&
-          contract.confidenceScore >= 60 &&
-          contract.confidenceScore < 80) ||
-        (confidenceFilter === "low" && contract.confidenceScore < 60);
-
-      return (
-        matchesSearch && matchesRiskType && matchesStatus && matchesConfidence
+      const response = await Axios.get<{ data: ContractsResponse }>(
+        `/contract?${params}`
       );
-    });
-  }, [searchTerm, riskTypeFilter, statusFilter, confidenceFilter]);
+      return response.data.data;
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
 
-  const hasActiveFilters = Boolean(
-    searchTerm ||
-      riskTypeFilter !== "all" ||
-      statusFilter !== "all" ||
-      confidenceFilter !== "all"
-  );
+  const contracts = contractsData?.contracts || [];
+  const totalContracts = contractsData?.total || 0;
+  const totalPages = Math.ceil(totalContracts / pageSize);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleStatusFilterChange = (status: string) => {
+    setFilters((prev) => ({ ...prev, statusFilter: status }));
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (sort: string) => {
+    setFilters((prev) => ({ ...prev, sort }));
+    setCurrentPage(1);
+  };
+
+  const handleSortOrderChange = (sortOrder: string) => {
+    setFilters((prev) => ({ ...prev, sortOrder }));
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters =
+    filters.statusFilter !== "ALL" ||
+    filters.sort !== "createdAt" ||
+    filters.sortOrder !== "desc";
 
   const clearFilters = () => {
-    setSearchTerm("");
-    setRiskTypeFilter("all");
-    setStatusFilter("all");
-    setConfidenceFilter("all");
+    setFilters({
+      statusFilter: "ALL",
+      sort: "createdAt",
+      sortOrder: "desc",
+    });
+    setCurrentPage(1);
   };
+
+  const generatePaginationItems = () => {
+    const items = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        items.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          items.push(i);
+        }
+        items.push("...");
+        items.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        items.push(1);
+        items.push("...");
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          items.push(i);
+        }
+      } else {
+        items.push(1);
+        items.push("...");
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          items.push(i);
+        }
+        items.push("...");
+        items.push(totalPages);
+      }
+    }
+
+    return items;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <br />
+        <ContractFilters
+          onStatusChange={handleStatusFilterChange}
+          onSortChange={handleSortChange}
+          onSortOrderChange={handleSortOrderChange}
+          onClearFilters={clearFilters}
+          hasActiveFilters={hasActiveFilters}
+          currentFilters={filters}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <ContractCardSkeleton key={index} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <br />
+        <ContractFilters
+          onStatusChange={handleStatusFilterChange}
+          onSortChange={handleSortChange}
+          onSortOrderChange={handleSortOrderChange}
+          onClearFilters={clearFilters}
+          hasActiveFilters={hasActiveFilters}
+          currentFilters={filters}
+        />
+
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
+              Error Loading Contracts
+            </h3>
+            <p className="text-muted-foreground text-center max-w-md mb-4">
+              Failed to load contracts. Please try again.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+            >
+              Try Again
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <br />
       <ContractFilters
-        onSearchChange={setSearchTerm}
-        onRiskTypeChange={setRiskTypeFilter}
-        onStatusChange={setStatusFilter}
-        onConfidenceChange={setConfidenceFilter}
+        onStatusChange={handleStatusFilterChange}
+        onSortChange={handleSortChange}
+        onSortOrderChange={handleSortOrderChange}
         onClearFilters={clearFilters}
         hasActiveFilters={hasActiveFilters}
+        currentFilters={filters}
       />
 
-      {filteredContracts.length === 0 ? (
+      {contracts.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
+            <AlertCircle
+              className="h-12 w-12 text-muted-foreground mb-4"
+              strokeWidth={1.5}
+            />
             <h3 className="text-lg font-semibold mb-2">No contracts found</h3>
             <p className="text-muted-foreground text-center max-w-md">
               {hasActiveFilters
-                ? "Try adjusting your filters or search terms to find more contracts."
+                ? "Try adjusting your filters to find more contracts."
                 : "You haven't uploaded any contracts yet. Start by uploading a contract for analysis."}
             </p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredContracts.map((contract, index) => (
-            <ContractCard key={contract.id} {...contract} delay={index * 0.1} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {contracts.map((contract, index) => (
+              <ContractCard
+                key={contract.id}
+                {...contract}
+                delay={index * 0.1}
+              />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex justify-center pt-6">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) {
+                          handlePageChange(currentPage - 1);
+                        }
+                      }}
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+
+                  {generatePaginationItems().map((item, index) => (
+                    <PaginationItem key={index}>
+                      {item === "..." ? (
+                        <span className="px-3 py-2 text-sm text-muted-foreground">
+                          ...
+                        </span>
+                      ) : (
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(item as number);
+                          }}
+                          isActive={currentPage === item}
+                          className="cursor-pointer"
+                        >
+                          {item}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) {
+                          handlePageChange(currentPage + 1);
+                        }
+                      }}
+                      className={
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+
+          {contracts.length > 0 && (
+            <div className="text-center text-sm text-muted-foreground pt-4">
+              Showing {skip + 1}-
+              {Math.min(skip + contracts.length, totalContracts)} of{" "}
+              {totalContracts} contracts
+            </div>
+          )}
+        </>
       )}
     </div>
   );

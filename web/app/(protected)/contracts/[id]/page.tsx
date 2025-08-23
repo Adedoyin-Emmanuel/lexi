@@ -1,60 +1,205 @@
 "use client";
 
-import { ContractTabs } from "./components/contract-tabs";
-import { ContractChat } from "./components/contract-chat";
-import { ContractStats } from "./components/contract-stats";
-import { ContractHeader } from "./components/contract-header";
-import { ContractOverview } from "./components/contract-overview";
+import React, { useState } from "react";
+import { AlertCircle } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
-const mockContract = {
-  id: "1",
-  name: "Employment Agreement - John Smith",
-  uploadedAt: "2024-01-15",
-  confidenceScore: 85,
-  status: "Safe" as const,
-  riskType: "Low" as const,
-  contractType: "Employment",
-  parties: ["John Smith", "TechCorp Inc"],
-  startDate: "2024-01-15",
-  endDate: "2025-01-15",
-  value: "$75,000",
-  summary:
-    "This employment agreement outlines the terms and conditions for John Smith's employment as a Senior Software Engineer at TechCorp Inc. The contract includes standard employment terms, benefits, and termination clauses.",
-  keyTerms: [
-    "Position: Senior Software Engineer",
-    "Salary: $75,000 annually",
-    "Benefits: Health insurance, 401k, PTO",
-    "Term: 1 year with renewal option",
-    "Termination: 30 days notice required",
-  ],
-  risks: [
-    "Non-compete clause may be overly restrictive",
-    "Intellectual property assignment is standard",
-    "Termination clause is reasonable",
-  ],
-  obligations: [
-    "Employee must maintain confidentiality",
-    "Company must provide benefits as outlined",
-    "Both parties must give 30 days notice for termination",
-  ],
-};
+import {
+  ContractTabs,
+  ContractChat,
+  ContractHeader,
+  ContractChatFab,
+  ContractOverview,
+  ContractInsightsPanel,
+} from "./components";
+import {
+  ResizablePanel,
+  ResizableHandle,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { Axios } from "@/app/config/axios";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ContractDetailSkeleton } from "@/components/ui/loading-skeleton";
+
+interface ContractData {
+  id: string;
+  title: string;
+  status: string;
+  isFlagged: boolean;
+  failureReason?: string;
+  hasAbstainWarnings: boolean;
+  summary: Record<string, unknown>;
+  risks: Record<string, unknown>[];
+  chats: Record<string, unknown>[];
+  clauses: Record<string, unknown>[];
+  obligations: Record<string, unknown>[];
+  suggestions: Record<string, unknown>[];
+  structuredContract: Record<string, unknown>;
+  validationMetadata: Record<string, unknown>;
+  extractionMetadata: Record<string, unknown>;
+}
 
 const ContractDetail = () => {
-  return (
-    <div className="space-y-8">
-      <ContractHeader contractName={mockContract.name} />
+  const params = useParams();
+  const contractId = params.id as string;
+  const isMobile = useIsMobile();
+  const [activeView, setActiveView] = useState<"document" | "insights">(
+    "document"
+  );
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <ContractOverview contract={mockContract} />
-          <ContractTabs contract={mockContract} />
+  const {
+    data: contract,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["contract", contractId],
+    queryFn: async (): Promise<ContractData> => {
+      const response = await Axios.get<{ data: ContractData }>(
+        `/contract/${contractId}`
+      );
+      return response.data.data;
+    },
+    enabled: !!contractId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+
+  if (isLoading) {
+    return <ContractDetailSkeleton />;
+  }
+
+  if (error || !contract) {
+    return (
+      <div className="space-y-8">
+        <ContractHeader contractName="Contract Details" />
+
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
+              Error Loading Contract
+            </h3>
+            <p className="text-muted-foreground text-center max-w-md mb-4">
+              Failed to load contract details. Please try again.
+            </p>
+            <Button onClick={() => window.location.reload()}>
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const contractOverviewData = {
+    value: (contract.summary?.value as string) || "",
+    endDate: (contract.summary?.duration as string) || "",
+    parties: (contract.summary?.parties as string[]) || [],
+    startDate: (contract.summary?.effectiveDate as string) || "",
+    uploadedAt: new Date().toISOString().split("T")[0],
+    contractType: (contract.summary?.type as string) || "Contract",
+  };
+
+  const contractTabsData = {
+    summary:
+      (contract.summary?.overviewSummary as string) ||
+      (contract.summary?.plainEnglishSummary as string) ||
+      "",
+    keyTerms:
+      contract.obligations?.map(
+        (ob: Record<string, unknown>) => ob.title as string
+      ) || [],
+    risks:
+      contract.risks?.map(
+        (risk: Record<string, unknown>) => risk.description as string
+      ) || [],
+    obligations:
+      contract.obligations?.map(
+        (ob: Record<string, unknown>) => ob.userFriendlyExplanation as string
+      ) || [],
+  };
+
+  if (isMobile) {
+    return (
+      <div className="w-full flex flex-col overflow-hidden">
+        <ContractHeader contractName={contract.title} />
+
+        <div className="flex border-b border-border bg-background">
+          <button
+            onClick={() => setActiveView("document")}
+            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+              activeView === "document"
+                ? "text-primary border-b-2 border-primary bg-primary/10"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Document
+          </button>
+          <button
+            onClick={() => setActiveView("insights")}
+            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+              activeView === "insights"
+                ? "text-primary border-b-2 border-primary bg-primary/10"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Analysis
+          </button>
         </div>
 
-        <div className="space-y-6">
-          <ContractStats contract={mockContract} />
-          <ContractChat contractName={mockContract.name} />
+        <div className="flex-1 overflow-hidden">
+          {activeView === "document" ? (
+            <div className="h-full p-4 space-y-6">
+              <ContractOverview contract={contractOverviewData} />
+              <ContractTabs contract={contractTabsData} />
+            </div>
+          ) : (
+            <div className="h-full">
+              <ContractInsightsPanel
+                contract={contract}
+                isLoading={isLoading}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="border-t border-gray-200">
+          <ContractChat contractName={contract.title} contractId={contractId} />
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="w-full flex flex-col overflow-hidden">
+      <ContractHeader contractName={contract.title} />
+
+      <div className="w-full overflow-hidden">
+        <ResizablePanelGroup direction="horizontal" className="h-full">
+          <ResizablePanel defaultSize={40} minSize={30}>
+            <div className="h-full overflow-hidden p-4 space-y-6">
+              <ContractOverview contract={contractOverviewData} />
+              <ContractTabs contract={contractTabsData} />
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          <ResizablePanel defaultSize={60} minSize={25}>
+            <div className="h-full overflow-hidden">
+              <ContractInsightsPanel
+                contract={contract}
+                isLoading={isLoading}
+              />
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+
+      <ContractChatFab contractName={contract.title} contractId={contractId} />
     </div>
   );
 };

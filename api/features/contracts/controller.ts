@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import { logger, response } from "./../../utils";
+import { Document } from "./../../models/document";
 import { getContractSchema } from "./contracts.dto";
 import { redisService } from "./../../services/redis";
 import { documentRepository } from "./../../models/repositories";
@@ -11,19 +12,33 @@ export default class ContractController {
 
     const values = await getContractSchema.validateAsync(req.query);
 
-    const contracts = await documentRepository.getUserContractsByFilters(
-      currentUser.userId.toString(),
-      values
-    );
+    const { documents: contracts, total } =
+      await documentRepository.getUserContractsByFilters(
+        currentUser.userId.toString(),
+        values
+      );
+
+    const formattedContract =
+      ContractController.formatRecentContracts(contracts);
 
     const dataToSend = {
-      contracts,
       skip: values.skip,
       take: values.take,
-      total: contracts.length,
+      total: total,
+      contracts: formattedContract,
     };
 
     return response(res, 200, "Contracts fetched successfully", dataToSend);
+  }
+
+  private static formatRecentContracts(documents: Document[]) {
+    return documents.map((document) => ({
+      id: document._id,
+      title: document.title,
+      createdAt: (document as any).createdAt,
+      riskScore: document.summary?.overallRiskScore || 0,
+      confidenceScore: document.summary?.overallConfidenceScore || 0,
+    }));
   }
 
   static async getContractById(req: Request, res: Response) {

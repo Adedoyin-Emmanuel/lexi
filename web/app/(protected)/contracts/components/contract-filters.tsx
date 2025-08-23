@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Search, X, AlertTriangle, Shield, Target } from "lucide-react";
+import { X, Shield, ArrowUpDown, Calendar, TrendingUp } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -17,67 +15,31 @@ interface ContractFiltersProps {
   hasActiveFilters: boolean;
   onClearFilters: () => void;
   onStatusChange: (value: string) => void;
-  onSearchChange: (value: string) => void;
-  onRiskTypeChange: (value: string) => void;
-  onConfidenceChange: (value: string) => void;
+  onSortChange: (value: string) => void;
+  onSortOrderChange: (value: string) => void;
+  currentFilters: {
+    statusFilter: string;
+    sort: string;
+    sortOrder: string;
+  };
 }
 
 export const ContractFilters = ({
-  onSearchChange,
   onClearFilters,
   onStatusChange,
+  onSortChange,
+  onSortOrderChange,
   hasActiveFilters,
-  onRiskTypeChange,
-  onConfidenceChange,
+  currentFilters,
 }: ContractFiltersProps) => {
-  const [searchValue, setSearchValue] = useState("");
-
-  const handleSearchChange = (value: string) => {
-    setSearchValue(value);
-    onSearchChange(value);
-  };
-
   return (
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-      <div className="relative flex-1 min-w-0 lg:min-w-64 lg:max-w-md">
-        <Search
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-          strokeWidth={1.5}
-        />
-        <Input
-          placeholder="Search contracts..."
-          value={searchValue}
-          onChange={(e) => handleSearchChange(e.target.value)}
-          className="pl-10"
-        />
-      </div>
-
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Select onValueChange={onRiskTypeChange}>
-            <SelectTrigger className="w-full cursor-pointer">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
-                <SelectValue placeholder="Risk Type" />
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all" className="cursor-pointer">
-                All
-              </SelectItem>
-              <SelectItem value="Low" className="cursor-pointer">
-                Low
-              </SelectItem>
-              <SelectItem value="Medium" className="cursor-pointer">
-                Medium
-              </SelectItem>
-              <SelectItem value="High" className="cursor-pointer">
-                High
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select onValueChange={onStatusChange}>
+          <Select
+            onValueChange={onStatusChange}
+            value={currentFilters.statusFilter}
+          >
             <SelectTrigger className="w-full cursor-pointer">
               <div className="flex items-center gap-2">
                 <Shield className="h-4 w-4" strokeWidth={1.5} />
@@ -85,43 +47,75 @@ export const ContractFilters = ({
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all" className="cursor-pointer">
-                All
+              <SelectItem value="ALL" className="cursor-pointer">
+                All Status
               </SelectItem>
-              <SelectItem value="Safe" className="cursor-pointer">
-                Safe
+              <SelectItem value="completed" className="cursor-pointer">
+                Completed
               </SelectItem>
-              <SelectItem value="Risky" className="cursor-pointer">
-                Risky
-              </SelectItem>
-              <SelectItem value="Processing" className="cursor-pointer">
+              <SelectItem value="processing" className="cursor-pointer">
                 Processing
               </SelectItem>
-              <SelectItem value="Needs Review" className="cursor-pointer">
-                Needs Review
+              <SelectItem value="pending" className="cursor-pointer">
+                Pending
+              </SelectItem>
+              <SelectItem value="failed" className="cursor-pointer">
+                Failed
               </SelectItem>
             </SelectContent>
           </Select>
 
-          <Select onValueChange={onConfidenceChange}>
+          <Select onValueChange={onSortChange} value={currentFilters.sort}>
             <SelectTrigger className="w-full cursor-pointer">
               <div className="flex items-center gap-2">
-                <Target className="h-4 w-4" strokeWidth={1.5} />
-                <SelectValue placeholder="Confidence" />
+                <ArrowUpDown className="h-4 w-4" strokeWidth={1.5} />
+                <SelectValue placeholder="Sort By" />
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all" className="cursor-pointer">
-                All
+              <SelectItem value="createdAt" className="cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-3 w-3" strokeWidth={1.5} />
+                  Date Created
+                </div>
               </SelectItem>
-              <SelectItem value="high" className="cursor-pointer">
-                High (80%+)
+              <SelectItem value="updatedAt" className="cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-3 w-3" strokeWidth={1.5} />
+                  Date Updated
+                </div>
               </SelectItem>
-              <SelectItem value="medium" className="cursor-pointer">
-                Medium (60-79%)
+              <SelectItem value="riskScore" className="cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-3 w-3" strokeWidth={1.5} />
+                  Risk Score
+                </div>
               </SelectItem>
-              <SelectItem value="low" className="cursor-pointer">
-                Low (&lt;60%)
+              <SelectItem value="confidenceScore" className="cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-3 w-3" strokeWidth={1.5} />
+                  Confidence Score
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            onValueChange={onSortOrderChange}
+            value={currentFilters.sortOrder}
+          >
+            <SelectTrigger className="w-full cursor-pointer">
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4" strokeWidth={1.5} />
+                <SelectValue placeholder="Order" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="desc" className="cursor-pointer">
+                Descending
+              </SelectItem>
+              <SelectItem value="asc" className="cursor-pointer">
+                Ascending
               </SelectItem>
             </SelectContent>
           </Select>

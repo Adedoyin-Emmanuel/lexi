@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle, Send, X } from "lucide-react";
+import { MessageCircle, Send, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
 
@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSocket } from "@/hooks/use-socket";
+import { useAuth } from "@/hooks/use-auth";
+import { SOCKET_EVENTS } from "@/hooks/types/socket";
 
 interface ChatMessage {
   id: number;
@@ -17,13 +20,18 @@ interface ChatMessage {
 
 interface ContractChatProps {
   contractName: string;
+  contractId: string;
 }
 
-export const ContractChat = ({ contractName }: ContractChatProps) => {
+export const ContractChat = ({
+  contractName,
+  contractId,
+}: ContractChatProps) => {
   const [chatMessage, setChatMessage] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
     {
       id: 1,
@@ -33,6 +41,9 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
   ]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const { user } = useAuth();
+  const socket = useSocket(user?.id as string);
 
   useEffect(() => {
     if (isChatOpen) {
@@ -48,6 +59,31 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
       document.body.style.overflow = "unset";
     };
   }, [isChatOpen]);
+
+  // Socket event listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    // Join the contract room
+    socket.emit(SOCKET_EVENTS.CHAT_MESSAGE_JOIN_ROOM, contractId);
+
+    // Listen for AI responses
+    const handleAIResponse = (data: { message: string }) => {
+      const botResponse: ChatMessage = {
+        id: Date.now() + 1,
+        type: "bot",
+        message: data.message,
+      };
+      setChatHistory((prev) => [...prev, botResponse]);
+      setIsLoading(false);
+    };
+
+    socket.on(SOCKET_EVENTS.CHAT_MESSAGE_AI_RESPONSE, handleAIResponse);
+
+    return () => {
+      socket.off(SOCKET_EVENTS.CHAT_MESSAGE_AI_RESPONSE, handleAIResponse);
+    };
+  }, [socket, contractId]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -111,7 +147,7 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
   }, [chatHistory]);
 
   const handleSendMessage = useCallback(() => {
-    if (!chatMessage.trim()) return;
+    if (!chatMessage.trim() || isLoading || !socket) return;
 
     const userMessage: ChatMessage = {
       id: Date.now(),
@@ -121,17 +157,14 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
 
     setChatMessage("");
     setChatHistory((prev) => [...prev, userMessage]);
+    setIsLoading(true);
 
-    setTimeout(() => {
-      const botResponse: ChatMessage = {
-        id: Date.now() + 1,
-        type: "bot",
-        message:
-          "I understand you're asking about this contract. Let me analyze the relevant sections and provide you with a detailed explanation...",
-      };
-      setChatHistory((prev) => [...prev, botResponse]);
-    }, 1000);
-  }, [chatMessage]);
+    // Send message to server via socket
+    socket.emit(SOCKET_EVENTS.CHAT_MESSAGE_USER_MESSAGE, {
+      message: chatMessage,
+      contractId: contractId,
+    });
+  }, [chatMessage, isLoading, socket, contractId]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -184,6 +217,22 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
                   </div>
                 </div>
               ))}
+
+              {isLoading && (
+                <div className="flex justify-start animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+                  <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm bg-muted rounded-bl-md">
+                    <div className="flex items-center gap-2">
+                      <Loader2
+                        className="h-4 w-4 animate-spin"
+                        strokeWidth={1.5}
+                      />
+                      <span className="text-muted-foreground">
+                        AI is thinking...
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </ScrollArea>
 
@@ -200,9 +249,13 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
               onClick={handleSendMessage}
               size="sm"
               className="px-3 flex-shrink-0"
-              disabled={!chatMessage.trim()}
+              disabled={!chatMessage.trim() || isLoading}
             >
-              <Send className="h-4 w-4" strokeWidth={1.5} />
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
+              ) : (
+                <Send className="h-4 w-4" strokeWidth={1.5} />
+              )}
             </Button>
           </div>
         </CardContent>
