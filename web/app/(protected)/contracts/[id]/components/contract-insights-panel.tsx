@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
+import { LoadingSkeleton } from "@/components/loading-skeleton";
 
 import { RiskCard } from "../../../analyze/components/risk-card";
 import { ClauseCard } from "../../../analyze/components/clause-card";

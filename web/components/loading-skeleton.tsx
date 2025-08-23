@@ -25,7 +25,7 @@ export const LoadingSkeleton = ({
 
 export const ContractCardSkeleton = () => {
   return (
-    <div className="space-y-4 p-6 border rounded-lg">
+    <div className="space-y-4 p-6 border rounded-lg border-gray-200">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0 pr-4">
           <div className="flex items-center gap-2 mb-3">
@@ -63,13 +63,13 @@ export const ContractDetailSkeleton = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="space-y-4 p-6 border rounded-lg">
+          <div className="space-y-4 p-6 border rounded-lg border-gray-200">
             <LoadingSkeleton className="w-1/4 h-6" />
             <LoadingSkeleton className="w-3/4 h-4" />
             <LoadingSkeleton className="w-1/2 h-4" />
           </div>
 
-          <div className="space-y-4 p-6 border rounded-lg">
+          <div className="space-y-4 p-6 border rounded-lg border-gray-200">
             <LoadingSkeleton className="w-1/3 h-6" />
             <LoadingSkeleton className="w-full h-4" />
             <LoadingSkeleton className="w-2/3 h-4" />
@@ -77,13 +77,13 @@ export const ContractDetailSkeleton = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="space-y-4 p-6 border rounded-lg">
+          <div className="space-y-4 p-6 border rounded-lg border-gray-200">
             <LoadingSkeleton className="w-1/2 h-6" />
             <LoadingSkeleton className="w-3/4 h-4" />
             <LoadingSkeleton className="w-1/2 h-4" />
           </div>
 
-          <div className="space-y-4 p-6 border rounded-lg">
+          <div className="space-y-4 p-6 border rounded-lg border-gray-200">
             <LoadingSkeleton className="w-1/3 h-6" />
             <LoadingSkeleton className="w-full h-4" />
           </div>

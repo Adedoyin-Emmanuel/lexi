@@ -15,7 +15,7 @@ import {
 import { Axios } from "@/app/config/axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContractCard, ContractFilters } from "./components";
-import { ContractCardSkeleton } from "@/components/ui/loading-skeleton";
+import { ContractCardSkeleton } from "@/components/loading-skeleton";
 
 interface Contract {
   id: string;

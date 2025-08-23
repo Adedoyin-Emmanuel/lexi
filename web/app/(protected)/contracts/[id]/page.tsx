@@ -21,7 +21,7 @@ import { Axios } from "@/app/config/axios";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ContractDetailSkeleton } from "@/components/ui/loading-skeleton";
+import { ContractDetailSkeleton } from "@/components/loading-skeleton";
 
 interface ContractData {
   id: string;
