@@ -13,12 +13,12 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-2">
+          <Link className="flex items-center space-x-2" href="/">
             <div className="w-8 h-8 flex items-center justify-center">
               <Image src="/logo.svg" alt="Lexi Logo" width={32} height={32} />
             </div>
             <span className="text-xl font-bold text-foreground">Lexi</span>
-          </div>
+          </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
             <Link
@@ -28,10 +28,11 @@ const Header = () => {
               Features
             </Link>
             <Link
-              href="#how-it-works"
+              target="_blank"
+              href="https://github.com/Adedoyin-Emmanuel/lexi"
               className="text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              How it works
+              Github
             </Link>
 
             <Link href="/auth/login">
@@ -44,9 +45,9 @@ const Header = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
-              <X className="w-6 h-6" />
+              <X className="w-6 h-6" strokeWidth={1.5} />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className="w-6 h-6" strokeWidth={1.5} />
             )}
           </button>
         </div>
@@ -61,16 +62,19 @@ const Header = () => {
                 Features
               </Link>
               <Link
-                href="#how-it-works"
+                target="_blank"
+                href="https://github.com/Adedoyin-Emmanuel/lexi"
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
-                How it works
+                Github
               </Link>
 
               <div className="pt-4">
-                <Button size="sm" className="w-full font-semibold">
-                  Get Started
-                </Button>
+                <Link href="/auth/login">
+                  <Button size="sm" className="w-full font-semibold">
+                    Get Started
+                  </Button>
+                </Link>
               </div>
             </nav>
           </div>

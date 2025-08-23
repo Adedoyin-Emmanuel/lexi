@@ -80,7 +80,10 @@ const Features = () => {
   ];
 
   return (
-    <section className="py-12 bg-background relative overflow-hidden">
+    <section
+      className="py-12 bg-background relative overflow-hidden"
+      id="features"
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-muted/10" />
       <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl" />
       <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/10 rounded-full blur-xl" />

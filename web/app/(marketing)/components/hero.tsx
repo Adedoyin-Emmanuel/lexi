@@ -1,11 +1,12 @@
 "use client";
 
-import { Play, Shield, ArrowRight } from "lucide-react";
 import { gsap } from "gsap";
+import Link from "next/link";
+import { Play, Shield, ArrowRight } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import DemoDialog from "./demo-dialog";
+import { Button } from "@/components/ui/button";
 
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -176,16 +177,18 @@ const Hero = () => {
               ref={buttonsRef}
               className="flex flex-col sm:flex-row gap-6 justify-center mb-16"
             >
-              <Button
-                size="lg"
-                className="group h-14 text-[17px] px-8 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 cursor-pointer"
-              >
-                Get started for free
-                <ArrowRight
-                  className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
-                  strokeWidth={1.5}
-                />
-              </Button>
+              <Link href="/auth/login">
+                <Button
+                  size="lg"
+                  className="group h-14 text-[17px] px-8 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 cursor-pointer"
+                >
+                  Get started for free
+                  <ArrowRight
+                    className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                    strokeWidth={1.5}
+                  />
+                </Button>
+              </Link>
 
               <Button
                 variant="outline"
