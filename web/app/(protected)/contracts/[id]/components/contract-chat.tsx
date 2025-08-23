@@ -1,7 +1,8 @@
 "use client";
 
-import { MessageCircle, Send } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { MessageCircle, Send, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,9 @@ interface ContractChatProps {
 
 export const ContractChat = ({ contractName }: ContractChatProps) => {
   const [chatMessage, setChatMessage] = useState("");
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
     {
       id: 1,
@@ -28,6 +32,72 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
     },
   ]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isChatOpen) {
+      document.body.style.overflow = "hidden";
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isChatOpen]);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const handleScroll = () => {
+      if (isChatOpen) return;
+
+      const currentScrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const isNearBottom =
+        currentScrollY + windowHeight >= documentHeight - 100;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false);
+      }
+
+      if (
+        (currentScrollY < lastScrollY || currentScrollY <= 100) &&
+        !isNearBottom
+      ) {
+        setIsVisible(true);
+      }
+
+      if (isNearBottom) {
+        setIsVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = setTimeout(() => {
+        if (!isNearBottom) {
+          setIsVisible(true);
+        }
+      }, 2000);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [lastScrollY, isChatOpen]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -40,7 +110,7 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
     }
   }, [chatHistory]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (!chatMessage.trim()) return;
 
     const userMessage: ChatMessage = {
@@ -49,8 +119,8 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
       message: chatMessage,
     };
 
-    setChatHistory((prev) => [...prev, userMessage]);
     setChatMessage("");
+    setChatHistory((prev) => [...prev, userMessage]);
 
     setTimeout(() => {
       const botResponse: ChatMessage = {
@@ -61,69 +131,159 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
       };
       setChatHistory((prev) => [...prev, botResponse]);
     }, 1000);
-  };
+  }, [chatMessage]);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage]
+  );
 
-  return (
-    <Card className="h-[500px] max-w-md mx-auto flex flex-col">
-      <CardHeader className="pb-3 flex-shrink-0">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <MessageCircle className="h-5 w-5" strokeWidth={1.5} />
-          Contract Assistant
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col p-4 min-h-0">
-        <ScrollArea ref={scrollAreaRef} className="flex-1 mb-4 pr-2 min-h-0">
-          <div className="space-y-3">
-            {chatHistory.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.type === "user" ? "justify-end" : "justify-start"
-                } animate-in fade-in-0 slide-in-from-bottom-2 duration-300`}
-              >
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setChatMessage(e.target.value);
+    },
+    []
+  );
+
+  const ChatInterface = useCallback(
+    () => (
+      <Card className="h-[500px] max-w-md mx-auto flex flex-col">
+        <CardHeader className="pb-3 flex-shrink-0">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <MessageCircle className="h-5 w-5" strokeWidth={1.5} />
+            Contract Assistant
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex-1 flex flex-col p-4 min-h-0">
+          <ScrollArea ref={scrollAreaRef} className="flex-1 mb-4 pr-2 min-h-0">
+            <div className="space-y-3">
+              {chatHistory.map((message) => (
                 <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm ${
-                    message.type === "user"
-                      ? "bg-primary text-primary-foreground rounded-br-md"
-                      : "bg-muted rounded-bl-md"
-                  }`}
+                  key={message.id}
+                  className={`flex ${
+                    message.type === "user" ? "justify-end" : "justify-start"
+                  } animate-in fade-in-0 slide-in-from-bottom-2 duration-300`}
                 >
-                  <div className="flex items-start gap-2">
-                    <div className="flex-1">
-                      <p className="leading-relaxed">{message.message}</p>
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm ${
+                      message.type === "user"
+                        ? "bg-primary text-primary-foreground rounded-br-md"
+                        : "bg-muted rounded-bl-md"
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1">
+                        <p className="leading-relaxed">{message.message}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
+              ))}
+            </div>
+          </ScrollArea>
 
-        <div className="flex gap-2 pt-2 border-t border-gray-200 flex-shrink-0">
-          <Input
-            placeholder="Ask about this contract..."
-            value={chatMessage}
-            onChange={(e) => setChatMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="flex-1 text-sm min-w-0"
-          />
-          <Button
-            onClick={handleSendMessage}
-            size="sm"
-            className="px-3 flex-shrink-0"
-            disabled={!chatMessage.trim()}
-          >
-            <Send className="h-4 w-4" strokeWidth={1.5} />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          <div className="flex gap-2 pt-2 border-t border-gray-200 flex-shrink-0">
+            <Input
+              ref={inputRef}
+              placeholder="Ask about this contract..."
+              value={chatMessage}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              className="flex-1 text-sm min-w-0"
+            />
+            <Button
+              onClick={handleSendMessage}
+              size="sm"
+              className="px-3 flex-shrink-0"
+              disabled={!chatMessage.trim()}
+            >
+              <Send className="h-4 w-4" strokeWidth={1.5} />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    ),
+    [
+      chatHistory,
+      chatMessage,
+      handleSendMessage,
+      handleKeyPress,
+      handleInputChange,
+    ]
+  );
+
+  return (
+    <>
+      <div className="hidden md:block">{ChatInterface()}</div>
+
+      <div className="md:hidden">
+        <AnimatePresence>
+          {isVisible && !isChatOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              transition={{
+                duration: 0.3,
+                ease: "easeInOut",
+                type: "spring",
+                stiffness: 300,
+                damping: 25,
+              }}
+              className="fixed bottom-6 right-6 z-50"
+            >
+              <Button
+                size="lg"
+                onClick={() => setIsChatOpen(true)}
+                className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+              >
+                <MessageCircle className="h-6 w-6" />
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {isChatOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+              onClick={() => setIsChatOpen(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeInOut",
+                }}
+                className="absolute bottom-0 left-0 right-0 h-[80vh] max-h-[600px] p-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="relative h-full">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsChatOpen(false)}
+                    className="absolute top-2 right-2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <div className="h-full">{ChatInterface()}</div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 };
