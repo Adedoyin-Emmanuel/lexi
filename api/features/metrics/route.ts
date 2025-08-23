@@ -5,7 +5,7 @@ import { useAuth } from "./../../middlewares";
 
 const router = Router();
 
-router.get("/dashboard", [useAuth], MetricsController.getDashboardStats);
+router.get("/overview", [useAuth], MetricsController.getDashboardStats);
 
 router.get(
   "/recent-contracts",

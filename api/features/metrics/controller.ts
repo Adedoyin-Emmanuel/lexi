@@ -25,7 +25,7 @@ export default class MetricsController {
       return response(
         res,
         200,
-        "Dashboard stats retrived successfully - redis",
+        "Dashboard stats retrived successfully",
         cachedDashboardStats
       );
     }

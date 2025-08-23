@@ -8,91 +8,129 @@ import {
   CheckCircle,
   AlertTriangle,
 } from "lucide-react";
+import dayjs from "dayjs";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import relativeTime from "dayjs/plugin/relativeTime";
 
+import { Axios } from "@/app/config/axios";
 import { Button } from "@/components/ui/button";
+import { DashboardSkeleton } from "./components/loading-skeleton";
 import { StatsCard, ContractCard, FloatingActionButton } from "./components";
+
+dayjs.extend(relativeTime);
+
+interface DashboardStats {
+  totalContracts: number;
+  needsAttention: number;
+  inProcessing: number;
+  contractsPassed: number;
+}
+
+interface RecentContract {
+  id: string;
+  title: string;
+  createdAt: string;
+  riskScore: number;
+  confidenceScore: number;
+}
+
+interface ApiResponse<T> {
+  code: number;
+  status: string;
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+const fetchDashboardStats = async (): Promise<DashboardStats> => {
+  const response = await Axios.get<ApiResponse<DashboardStats>>(
+    "/metrics/overview"
+  );
+  return response.data.data;
+};
+
+const fetchRecentContracts = async (): Promise<RecentContract[]> => {
+  const response = await Axios.get<ApiResponse<RecentContract[]>>(
+    "/metrics/recent-contracts"
+  );
+  return response.data.data;
+};
+
+const formatDate = (dateString: string): string => {
+  return dayjs(dateString).fromNow();
+};
+
+const getStatusFromRiskScore = (
+  riskScore: number
+): "Safe" | "Risky" | "Processing" | "Needs Review" => {
+  if (riskScore >= 65) return "Risky";
+  if (riskScore >= 40) return "Needs Review";
+  return "Safe";
+};
 
 const statsData = [
   {
     icon: FileText,
-    number: "1,247",
+    key: "totalContracts" as keyof DashboardStats,
     label: "Total Contracts",
-    subtext: "+12 this week",
-    trend: "up" as const,
     delay: 0.1,
   },
   {
     icon: AlertTriangle,
-    number: "23",
+    key: "needsAttention" as keyof DashboardStats,
     label: "Need Attention",
-    subtext: "+3 this week",
-    trend: "up" as const,
     delay: 0.2,
   },
   {
     icon: Clock,
-    number: "8",
+    key: "inProcessing" as keyof DashboardStats,
     label: "In Processing",
-    subtext: "-2 this week",
-    trend: "down" as const,
     delay: 0.3,
   },
   {
     icon: CheckCircle,
-    number: "1,216",
+    key: "contractsPassed" as keyof DashboardStats,
     label: "Contracts Passed",
-    subtext: "+15 this week",
-    trend: "up" as const,
     delay: 0.4,
   },
 ];
 
-const recentContracts = [
-  {
-    id: "1",
-    name: "Employment Agreement - John Smith",
-    uploadedAt: "5 minutes ago",
-    status: "Safe" as const,
-    confidenceScore: 95,
-    delay: 0.5,
-  },
-  {
-    id: "2",
-    name: "Service Contract - TechCorp Inc",
-    uploadedAt: "12 minutes ago",
-    status: "Processing" as const,
-    confidenceScore: 78,
-    delay: 0.6,
-  },
-  {
-    id: "3",
-    name: "NDA - StartupXYZ",
-    uploadedAt: "1 hour ago",
-    status: "Needs Review" as const,
-    confidenceScore: 45,
-    delay: 0.7,
-  },
-  {
-    id: "4",
-    name: "Lease Agreement - Office Space",
-    uploadedAt: "2 hours ago",
-    status: "Risky" as const,
-    confidenceScore: 32,
-    delay: 0.8,
-  },
-  {
-    id: "5",
-    name: "Partnership Agreement - ABC Corp",
-    uploadedAt: "3 hours ago",
-    status: "Safe" as const,
-    confidenceScore: 88,
-    delay: 0.9,
-  },
-];
-
 export default function Dashboard() {
+  const {
+    data: dashboardStats,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: fetchDashboardStats,
+  });
+
+  const {
+    data: recentContracts,
+    isLoading: contractsLoading,
+    error: contractsError,
+  } = useQuery({
+    queryKey: ["recent-contracts"],
+    queryFn: fetchRecentContracts,
+  });
+
+  if (statsLoading || contractsLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (statsError || contractsError) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+          <p className="text-muted-foreground">Failed to load dashboard data</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full">
       <div className="w-full space-y-8">
@@ -104,10 +142,12 @@ export default function Dashboard() {
         >
           <div></div>
 
-          <Button size="lg" className="gap-2 hidden md:flex cursor-pointer">
-            <Plus className="h-4 w-4" strokeWidth={1.5} />
-            Analyze New Contract
-          </Button>
+          <Link href="/analyze">
+            <Button size="lg" className="gap-2 hidden md:flex cursor-pointer">
+              <Plus className="h-4 w-4" strokeWidth={1.5} />
+              Analyze New Contract
+            </Button>
+          </Link>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -115,10 +155,8 @@ export default function Dashboard() {
             <StatsCard
               key={index}
               icon={stat.icon}
-              number={stat.number}
+              number={dashboardStats?.[stat.key] || 0}
               label={stat.label}
-              subtext={stat.subtext}
-              trend={stat.trend}
               delay={stat.delay}
             />
           ))}
@@ -149,15 +187,15 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-            {recentContracts.map((contract) => (
+            {recentContracts?.map((contract, index) => (
               <ContractCard
                 key={contract.id}
                 id={contract.id}
-                name={contract.name}
-                uploadedAt={contract.uploadedAt}
-                status={contract.status}
+                name={contract.title}
+                uploadedAt={formatDate(contract.createdAt)}
+                status={getStatusFromRiskScore(contract.riskScore)}
                 confidenceScore={contract.confidenceScore}
-                delay={contract.delay}
+                delay={0.5 + index * 0.1}
               />
             ))}
           </div>

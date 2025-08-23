@@ -8,31 +8,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface StatsCardProps {
   label: string;
   delay?: number;
-  subtext: string;
   icon: LucideIcon;
   number: string | number;
-  trend?: "up" | "down" | "neutral";
 }
 
 export const StatsCard = ({
   icon: Icon,
   number,
   label,
-  subtext,
-  trend = "neutral",
   delay = 0,
 }: StatsCardProps) => {
-  const getTrendColor = () => {
-    switch (trend) {
-      case "up":
-        return "text-green-600";
-      case "down":
-        return "text-red-600";
-      default:
-        return "text-muted-foreground";
-    }
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -46,7 +31,6 @@ export const StatsCard = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{number}</div>
-          <p className={`text-xs ${getTrendColor()}`}>{subtext}</p>
         </CardContent>
       </Card>
     </motion.div>

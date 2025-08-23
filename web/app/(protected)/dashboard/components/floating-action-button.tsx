@@ -1,14 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { Plus } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 
 interface FloatingActionButtonProps {
-  onClick?: () => void;
   className?: string;
+  onClick?: () => void;
 }
 
 export const FloatingActionButton = ({
@@ -26,14 +27,12 @@ export const FloatingActionButton = ({
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
       const isNearBottom =
-        currentScrollY + windowHeight >= documentHeight - 100; // 100px from bottom
+        currentScrollY + windowHeight >= documentHeight - 100;
 
-      // Hide button when scrolling down
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
       }
 
-      // Show button when scrolling up or at top, but not near bottom
       if (
         (currentScrollY < lastScrollY || currentScrollY <= 100) &&
         !isNearBottom
@@ -41,19 +40,16 @@ export const FloatingActionButton = ({
         setIsVisible(true);
       }
 
-      // Hide button when near bottom of page
       if (isNearBottom) {
         setIsVisible(false);
       }
 
       setLastScrollY(currentScrollY);
 
-      // Clear existing timeout
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
 
-      // Show button after scrolling stops (2 seconds delay), but not if near bottom
       timeoutId = setTimeout(() => {
         if (!isNearBottom) {
           setIsVisible(true);
@@ -87,13 +83,15 @@ export const FloatingActionButton = ({
           }}
           className={`fixed bottom-6 right-6 z-50 ${className}`}
         >
-          <Button
-            size="lg"
-            onClick={onClick}
-            className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
+          <Link href="/analyze">
+            <Button
+              size="lg"
+              onClick={onClick}
+              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </Link>
         </motion.div>
       )}
     </AnimatePresence>
