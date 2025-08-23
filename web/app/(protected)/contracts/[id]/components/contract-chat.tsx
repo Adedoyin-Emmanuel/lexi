@@ -3,6 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Send, X, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
@@ -218,7 +220,42 @@ export const ContractChat = ({
                   >
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
-                        <p className="leading-relaxed">{message.message}</p>
+                        <p className="leading-relaxed">
+                          {message.type === "user" ? (
+                            message.message
+                          ) : (
+                            <ReactMarkdown
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                p: ({ ...props }) => (
+                                  <p className="leading-relaxed" {...props} />
+                                ),
+                                a: ({ ...props }) => (
+                                  <a
+                                    className="text-primary underline"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    {...props}
+                                  />
+                                ),
+                                code: ({ ...props }) => (
+                                  <code
+                                    className="bg-muted px-1 py-0.5 rounded-sm"
+                                    {...props}
+                                  />
+                                ),
+                                pre: ({ ...props }) => (
+                                  <pre
+                                    className="bg-muted p-3 rounded-md overflow-x-auto"
+                                    {...props}
+                                  />
+                                ),
+                              }}
+                            >
+                              {message.message}
+                            </ReactMarkdown>
+                          )}
+                        </p>
                       </div>
                     </div>
                   </div>

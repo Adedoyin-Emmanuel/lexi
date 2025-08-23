@@ -12,13 +12,30 @@ export default class ChatHandler {
     const { message, contractId } = payload;
     const socket = getSocket();
 
-    const cacheKey = `contract:${contractId}`;
-    let contract = await redisService.get(cacheKey);
+    let contract = await documentRepository.findById(contractId);
 
     if (!contract) {
-      contract = await documentRepository.findById(contractId);
-      await redisService.set(cacheKey, contract, 60 * 5);
+      logger(`Contract not found for ID: ${contractId}`);
+      socket.to(contractId).emit(SOCKET_EVENTS.CHAT_MESSAGE_AI_RESPONSE, {
+        message:
+          "Sorry, I couldn't find the contract you're referring to. Please check the contract ID and try again.",
+      });
+      return;
     }
+
+    if (contract && typeof contract._id === "string") {
+      contract._id = new Types.ObjectId(contract._id);
+    }
+
+    // Save user message to database first
+    await documentRepository.update(new Types.ObjectId(contractId), {
+      $push: {
+        chats: {
+          role: "user",
+          content: message,
+        },
+      },
+    } as any);
 
     const aiResponse = await this.getAIResponse(message, contract as Document);
 
@@ -26,6 +43,7 @@ export default class ChatHandler {
       message: aiResponse,
     });
 
+    // Save AI response to database
     await documentRepository.update(new Types.ObjectId(contractId), {
       $push: {
         chats: {
@@ -39,7 +57,7 @@ export default class ChatHandler {
   private static async getRecentConversationContext(contractId: string) {
     const cacheKey = `chat:context:${contractId}`;
 
-    const cachedContext = await redisService.get(cacheKey);
+    const cachedContext = await redisService.get<string>(cacheKey);
 
     if (cachedContext) {
       return cachedContext;
@@ -47,7 +65,7 @@ export default class ChatHandler {
 
     const recentContext = await documentRepository.findById(contractId);
 
-    const recentChats = recentContext?.chats.slice(0, 5);
+    const recentChats = recentContext?.chats?.slice(0, 5) || [];
 
     if (!recentChats.length) {
       return "";
@@ -60,6 +78,8 @@ export default class ChatHandler {
           `${chat.role === "user" ? "User" : "Assistant"}: ${chat.content}`
       )
       .join("\n");
+
+    await redisService.set(cacheKey, context, 60 * 5);
 
     return context;
   }
@@ -90,6 +110,24 @@ export default class ChatHandler {
   static async constructPromptBasedOnContract(
     contract: Document
   ): Promise<string> {
+    if (!contract) {
+      throw new Error(
+        "Invalid contract provided to constructPromptBasedOnContract: contract is null or undefined"
+      );
+    }
+
+    if (!contract._id) {
+      throw new Error(
+        "Invalid contract provided to constructPromptBasedOnContract: contract._id is missing"
+      );
+    }
+
+    if (!contract.title) {
+      throw new Error(
+        "Invalid contract provided to constructPromptBasedOnContract: contract.title is missing"
+      );
+    }
+
     const recentContext = await this.getRecentConversationContext(
       contract._id.toString()
     );
