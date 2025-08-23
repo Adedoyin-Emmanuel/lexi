@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { logger, response } from "./../../utils";
 import { Document } from "./../../models/document";
 import { getContractSchema } from "./contracts.dto";
-import { redisService } from "./../../services/redis";
+import { redisService, PDFGenerator } from "./../../services";
 import { documentRepository } from "./../../models/repositories";
 
 export default class ContractController {
@@ -109,5 +109,27 @@ export default class ContractController {
     );
 
     return response(res, 200, "Contract fetched successfully", dataToSend);
+  }
+
+  static async downloadSummary(req: Request, res: Response) {
+    try {
+      const currentUser = req.user;
+      const contractId = req.params.id;
+
+      const contract = await documentRepository.getContractById(
+        contractId,
+        currentUser.userId.toString()
+      );
+
+      if (!contract) {
+        return response(res, 404, "Contract not found", {});
+      }
+
+      const pdfGenerator = new PDFGenerator();
+      pdfGenerator.generateContractPDF(contract, res);
+    } catch (error) {
+      logger("Error generating PDF:", error);
+      return response(res, 500, "Error generating PDF", {});
+    }
   }
 }

@@ -9,4 +9,6 @@ router.get("/", [useAuth], ContractController.getContracts);
 
 router.get("/:id", [useAuth], ContractController.getContractById);
 
+router.get("/:id/download", [useAuth], ContractController.downloadSummary);
+
 export default router;
