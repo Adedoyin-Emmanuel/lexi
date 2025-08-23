@@ -1,4 +1,4 @@
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["http://localhost:3000", "https://uselexi.xyz"];
 
 const corsOptions = {
   origin: (origin: any, callback: any) => {
