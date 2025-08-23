@@ -1,7 +1,7 @@
 "use client";
 
-import { MessageCircle, X } from "lucide-react";
 import { useState } from "react";
+import { MessageCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -38,9 +38,9 @@ export const ContractChatFab: React.FC<ContractChatFabProps> = ({
             <Button
               size="lg"
               onClick={() => setIsOpen(true)}
-              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+              className="h-14 w-14 cursor-pointer rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
             >
-              <MessageCircle className="h-6 w-6" />
+              <MessageCircle className="h-6 w-6" strokeWidth={1.5} />
             </Button>
           </motion.div>
         )}

@@ -10,7 +10,7 @@ import { useSocket } from "@/hooks/use-socket";
 import { Button } from "@/components/ui/button";
 import { SOCKET_EVENTS } from "@/hooks/types/socket";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ChatMessage {
   id: number;
@@ -181,13 +181,20 @@ export const ContractChat = ({
 
   const ChatInterface = useCallback(
     () => (
-      <Card className="h-[500px] max-w-md mx-auto flex flex-col">
-        <CardHeader className="pb-3 flex-shrink-0">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <MessageCircle className="h-5 w-5" strokeWidth={1.5} />
-            Contract Assistant
-          </CardTitle>
-        </CardHeader>
+      <Card className="h-[600px] max-w-md mx-auto flex flex-col">
+        <div className="flex items-center justify-between p-4 pb-3 border-b border-gray-200">
+          <div className="flex items-center gap-2">
+            <h3 className="text-[17px] font-semibold">Contract Assistant</h3>
+          </div>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => setIsChatOpen(false)}
+            className="h-6 w-6 p-0 rounded-full cursor-pointer bg-gray-100 text-gray-600 hover:text-white"
+          >
+            <X className="h-3 w-3" strokeWidth={1.5} />
+          </Button>
+        </div>
         <CardContent className="flex-1 flex flex-col p-4 min-h-0">
           <ScrollArea
             ref={scrollAreaRef}
@@ -274,7 +281,48 @@ export const ContractChat = ({
   return (
     <>
       <div className="hidden md:block">
-        <div className="fixed bottom-6 right-6 z-50">{ChatInterface()}</div>
+        <AnimatePresence>
+          {!isChatOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              transition={{
+                duration: 0.3,
+                ease: "easeInOut",
+                type: "spring",
+                stiffness: 300,
+                damping: 25,
+              }}
+              className="fixed bottom-6 right-6 z-50"
+            >
+              <Button
+                size="lg"
+                onClick={() => setIsChatOpen(true)}
+                className="h-14 w-14 cursor-pointer rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+              >
+                <MessageCircle className="h-6 w-6" strokeWidth={1.5} />
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {isChatOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{
+                duration: 0.3,
+                ease: "easeInOut",
+              }}
+              className="fixed bottom-6 right-6 z-50"
+            >
+              {ChatInterface()}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="md:hidden">

@@ -6,11 +6,10 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
 import {
-  ContractChat,
   ContractHeader,
   ContractChatFab,
-  ContractDocumentPreview,
   ContractInsightsPanel,
+  ContractDocumentPreview,
 } from "./components";
 import {
   ResizablePanel,
@@ -142,7 +141,10 @@ const ContractDetail = () => {
         </div>
 
         <div className="border-t border-gray-200">
-          <ContractChat contractName={contract.title} contractId={contractId} />
+          <ContractChatFab
+            contractName={contract.title}
+            contractId={contractId}
+          />
         </div>
       </div>
     );
