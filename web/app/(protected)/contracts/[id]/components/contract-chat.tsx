@@ -1,16 +1,16 @@
 "use client";
 
-import { MessageCircle, Send, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { MessageCircle, Send, X, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 
+import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
+import { useSocket } from "@/hooks/use-socket";
 import { Button } from "@/components/ui/button";
+import { SOCKET_EVENTS } from "@/hooks/types/socket";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSocket } from "@/hooks/use-socket";
-import { useAuth } from "@/hooks/use-auth";
-import { SOCKET_EVENTS } from "@/hooks/types/socket";
 
 interface ChatMessage {
   id: number;
@@ -60,14 +60,11 @@ export const ContractChat = ({
     };
   }, [isChatOpen]);
 
-  // Socket event listeners
   useEffect(() => {
     if (!socket) return;
 
-    // Join the contract room
     socket.emit(SOCKET_EVENTS.CHAT_MESSAGE_JOIN_ROOM, contractId);
 
-    // Listen for AI responses
     const handleAIResponse = (data: { message: string }) => {
       const botResponse: ChatMessage = {
         id: Date.now() + 1,
@@ -159,7 +156,6 @@ export const ContractChat = ({
     setChatHistory((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Send message to server via socket
     socket.emit(SOCKET_EVENTS.CHAT_MESSAGE_USER_MESSAGE, {
       message: chatMessage,
       contractId: contractId,
@@ -264,6 +260,7 @@ export const ContractChat = ({
     [
       chatHistory,
       chatMessage,
+      isLoading,
       handleSendMessage,
       handleKeyPress,
       handleInputChange,

@@ -6,11 +6,10 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
 import {
-  ContractTabs,
   ContractChat,
   ContractHeader,
   ContractChatFab,
-  ContractOverview,
+  ContractDocumentPreview,
   ContractInsightsPanel,
 } from "./components";
 import {
@@ -85,41 +84,18 @@ const ContractDetail = () => {
             <p className="text-muted-foreground text-center max-w-md mb-4">
               Failed to load contract details. Please try again.
             </p>
-            <Button onClick={() => window.location.reload()}>
-              Try Again
-            </Button>
+            <Button onClick={() => window.location.reload()}>Try Again</Button>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  const contractOverviewData = {
-    value: (contract.summary?.value as string) || "",
-    endDate: (contract.summary?.duration as string) || "",
-    parties: (contract.summary?.parties as string[]) || [],
-    startDate: (contract.summary?.effectiveDate as string) || "",
-    uploadedAt: new Date().toISOString().split("T")[0],
-    contractType: (contract.summary?.type as string) || "Contract",
-  };
-
-  const contractTabsData = {
-    summary:
-      (contract.summary?.overviewSummary as string) ||
-      (contract.summary?.plainEnglishSummary as string) ||
-      "",
-    keyTerms:
-      contract.obligations?.map(
-        (ob: Record<string, unknown>) => ob.title as string
-      ) || [],
-    risks:
-      contract.risks?.map(
-        (risk: Record<string, unknown>) => risk.description as string
-      ) || [],
-    obligations:
-      contract.obligations?.map(
-        (ob: Record<string, unknown>) => ob.userFriendlyExplanation as string
-      ) || [],
+  const contractDocumentData = {
+    title: contract.title,
+    summary: contract.summary,
+    structuredContract: contract.structuredContract,
+    status: contract.status,
   };
 
   if (isMobile) {
@@ -152,9 +128,8 @@ const ContractDetail = () => {
 
         <div className="flex-1 overflow-hidden">
           {activeView === "document" ? (
-            <div className="h-full p-4 space-y-6">
-              <ContractOverview contract={contractOverviewData} />
-              <ContractTabs contract={contractTabsData} />
+            <div className="h-full p-0 space-y-6">
+              <ContractDocumentPreview contract={contractDocumentData} />
             </div>
           ) : (
             <div className="h-full">
@@ -180,9 +155,8 @@ const ContractDetail = () => {
       <div className="w-full overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={40} minSize={30}>
-            <div className="h-full overflow-hidden p-4 space-y-6">
-              <ContractOverview contract={contractOverviewData} />
-              <ContractTabs contract={contractTabsData} />
+            <div className="h-full overflow-hidden p-0 space-y-6">
+              <ContractDocumentPreview contract={contractDocumentData} />
             </div>
           </ResizablePanel>
 

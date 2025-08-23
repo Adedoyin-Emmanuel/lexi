@@ -4,37 +4,36 @@ import React, { useState } from "react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 
-// Import the card components from analyze page
-import { SummaryCard } from "../../../analyze/components/summary-card";
-import { ClauseCard } from "../../../analyze/components/clause-card";
 import { RiskCard } from "../../../analyze/components/risk-card";
+import { ClauseCard } from "../../../analyze/components/clause-card";
+import { SummaryCard } from "../../../analyze/components/summary-card";
 import { ObligationCard } from "../../../analyze/components/obligation-card";
 import { NegotiationCard } from "../../../analyze/components/negotiation-card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ContractData {
   id: string;
   title: string;
   status: string;
+  isFlagged: boolean;
+  failureReason?: string;
+  hasAbstainWarnings: boolean;
   summary: Record<string, unknown>;
   risks: Record<string, unknown>[];
-  obligations: Record<string, unknown>[];
-  suggestions: Record<string, unknown>[];
-  clauses: Record<string, unknown>[];
   chats: Record<string, unknown>[];
-  isFlagged: boolean;
-  hasAbstainWarnings: boolean;
-  failureReason?: string;
+  clauses: Record<string, unknown>[];
+  suggestions: Record<string, unknown>[];
+  obligations: Record<string, unknown>[];
   structuredContract: Record<string, unknown>;
   validationMetadata: Record<string, unknown>;
   extractionMetadata: Record<string, unknown>;
 }
 
 interface ContractInsightsPanelProps {
-  contract: ContractData;
   isLoading: boolean;
+  contract: ContractData;
   onClauseSelect?: (clauseId: string) => void;
   onViewInDocument?: (clauseId: string) => void;
 }
@@ -63,7 +62,6 @@ export const ContractInsightsPanel: React.FC<ContractInsightsPanelProps> = ({
     );
   }
 
-  // Convert contract data to match analyze page format
   const convertClauseToFrontend = (clause: Record<string, unknown>) => ({
     id: clause.title as string,
     title: clause.title as string,

@@ -31,9 +31,7 @@ export const ContractHeader = ({ contractName }: ContractHeaderProps) => {
           <h1 className="text-base sm:text-lg md:text-[23px] font-bold tracking-tight break-words">
             {contractName}
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Contract Details & Analysis
-          </p>
+          <br />
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <Button
