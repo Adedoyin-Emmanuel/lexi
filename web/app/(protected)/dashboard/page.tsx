@@ -1,12 +1,13 @@
 "use client";
 
 import {
-  Plus,
   Clock,
   Upload,
   FileText,
   CheckCircle,
   AlertTriangle,
+  Plus,
+  RefreshCw,
 } from "lucide-react";
 import dayjs from "dayjs";
 import Link from "next/link";
@@ -17,7 +18,13 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Axios } from "@/app/config/axios";
 import { Button } from "@/components/ui/button";
 import { DashboardSkeleton } from "./components/loading-skeleton";
-import { StatsCard, ContractCard, FloatingActionButton } from "./components";
+import { 
+  StatsCard, 
+  ContractCard, 
+  FloatingActionButton,
+  EmptyContractsState,
+  EmptyDashboardState 
+} from "./components";
 
 dayjs.extend(relativeTime);
 
@@ -45,17 +52,38 @@ interface ApiResponse<T> {
 }
 
 const fetchDashboardStats = async (): Promise<DashboardStats> => {
-  const response = await Axios.get<ApiResponse<DashboardStats>>(
-    "/metrics/overview"
-  );
-  return response.data.data;
+  try {
+    const response = await Axios.get<ApiResponse<DashboardStats>>(
+      "/metrics/overview"
+    );
+    return response.data.data;
+  } catch (error: any) {
+    // Handle 404 responses for empty data
+    if (error.response?.status === 404) {
+      return {
+        totalContracts: 0,
+        needsAttention: 0,
+        inProcessing: 0,
+        contractsPassed: 0,
+      };
+    }
+    throw error;
+  }
 };
 
 const fetchRecentContracts = async (): Promise<RecentContract[]> => {
-  const response = await Axios.get<ApiResponse<RecentContract[]>>(
-    "/metrics/recent-contracts"
-  );
-  return response.data.data;
+  try {
+    const response = await Axios.get<ApiResponse<RecentContract[]>>(
+      "/metrics/recent-contracts"
+    );
+    return response.data.data;
+  } catch (error: any) {
+    // Handle 404 responses for empty data
+    if (error.response?.status === 404) {
+      return [];
+    }
+    throw error;
+  }
 };
 
 const formatDate = (dateString: string): string => {
@@ -125,8 +153,57 @@ export default function Dashboard() {
       <div className="min-h-screen w-full flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
-          <p className="text-muted-foreground">Failed to load dashboard data</p>
+          <p className="text-muted-foreground mb-4">Failed to load dashboard data</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            variant="outline"
+            className="gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Try Again
+          </Button>
         </div>
+      </div>
+    );
+  }
+
+  // Check if this is a completely empty dashboard (no contracts at all)
+  const hasNoContracts = !recentContracts || recentContracts.length === 0;
+  const hasNoStats = !dashboardStats || 
+    (dashboardStats.totalContracts === 0 && 
+     dashboardStats.needsAttention === 0 && 
+     dashboardStats.inProcessing === 0 && 
+     dashboardStats.contractsPassed === 0);
+
+  // If completely empty, show welcome state
+  if (hasNoContracts && hasNoStats) {
+    return (
+      <div className="min-h-screen w-full">
+        <div className="w-full space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-between"
+          >
+            <div></div>
+            <Link href="/analyze">
+              <Button size="lg" className="gap-2 hidden md:flex cursor-pointer">
+                <Plus className="h-4 w-4" strokeWidth={1.5} />
+                Analyze New Contract
+              </Button>
+            </Link>
+          </motion.div>
+
+          <EmptyDashboardState delay={0.2} />
+        </div>
+
+        <FloatingActionButton
+          className="block md:hidden"
+          onClick={() => {
+            console.log("Analyze new contract clicked");
+          }}
+        />
       </div>
     );
   }
@@ -162,6 +239,31 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* Welcome message for users with some data */}
+        {dashboardStats && dashboardStats.totalContracts > 0 && dashboardStats.totalContracts <= 3 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4"
+          >
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                  Great start! 🎉
+                </h3>
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  You've uploaded {dashboardStats.totalContracts} contract{dashboardStats.totalContracts !== 1 ? 's' : ''}. 
+                  Keep uploading more contracts to get better insights and track your legal document portfolio.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         <br />
 
         <motion.div
@@ -187,17 +289,21 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-            {recentContracts?.map((contract, index) => (
-              <ContractCard
-                key={contract.id}
-                id={contract.id}
-                name={contract.title}
-                uploadedAt={formatDate(contract.createdAt)}
-                status={getStatusFromRiskScore(contract.riskScore)}
-                confidenceScore={contract.confidenceScore}
-                delay={0.5 + index * 0.1}
-              />
-            ))}
+            {hasNoContracts ? (
+              <EmptyContractsState delay={0.5} />
+            ) : (
+              recentContracts?.map((contract, index) => (
+                <ContractCard
+                  key={contract.id}
+                  id={contract.id}
+                  name={contract.title}
+                  uploadedAt={formatDate(contract.createdAt)}
+                  status={getStatusFromRiskScore(contract.riskScore)}
+                  confidenceScore={contract.confidenceScore}
+                  delay={0.5 + index * 0.1}
+                />
+              ))
+            )}
           </div>
         </motion.div>
 

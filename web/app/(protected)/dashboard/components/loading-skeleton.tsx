@@ -17,7 +17,7 @@ export const StatsCardSkeleton = () => (
 
 export const ContractCardSkeleton = () => (
   <Card className="h-full">
-    <CardContent className="p-4">
+    <CardContent className="p-0">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 mb-2">
@@ -36,7 +36,7 @@ export const ContractCardSkeleton = () => (
 );
 
 export const DashboardSkeleton = () => (
-  <div className="min-h-screen bg-background p-6">
+  <div className="min-h-screen bg-background p-0">
     <div className="max-w-7xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
         <div>
