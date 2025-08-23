@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 
+import Logo from "@/components/logo";
 import { Axios } from "@/app/config/axios";
 import { Button } from "@/components/ui/button";
 
@@ -40,6 +41,10 @@ const Logout = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className=" p-6 space-y-6">
+          <div className="flex justify-center">
+            <Logo />
+          </div>
+
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-semibold text-gray-900">
               Sign out of Lexi
@@ -55,7 +60,7 @@ const Logout = () => {
               variant="outline"
               onClick={handleCancel}
               disabled={logoutMutation.isPending}
-              className="flex-1 cursor-pointer hover:bg-gray-100 hover:text-black text-black font-medium"
+              className="flex-1 cursor-pointer border border-gray-200 hover:bg-gray-100 hover:text-black text-black font-medium"
             >
               Cancel
             </Button>
