@@ -1,20 +1,18 @@
 "use client";
 
+import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import { User, Building2, Palette, Loader2 } from "lucide-react";
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/hooks/use-auth";
-import { Axios } from "@/app/config/axios";
-import toast from "react-hot-toast";
-
-import { SettingsHeader } from "./settings-header";
-import { ProfileTab } from "./profile-tab";
 import { RoleTab } from "./role-tab";
-import { SpecialitiesTab } from "./specialities-tab";
 import { SaveButton } from "./save-button";
+import { Axios } from "@/app/config/axios";
+import { ProfileTab } from "./profile-tab";
+import { useAuth } from "@/hooks/use-auth";
 import type { SettingsData } from "./types";
+import { SpecialitiesTab } from "./specialities-tab";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function Settings() {
   const { user, isLoading: authLoading } = useAuth();
@@ -80,24 +78,28 @@ export function Settings() {
       className="w-full"
     >
       <div className="w-full py-6 md:py-8">
-        <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <SettingsHeader />
-
+        <div className="max-w-4xl">
           <Tabs defaultValue="profile" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3 max-w-md">
-              <TabsTrigger value="profile" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
+              <TabsTrigger
+                value="profile"
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <User className="h-4 w-4" strokeWidth={1.5} />
                 Profile
               </TabsTrigger>
-              <TabsTrigger value="role" className="flex items-center gap-2">
-                <Building2 className="h-4 w-4" />
+              <TabsTrigger
+                value="role"
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <Building2 className="h-4 w-4" strokeWidth={1.5} />
                 Role
               </TabsTrigger>
               <TabsTrigger
                 value="specialities"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
               >
-                <Palette className="h-4 w-4" />
+                <Palette className="h-4 w-4" strokeWidth={1.5} />
                 Specialities
               </TabsTrigger>
             </TabsList>

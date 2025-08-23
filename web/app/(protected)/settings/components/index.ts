@@ -1,7 +1,6 @@
-export { Settings } from "./settings";
-export { SettingsHeader } from "./settings-header";
-export { ProfileTab } from "./profile-tab";
 export { RoleTab } from "./role-tab";
-export { SpecialitiesTab } from "./specialities-tab";
+export { Settings } from "./settings";
 export { SaveButton } from "./save-button";
 export type { SettingsData } from "./types";
+export { ProfileTab } from "./profile-tab";
+export { SpecialitiesTab } from "./specialities-tab";

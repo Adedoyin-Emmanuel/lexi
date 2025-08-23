@@ -2,22 +2,23 @@
 
 import { motion } from "framer-motion";
 import { Palette } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import {
   Card,
+  CardTitle,
+  CardHeader,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SettingsData {
   displayName: string;
-  role: "freelancer" | "creator";
   specialities: string[];
+  role: "freelancer" | "creator";
 }
 
 interface SpecialitiesTabProps {
@@ -75,7 +76,7 @@ export function SpecialitiesTab({ data, setData }: SpecialitiesTabProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Palette className="h-5 w-5" />
+            <Palette className="h-5 w-5" strokeWidth={1.5} />
             Your Specialities
           </CardTitle>
           <CardDescription>

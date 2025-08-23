@@ -1,20 +1,21 @@
 "use client";
 
 import { User } from "lucide-react";
-import { Input } from "@/components/ui/input";
+
 import {
   Card,
+  CardTitle,
+  CardHeader,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { TabsContent } from "@/components/ui/tabs";
 
 interface SettingsData {
   displayName: string;
-  role: "freelancer" | "creator";
   specialities: string[];
+  role: "freelancer" | "creator";
 }
 
 interface ProfileTabProps {
@@ -28,7 +29,7 @@ export function ProfileTab({ data, setData }: ProfileTabProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+            <User className="h-5 w-5" strokeWidth={1.5} />
             Profile Information
           </CardTitle>
           <CardDescription>

@@ -1,19 +1,20 @@
 "use client";
 
 import { User, Briefcase, Building2 } from "lucide-react";
+
 import {
   Card,
+  CardTitle,
+  CardHeader,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 
 interface SettingsData {
   displayName: string;
-  role: "freelancer" | "creator";
   specialities: string[];
+  role: "freelancer" | "creator";
 }
 
 interface RoleTabProps {
@@ -31,7 +32,7 @@ export function RoleTab({ data, setData }: RoleTabProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
+            <Building2 className="h-5 w-5" strokeWidth={1.5} />
             Professional Role
           </CardTitle>
           <CardDescription>
@@ -44,7 +45,7 @@ export function RoleTab({ data, setData }: RoleTabProps) {
               className={`relative p-6 rounded-xl border-2 transition-all duration-300 cursor-pointer group ${
                 data.role === "freelancer"
                   ? "border-primary bg-primary/5 shadow-lg"
-                  : "border-border hover:border-primary/50 hover:bg-muted/50"
+                  : "hover:border-primary/50 hover:bg-muted/50 border-gray-200"
               }`}
               onClick={() => handleRoleSelect("freelancer")}
             >
@@ -71,7 +72,7 @@ export function RoleTab({ data, setData }: RoleTabProps) {
               className={`relative p-6 rounded-xl border-2 transition-all duration-300 cursor-pointer group ${
                 data.role === "creator"
                   ? "border-primary bg-primary/5 shadow-lg"
-                  : "border-border hover:border-primary/50 hover:bg-muted/50"
+                  : "hover:border-primary/50 hover:bg-muted/50 border-gray-200"
               }`}
               onClick={() => handleRoleSelect("creator")}
             >

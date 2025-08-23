@@ -1,14 +1,14 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { Save, Loader2, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
+import { Button } from "@/components/ui/button";
 interface SaveButtonProps {
-  isFormValid: boolean;
   isSaving: boolean;
-  showSuccess: boolean;
   onSave: () => void;
+  isFormValid: boolean;
+  showSuccess: boolean;
 }
 
 export function SaveButton({
@@ -22,7 +22,7 @@ export function SaveButton({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
-      className="pt-6 border-t"
+      className="pt-6"
     >
       <div className="flex justify-between items-center">
         <div className="text-sm text-muted-foreground">
@@ -55,7 +55,7 @@ export function SaveButton({
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="flex items-center"
               >
-                <Check className="h-4 w-4 mr-2" />
+                <Check className="h-4 w-4 mr-2" strokeWidth={1.5} />
                 Saved!
               </motion.div>
             ) : (
@@ -66,7 +66,7 @@ export function SaveButton({
                 exit={{ opacity: 0 }}
                 className="flex items-center"
               >
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="h-4 w-4 mr-2" strokeWidth={1.5} />
                 Save Changes
               </motion.div>
             )}
