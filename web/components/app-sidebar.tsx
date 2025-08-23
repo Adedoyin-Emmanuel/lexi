@@ -51,7 +51,7 @@ export const AppSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-[3px] mb-2">
