@@ -4,7 +4,7 @@ dotenv.config();
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
-import { IGoogleUser } from "features/auth/types";
+import { IGoogleUser } from "./../features/auth/types";
 import { GOOGLE_CALLBACK_URL } from "../constants/app";
 
 passport.use(

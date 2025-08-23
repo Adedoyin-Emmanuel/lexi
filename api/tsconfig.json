@@ -30,5 +30,5 @@
     "baseUrl": "./",
     "outDir": "./dist"
   },
-  "include": ["**/*.ts", "setup.js"]
+  "include": ["**/*.ts"]
 }

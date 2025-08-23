@@ -5,7 +5,7 @@ import logger from "./logger";
 import { SOCKET_EVENTS } from "../types/socket";
 import { IS_PRODUCTION } from "../constants/app";
 import chatHandler from "../features/chat/handler";
-import { IIncomingChatPayload } from "features/chat/types";
+import { IIncomingChatPayload } from "./../features/chat/types";
 
 let io: IOServer;
 
