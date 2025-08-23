@@ -18,6 +18,8 @@ export enum SOCKET_EVENTS {
   DOCUMENT_ANALYSIS_STRUCTURED = "document-analysis-structured",
 
   DOCUMENT_ANALYSIS_DETAILS_EXTRACTED = "document-analysis-details-extracted",
+
+  CHAT_MESSAGE_AI_RESPONSE = "chat-message-ai-response",
 }
 
 export interface IDocumentAnalysisStartedPayload {

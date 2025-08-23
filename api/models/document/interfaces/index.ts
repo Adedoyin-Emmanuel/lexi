@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import {
   RISK_LEVEL,
   SUGGESTION_TYPE,
@@ -15,6 +16,15 @@ export enum CONTRACT_TYPE {
   NDA = "NDA",
   ICA = "ICA",
   LICENSE_AGREEMENT = "License Agreement",
+}
+
+export interface IChat {
+  id: string;
+  createdAt: Date;
+  content: string;
+  userId: Types.ObjectId;
+  role: "user" | "assistant";
+  documentId: Types.ObjectId;
 }
 
 export interface IExtractionMetadata {

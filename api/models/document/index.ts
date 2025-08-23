@@ -7,6 +7,7 @@ import {
 import { Types } from "mongoose";
 
 import {
+  IChat,
   IRisk,
   IClause,
   ISummary,
@@ -17,7 +18,6 @@ import {
   IExtractionMetadata,
 } from "./interfaces";
 import { User } from "../user";
-import { Chat } from "../chat";
 import { IStructuredContract } from "../../jobs/analyze/pipeline/structuring/types";
 
 @modelOptions({
@@ -68,7 +68,7 @@ class Document {
   suggestions?: ISuggestion[];
 
   @prop({ required: false, default: [] })
-  chats?: Ref<Chat>[];
+  chats?: IChat[];
 
   @prop({ default: false })
   hasAbstainWarnings: boolean;
