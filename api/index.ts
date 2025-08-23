@@ -20,6 +20,7 @@ import userRouter from "./features/user/route";
 import JobsConfig from "./jobs/config/init-jobs";
 import analyzeRouter from "./features/analyze/route";
 import metricsRouter from "./features/metrics/route";
+import contractsRouter from "./features/contracts/route";
 
 import {
   logger,
@@ -94,6 +95,7 @@ class ApiServer {
     this.app.use(`${apiPath}/user`, userRouter);
     this.app.use(`${apiPath}/analyze`, analyzeRouter);
     this.app.use(`${apiPath}/metrics`, metricsRouter);
+    this.app.use(`${apiPath}/contract`, contractsRouter);
   }
 
   private setupErrorHandlers(): void {
