@@ -27,7 +27,6 @@ export default class ChatHandler {
       contract._id = new Types.ObjectId(contract._id);
     }
 
-    // Save user message to database first
     await documentRepository.update(new Types.ObjectId(contractId), {
       $push: {
         chats: {
@@ -43,7 +42,6 @@ export default class ChatHandler {
       message: aiResponse,
     });
 
-    // Save AI response to database
     await documentRepository.update(new Types.ObjectId(contractId), {
       $push: {
         chats: {
