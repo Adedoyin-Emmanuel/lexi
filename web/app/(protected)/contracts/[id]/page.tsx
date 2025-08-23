@@ -29,20 +29,20 @@ interface ChatMessage {
 
 interface ContractData {
   id: string;
-  title: string;
-  status: string;
-  isFlagged: boolean;
+  title?: string;
+  status?: string;
+  isFlagged?: boolean;
   failureReason?: string;
-  hasAbstainWarnings: boolean;
-  summary: Record<string, unknown>;
-  risks: Record<string, unknown>[];
-  chats: ChatMessage[];
-  clauses: Record<string, unknown>[];
-  obligations: Record<string, unknown>[];
-  suggestions: Record<string, unknown>[];
-  structuredContract: Record<string, unknown>;
-  validationMetadata: Record<string, unknown>;
-  extractionMetadata: Record<string, unknown>;
+  hasAbstainWarnings?: boolean;
+  summary?: Record<string, unknown>;
+  risks?: Record<string, unknown>[];
+  chats?: ChatMessage[];
+  clauses?: Record<string, unknown>[];
+  obligations?: Record<string, unknown>[];
+  suggestions?: Record<string, unknown>[];
+  structuredContract?: Record<string, unknown>;
+  validationMetadata?: Record<string, unknown>;
+  extractionMetadata?: Record<string, unknown>;
 }
 
 const ContractDetail = () => {
@@ -99,16 +99,36 @@ const ContractDetail = () => {
   }
 
   const contractDocumentData = {
-    title: contract.title,
-    summary: contract.summary,
-    structuredContract: contract.structuredContract,
-    status: contract.status,
+    title: contract.title || "Untitled Contract",
+    summary: contract.summary || {},
+    structuredContract: contract.structuredContract || {},
+    status: contract.status || "Unknown",
+  };
+
+  const contractTitle = contract.title || "Untitled Contract";
+
+  const safeContractData = {
+    id: contract.id,
+    title: contractTitle,
+    status: contract.status || "Unknown",
+    isFlagged: contract.isFlagged || false,
+    failureReason: contract.failureReason,
+    hasAbstainWarnings: contract.hasAbstainWarnings || false,
+    summary: contract.summary || {},
+    risks: contract.risks || [],
+    chats: contract.chats || [],
+    clauses: contract.clauses || [],
+    obligations: contract.obligations || [],
+    suggestions: contract.suggestions || [],
+    structuredContract: contract.structuredContract || {},
+    validationMetadata: contract.validationMetadata || {},
+    extractionMetadata: contract.extractionMetadata || {},
   };
 
   if (isMobile) {
     return (
       <div className="w-full flex flex-col overflow-hidden">
-        <ContractHeader contractName={contract.title} contractId={contractId} />
+        <ContractHeader contractName={contractTitle} contractId={contractId} />
 
         <div className="flex border-b border-border bg-background">
           <button
@@ -141,7 +161,7 @@ const ContractDetail = () => {
           ) : (
             <div className="h-full">
               <ContractInsightsPanel
-                contract={contract}
+                contract={safeContractData}
                 isLoading={isLoading}
               />
             </div>
@@ -150,9 +170,9 @@ const ContractDetail = () => {
 
         <div className="border-t border-gray-200">
           <ContractChatFab
-            contractName={contract.title}
+            contractName={contractTitle}
             contractId={contractId}
-            chats={contract.chats}
+            chats={contract.chats || []}
           />
         </div>
       </div>
@@ -161,10 +181,7 @@ const ContractDetail = () => {
 
   return (
     <div className="w-full flex flex-col overflow-hidden">
-      <ContractHeader
-        contractName={contract.title}
-        contractId={contractId}
-      />
+      <ContractHeader contractName={contractTitle} contractId={contractId} />
 
       <div className="w-full overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
@@ -179,7 +196,7 @@ const ContractDetail = () => {
           <ResizablePanel defaultSize={60} minSize={25}>
             <div className="h-full overflow-hidden">
               <ContractInsightsPanel
-                contract={contract}
+                contract={safeContractData}
                 isLoading={isLoading}
               />
             </div>
@@ -188,9 +205,9 @@ const ContractDetail = () => {
       </div>
 
       <ContractChatFab
-        contractName={contract.title}
+        contractName={contractTitle}
         contractId={contractId}
-        chats={contract.chats}
+        chats={contract.chats || []}
       />
     </div>
   );

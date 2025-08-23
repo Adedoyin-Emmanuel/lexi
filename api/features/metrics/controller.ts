@@ -114,10 +114,10 @@ export default class MetricsController {
   private static formatRecentContracts(documents: Document[]) {
     return documents.map((document) => ({
       id: document._id,
-      title: document.title,
+      title: document?.title,
       createdAt: (document as any).createdAt,
-      riskScore: document.summary.overallRiskScore,
-      confidenceScore: document.summary.overallConfidenceScore,
+      riskScore: document?.summary?.overallRiskScore,
+      confidenceScore: document?.summary?.overallConfidenceScore,
     }));
   }
 }

@@ -86,19 +86,19 @@ export default class ContractController {
       hasAbstainWarnings: false,
     };
 
-    dataToSend.title = contract.title;
-    dataToSend.risks = contract.risks;
-    dataToSend.chats = contract.chats;
-    dataToSend.status = contract.status;
-    dataToSend.summary = contract.summary;
-    dataToSend.clauses = contract.clauses;
-    dataToSend.isFlagged = contract.isFlagged;
+    dataToSend.title = contract?.title;
+    dataToSend.risks = contract?.risks;
+    dataToSend.chats = contract?.chats;
+    dataToSend.status = contract?.status;
+    dataToSend.summary = contract?.summary;
+    dataToSend.clauses = contract?.clauses;
+    dataToSend.isFlagged = contract?.isFlagged;
 
-    dataToSend.suggestions = contract.suggestions;
-    dataToSend.obligations = contract.obligations;
-    dataToSend.failureReason = contract.failureReason;
-    dataToSend.structuredContract = contract.structuredContract;
-    dataToSend.validationMetadata = contract.validationMetadata;
+    dataToSend.suggestions = contract?.suggestions;
+    dataToSend.obligations = contract?.obligations;
+    dataToSend.failureReason = contract?.failureReason;
+    dataToSend.structuredContract = contract?.structuredContract;
+    dataToSend.validationMetadata = contract?.validationMetadata;
     dataToSend.extractionMetadata = contract.extractionMetadata;
     dataToSend.hasAbstainWarnings = contract.hasAbstainWarnings;
 

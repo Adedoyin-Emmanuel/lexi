@@ -11,17 +11,16 @@ import {
 import { ContractDocument } from "../page";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { downloadContract } from "@/lib/download-contract";
 
 interface AnalyzeToolbarProps {
   isAnalyzing: boolean;
   onReanalyze: () => void;
   document: ContractDocument;
-  onExport: (format: "pdf" | "word" | "markdown") => void;
 }
 
 export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
   document,
-  onExport,
   onReanalyze,
   isAnalyzing,
 }) => {
@@ -104,27 +103,15 @@ export const AnalyzeToolbar: React.FC<AnalyzeToolbarProps> = ({
                 className="cursor-pointer  border !border-gray-300 text-gray-800"
               >
                 <Download className="w-4 h-4 mr-2" strokeWidth={1.5} />
-                Export
+                Download
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => onExport("pdf")}
+                onClick={() => downloadContract(document.id)}
                 className="cursor-pointer"
               >
-                Export as PDF
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onExport("word")}
-                className="cursor-pointer"
-              >
-                Export as Word
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onExport("markdown")}
-                className="cursor-pointer"
-              >
-                Export as Markdown
+                Download as PDF
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

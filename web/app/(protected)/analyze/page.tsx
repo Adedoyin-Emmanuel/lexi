@@ -178,26 +178,32 @@ const Analyze = () => {
     };
 
     socket.on(SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED, handleAnalysisStarted);
+
     socket.on(
       SOCKET_EVENTS.DOCUMENT_ANALYSIS_VALIDATED,
       handleAnalysisValidated
     );
+
     socket.on(
       SOCKET_EVENTS.DOCUMENT_ANALYSIS_STRUCTURED,
       handleAnalysisStructured
     );
+
     socket.on(
       SOCKET_EVENTS.DOCUMENT_ANALYSIS_SUMMARIZED,
       handleAnalysisSummarized
     );
+
     socket.on(
       SOCKET_EVENTS.DOCUMENT_ANALYSIS_DETAILS_EXTRACTED,
       handleAnalysisDetailsExtracted
     );
+
     socket.on(
       SOCKET_EVENTS.DOCUMENT_ANALYSIS_COMPLETED,
       handleAnalysisCompleted
     );
+
     socket.on(SOCKET_EVENTS.DOCUMENT_ANALYSIS_FAILED, handleAnalysisFailed);
 
     return () => {
@@ -205,26 +211,32 @@ const Analyze = () => {
         SOCKET_EVENTS.DOCUMENT_ANALYSIS_STARTED,
         handleAnalysisStarted
       );
+
       socket.off(
         SOCKET_EVENTS.DOCUMENT_ANALYSIS_VALIDATED,
         handleAnalysisValidated
       );
+
       socket.off(
         SOCKET_EVENTS.DOCUMENT_ANALYSIS_STRUCTURED,
         handleAnalysisStructured
       );
+
       socket.off(
         SOCKET_EVENTS.DOCUMENT_ANALYSIS_SUMMARIZED,
         handleAnalysisSummarized
       );
+
       socket.off(
         SOCKET_EVENTS.DOCUMENT_ANALYSIS_DETAILS_EXTRACTED,
         handleAnalysisDetailsExtracted
       );
+
       socket.off(
         SOCKET_EVENTS.DOCUMENT_ANALYSIS_COMPLETED,
         handleAnalysisCompleted
       );
+
       socket.off(SOCKET_EVENTS.DOCUMENT_ANALYSIS_FAILED, handleAnalysisFailed);
     };
   }, [socket]);
@@ -331,10 +343,6 @@ const Analyze = () => {
     setDocument(null);
   };
 
-  const handleExport = (format: "pdf" | "word" | "markdown") => {
-    console.log(`Exporting as ${format}`);
-  };
-
   if (!document) {
     return (
       <div className="w-full flex flex-col overflow-hidden">
@@ -350,7 +358,6 @@ const Analyze = () => {
       <div className="w-full flex flex-col overflow-hidden">
         <AnalyzeToolbar
           document={document}
-          onExport={handleExport}
           isAnalyzing={analysisState.isAnalyzing}
           onReanalyze={handleReanalyze}
         />
@@ -365,7 +372,7 @@ const Analyze = () => {
             onClick={() => setActiveView("document")}
             className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
               activeView === "document"
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                ? "text-primary border-b-2 border-primary bg-blue-50"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -375,7 +382,7 @@ const Analyze = () => {
             onClick={() => setActiveView("insights")}
             className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
               activeView === "insights"
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                ? "text-primary border-b-2 border-primary bg-blue-50"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -415,7 +422,6 @@ const Analyze = () => {
     <div className="w-full flex flex-col overflow-hidden">
       <AnalyzeToolbar
         document={document}
-        onExport={handleExport}
         isAnalyzing={analysisState.isAnalyzing}
         onReanalyze={handleReanalyze}
       />
