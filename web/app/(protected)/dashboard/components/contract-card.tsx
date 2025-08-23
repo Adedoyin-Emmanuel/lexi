@@ -1,8 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { MoreVertical, Download, Eye } from "lucide-react";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuItem,
@@ -12,11 +18,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CircularConfidence } from "../../components/circular-confidence";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ContractCardProps {
   id: string;
@@ -96,9 +97,11 @@ export const ContractCard = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="cursor-pointer">
-                <Eye className="mr-2 h-4 w-4 hover:text-white" />
-                View
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href={`/contracts/${id}`}>
+                  <Eye className="mr-2 h-4 w-4 hover:text-white" />
+                  View
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 <Download className="mr-2 h-4 w-4 hover:text-white" />

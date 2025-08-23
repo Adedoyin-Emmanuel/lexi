@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
 
 interface LoadingSkeletonProps {
-  className?: string;
   width?: string;
   height?: string;
+  className?: string;
 }
 
 export const LoadingSkeleton = ({
