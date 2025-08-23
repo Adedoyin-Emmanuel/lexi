@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { FileText, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
-import { ContractCard, ContractFilters } from "./components";
 import { Card, CardContent } from "@/components/ui/card";
+import { ContractCard, ContractFilters } from "./components";
 
-// Mock data - replace with actual API call
 const mockContracts = [
   {
     id: "1",
@@ -112,21 +111,7 @@ const Contracts = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Contracts</h1>
-          <p className="text-muted-foreground">
-            Manage and review your contract analysis results
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <FileText className="h-5 w-5 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">
-            {filteredContracts.length} of {mockContracts.length} contracts
-          </span>
-        </div>
-      </div>
-
+      <br />
       <ContractFilters
         onSearchChange={setSearchTerm}
         onRiskTypeChange={setRiskTypeFilter}

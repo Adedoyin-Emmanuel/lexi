@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, X } from "lucide-react";
+import { Search, X, AlertTriangle, Shield, Target } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,73 +38,92 @@ export const ContractFilters = ({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-            strokeWidth={1.5}
-          />
-          <Input
-            placeholder="Search contracts..."
-            value={searchValue}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
-          <span className="text-sm font-medium">Filters:</span>
-        </div>
+    <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="relative flex-1 min-w-64 max-w-md">
+        <Search
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
+          strokeWidth={1.5}
+        />
+        <Input
+          placeholder="Search contracts..."
+          value={searchValue}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
-      <div className="flex items-center gap-4 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Risk Type:</span>
-          <Select onValueChange={onRiskTypeChange}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="Low">Low</SelectItem>
-              <SelectItem value="Medium">Medium</SelectItem>
-              <SelectItem value="High">High</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="flex items-center gap-3">
+        <Select onValueChange={onRiskTypeChange}>
+          <SelectTrigger className="w-40 cursor-pointer">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
+              <SelectValue placeholder="Risk Type" />
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all" className="cursor-pointer">
+              All
+            </SelectItem>
+            <SelectItem value="Low" className="cursor-pointer">
+              Low
+            </SelectItem>
+            <SelectItem value="Medium" className="cursor-pointer">
+              Medium
+            </SelectItem>
+            <SelectItem value="High" className="cursor-pointer">
+              High
+            </SelectItem>
+          </SelectContent>
+        </Select>
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Status:</span>
-          <Select onValueChange={onStatusChange}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="Safe">Safe</SelectItem>
-              <SelectItem value="Risky">Risky</SelectItem>
-              <SelectItem value="Processing">Processing</SelectItem>
-              <SelectItem value="Needs Review">Needs Review</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <Select onValueChange={onStatusChange}>
+          <SelectTrigger className="w-40 cursor-pointer">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4" strokeWidth={1.5} />
+              <SelectValue placeholder="Status" />
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all" className="cursor-pointer">
+              All
+            </SelectItem>
+            <SelectItem value="Safe" className="cursor-pointer">
+              Safe
+            </SelectItem>
+            <SelectItem value="Risky" className="cursor-pointer">
+              Risky
+            </SelectItem>
+            <SelectItem value="Processing" className="cursor-pointer">
+              Processing
+            </SelectItem>
+            <SelectItem value="Needs Review" className="cursor-pointer">
+              Needs Review
+            </SelectItem>
+          </SelectContent>
+        </Select>
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Confidence:</span>
-          <Select onValueChange={onConfidenceChange}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="high">High (80%+)</SelectItem>
-              <SelectItem value="medium">Medium (60-79%)</SelectItem>
-              <SelectItem value="low">Low (&lt;60%)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <Select onValueChange={onConfidenceChange}>
+          <SelectTrigger className="w-40 cursor-pointer">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4" strokeWidth={1.5} />
+              <SelectValue placeholder="Confidence" />
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all" className="cursor-pointer">
+              All
+            </SelectItem>
+            <SelectItem value="high" className="cursor-pointer">
+              High (80%+)
+            </SelectItem>
+            <SelectItem value="medium" className="cursor-pointer">
+              Medium (60-79%)
+            </SelectItem>
+            <SelectItem value="low" className="cursor-pointer">
+              Low (&lt;60%)
+            </SelectItem>
+          </SelectContent>
+        </Select>
 
         {hasActiveFilters && (
           <Button
