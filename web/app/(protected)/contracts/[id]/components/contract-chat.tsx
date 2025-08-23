@@ -19,8 +19,8 @@ interface ChatMessage {
 }
 
 interface ContractChatProps {
-  contractName: string;
   contractId: string;
+  contractName: string;
 }
 
 export const ContractChat = ({
@@ -189,7 +189,11 @@ export const ContractChat = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col p-4 min-h-0">
-          <ScrollArea ref={scrollAreaRef} className="flex-1 mb-4 pr-2 min-h-0">
+          <ScrollArea
+            ref={scrollAreaRef}
+            className="flex-1 mb-4 pr-2 min-h-0"
+            onWheel={(e) => e.stopPropagation()}
+          >
             <div className="space-y-3">
               {chatHistory.map((message) => (
                 <div
@@ -269,7 +273,9 @@ export const ContractChat = ({
 
   return (
     <>
-      <div className="hidden md:block">{ChatInterface()}</div>
+      <div className="hidden md:block">
+        <div className="fixed bottom-6 right-6 z-50">{ChatInterface()}</div>
+      </div>
 
       <div className="md:hidden">
         <AnimatePresence>
@@ -290,9 +296,9 @@ export const ContractChat = ({
               <Button
                 size="lg"
                 onClick={() => setIsChatOpen(true)}
-                className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                className="h-14 w-14 cursor-pointer rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
               >
-                <MessageCircle className="h-6 w-6" />
+                <MessageCircle className="h-6 w-6" strokeWidth={1.5} />
               </Button>
             </motion.div>
           )}
