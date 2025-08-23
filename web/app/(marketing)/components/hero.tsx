@@ -177,10 +177,10 @@ const Hero = () => {
               ref={buttonsRef}
               className="flex flex-col sm:flex-row gap-6 justify-center mb-16"
             >
-              <Link href="/auth/login">
+              <Link href="/auth/login" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="group h-14 text-[17px] px-8 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 cursor-pointer"
+                  className="w-full group h-14 text-[17px] px-8 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 cursor-pointer"
                 >
                   Get started for free
                   <ArrowRight
