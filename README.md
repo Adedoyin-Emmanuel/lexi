@@ -2,7 +2,7 @@
 
 ## Understand your contracts in plain English. Built for freelancers and creators
 
-> Built From Scratch with ❤️ by [me](https://github.com/Adedoyin-Emmanuel) | [Video Demo](https://youtube.com/@Adedoyin-Emma)
+> Built From Scratch with ❤️ by [me](https://github.com/Adedoyin-Emmanuel) | [Video Demo](https://youtube.com/@Adedoyin-Emma) | [My Hackathon Experience](https://adedoyin.hashnode.dev/my-experience-at-the-co-creating-with-gpt-5-hackathon-by-aimlapi) | [Presentation Slide](https://docs.google.com) | [Social Media Development Journey Post](https://x.com/Emmysoft_Tm/status/1958116799414747566)
 
 Lexi helps freelancers and creators understand contracts by detecting contract types, highlighting key clauses with confidence scores, and turning obligations into clear, actionable timelines.
 
