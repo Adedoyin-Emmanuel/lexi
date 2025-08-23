@@ -41,7 +41,10 @@ export const ContractFilters = ({
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
+            strokeWidth={1.5}
+          />
           <Input
             placeholder="Search contracts..."
             value={searchValue}
@@ -51,7 +54,7 @@ export const ContractFilters = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground" />
+          <Filter className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
           <span className="text-sm font-medium">Filters:</span>
         </div>
       </div>
@@ -110,7 +113,7 @@ export const ContractFilters = ({
             onClick={onClearFilters}
             className="flex items-center gap-2"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" strokeWidth={1.5} />
             Clear Filters
           </Button>
         )}

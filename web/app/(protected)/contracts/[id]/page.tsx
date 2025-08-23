@@ -1,27 +1,24 @@
 "use client";
 
-import { useState } from "react";
 import {
-  ArrowLeft,
-  FileText,
-  Calendar,
-  Download,
   Share2,
+  FileText,
+  Download,
+  ArrowLeft,
   MessageCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CircularConfidence } from "../../components/circular-confidence";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { CircularConfidence } from "../../components/circular-confidence";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Mock data - replace with actual API call
 const mockContract = {
   id: "1",
   name: "Employment Agreement - John Smith",
@@ -56,7 +53,6 @@ const mockContract = {
 };
 
 const ContractDetail = () => {
-  const params = useParams();
   const [chatMessage, setChatMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([
     {
@@ -120,7 +116,6 @@ const ContractDetail = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href="/contracts">
@@ -149,9 +144,7 @@ const ContractDetail = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Contract Overview */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -201,7 +194,6 @@ const ContractDetail = () => {
             </CardContent>
           </Card>
 
-          {/* Analysis Details */}
           <Tabs defaultValue="summary" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="summary">Summary</TabsTrigger>
@@ -267,9 +259,7 @@ const ContractDetail = () => {
           </Tabs>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-6">
-          {/* Contract Stats */}
           <Card>
             <CardHeader>
               <CardTitle>Contract Stats</CardTitle>
@@ -305,7 +295,6 @@ const ContractDetail = () => {
             </CardContent>
           </Card>
 
-          {/* Chat Widget */}
           <Card className="h-96">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

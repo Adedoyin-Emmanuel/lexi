@@ -74,14 +74,20 @@ export const ContractCard = ({
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0 pr-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <FileText
+                    className="h-4 w-4 text-muted-foreground"
+                    strokeWidth={1.5}
+                  />
                   <h3 className="font-semibold text-base truncate group-hover:text-primary transition-colors">
                     {name}
                   </h3>
                 </div>
 
                 <div className="flex items-center gap-2 mb-3">
-                  <Calendar className="h-3 w-3 text-muted-foreground" />
+                  <Calendar
+                    className="h-3 w-3 text-muted-foreground"
+                    strokeWidth={1.5}
+                  />
                   <span className="text-sm text-muted-foreground">
                     {uploadedAt}
                   </span>
@@ -118,7 +124,10 @@ export const ContractCard = ({
                   </TooltipContent>
                 </Tooltip>
 
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
+                <ArrowRight
+                  className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200"
+                  strokeWidth={1.5}
+                />
               </div>
             </div>
           </CardContent>
