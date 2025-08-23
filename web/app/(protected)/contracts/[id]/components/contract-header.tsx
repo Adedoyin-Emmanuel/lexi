@@ -4,12 +4,17 @@ import Link from "next/link";
 import { ArrowLeft, Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { downloadContract } from "@/lib/download-contract";
 
 interface ContractHeaderProps {
+  contractId: string;
   contractName: string;
 }
 
-export const ContractHeader = ({ contractName }: ContractHeaderProps) => {
+export const ContractHeader = ({
+  contractName,
+  contractId,
+}: ContractHeaderProps) => {
   return (
     <div className="space-y-3 sm:space-y-4">
       <div>
@@ -38,6 +43,7 @@ export const ContractHeader = ({ contractName }: ContractHeaderProps) => {
             variant="outline"
             size="sm"
             className="cursor-pointer border-gray-200"
+            onClick={() => downloadContract(contractId)}
           >
             <Download className="h-4 w-4 mr-2" strokeWidth={1.5} />
             <span className="hidden sm:inline">Download</span>

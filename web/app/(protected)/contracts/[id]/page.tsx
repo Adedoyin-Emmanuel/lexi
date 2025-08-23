@@ -77,7 +77,10 @@ const ContractDetail = () => {
   if (error || !contract) {
     return (
       <div className="space-y-8">
-        <ContractHeader contractName="Contract Details" />
+        <ContractHeader
+          contractName="Contract Details"
+          contractId={contractId}
+        />
 
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
@@ -105,7 +108,7 @@ const ContractDetail = () => {
   if (isMobile) {
     return (
       <div className="w-full flex flex-col overflow-hidden">
-        <ContractHeader contractName={contract.title} />
+        <ContractHeader contractName={contract.title} contractId={contractId} />
 
         <div className="flex border-b border-border bg-background">
           <button
@@ -158,7 +161,10 @@ const ContractDetail = () => {
 
   return (
     <div className="w-full flex flex-col overflow-hidden">
-      <ContractHeader contractName={contract.title} />
+      <ContractHeader
+        contractName={contract.title}
+        contractId={contractId}
+      />
 
       <div className="w-full overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">

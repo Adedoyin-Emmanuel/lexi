@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { MoreVertical, Download, Eye } from "lucide-react";
 
@@ -16,9 +15,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Axios } from "@/app/config/axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { downloadContract } from "@/lib/download-contract";
 import { CircularConfidence } from "../../components/circular-confidence";
 
 interface ContractCardProps {
@@ -38,33 +37,6 @@ export const ContractCard = ({
   uploadedAt,
   confidenceScore,
 }: ContractCardProps) => {
-  const downloadContract = async () => {
-    try {
-      const response = await Axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/contract/${id}/download`,
-        {
-          responseType: "blob",
-        }
-      );
-
-      const blob = new Blob([response.data], { type: "application/pdf" });
-
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `lexi-${id + "contract-summary" || "contract"}.pdf`;
-
-      document.body.appendChild(link);
-      link.click();
-
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      toast.error("Error downloading contract");
-      console.error("Error downloading contract:", error);
-    }
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Safe":
@@ -135,7 +107,7 @@ export const ContractCard = ({
 
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={downloadContract}
+                onClick={() => downloadContract(id)}
               >
                 <Download className="mr-2 h-4 w-4 hover:text-white" />
                 Download
