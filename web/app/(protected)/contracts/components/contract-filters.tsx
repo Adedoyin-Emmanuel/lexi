@@ -38,8 +38,8 @@ export const ContractFilters = ({
   };
 
   return (
-    <div className="flex items-center justify-between gap-4 flex-wrap">
-      <div className="relative flex-1 min-w-64 max-w-md">
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="relative flex-1 min-w-0 lg:min-w-64 lg:max-w-md">
         <Search
           className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
           strokeWidth={1.5}
@@ -52,85 +52,87 @@ export const ContractFilters = ({
         />
       </div>
 
-      <div className="flex items-center gap-3">
-        <Select onValueChange={onRiskTypeChange}>
-          <SelectTrigger className="w-40 cursor-pointer">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
-              <SelectValue placeholder="Risk Type" />
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all" className="cursor-pointer">
-              All
-            </SelectItem>
-            <SelectItem value="Low" className="cursor-pointer">
-              Low
-            </SelectItem>
-            <SelectItem value="Medium" className="cursor-pointer">
-              Medium
-            </SelectItem>
-            <SelectItem value="High" className="cursor-pointer">
-              High
-            </SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Select onValueChange={onRiskTypeChange}>
+            <SelectTrigger className="w-full cursor-pointer">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
+                <SelectValue placeholder="Risk Type" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="cursor-pointer">
+                All
+              </SelectItem>
+              <SelectItem value="Low" className="cursor-pointer">
+                Low
+              </SelectItem>
+              <SelectItem value="Medium" className="cursor-pointer">
+                Medium
+              </SelectItem>
+              <SelectItem value="High" className="cursor-pointer">
+                High
+              </SelectItem>
+            </SelectContent>
+          </Select>
 
-        <Select onValueChange={onStatusChange}>
-          <SelectTrigger className="w-40 cursor-pointer">
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4" strokeWidth={1.5} />
-              <SelectValue placeholder="Status" />
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all" className="cursor-pointer">
-              All
-            </SelectItem>
-            <SelectItem value="Safe" className="cursor-pointer">
-              Safe
-            </SelectItem>
-            <SelectItem value="Risky" className="cursor-pointer">
-              Risky
-            </SelectItem>
-            <SelectItem value="Processing" className="cursor-pointer">
-              Processing
-            </SelectItem>
-            <SelectItem value="Needs Review" className="cursor-pointer">
-              Needs Review
-            </SelectItem>
-          </SelectContent>
-        </Select>
+          <Select onValueChange={onStatusChange}>
+            <SelectTrigger className="w-full cursor-pointer">
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4" strokeWidth={1.5} />
+                <SelectValue placeholder="Status" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="cursor-pointer">
+                All
+              </SelectItem>
+              <SelectItem value="Safe" className="cursor-pointer">
+                Safe
+              </SelectItem>
+              <SelectItem value="Risky" className="cursor-pointer">
+                Risky
+              </SelectItem>
+              <SelectItem value="Processing" className="cursor-pointer">
+                Processing
+              </SelectItem>
+              <SelectItem value="Needs Review" className="cursor-pointer">
+                Needs Review
+              </SelectItem>
+            </SelectContent>
+          </Select>
 
-        <Select onValueChange={onConfidenceChange}>
-          <SelectTrigger className="w-40 cursor-pointer">
-            <div className="flex items-center gap-2">
-              <Target className="h-4 w-4" strokeWidth={1.5} />
-              <SelectValue placeholder="Confidence" />
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all" className="cursor-pointer">
-              All
-            </SelectItem>
-            <SelectItem value="high" className="cursor-pointer">
-              High (80%+)
-            </SelectItem>
-            <SelectItem value="medium" className="cursor-pointer">
-              Medium (60-79%)
-            </SelectItem>
-            <SelectItem value="low" className="cursor-pointer">
-              Low (&lt;60%)
-            </SelectItem>
-          </SelectContent>
-        </Select>
+          <Select onValueChange={onConfidenceChange}>
+            <SelectTrigger className="w-full cursor-pointer">
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4" strokeWidth={1.5} />
+                <SelectValue placeholder="Confidence" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="cursor-pointer">
+                All
+              </SelectItem>
+              <SelectItem value="high" className="cursor-pointer">
+                High (80%+)
+              </SelectItem>
+              <SelectItem value="medium" className="cursor-pointer">
+                Medium (60-79%)
+              </SelectItem>
+              <SelectItem value="low" className="cursor-pointer">
+                Low (&lt;60%)
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         {hasActiveFilters && (
           <Button
             variant="outline"
             size="sm"
             onClick={onClearFilters}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto justify-center"
           >
             <X className="h-3 w-3" strokeWidth={1.5} />
             Clear Filters

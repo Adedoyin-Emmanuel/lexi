@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Calendar, FileText, ArrowRight } from "lucide-react";
+import { Calendar, FileText } from "lucide-react";
 
 import {
   Tooltip,
@@ -123,11 +123,6 @@ export const ContractCard = ({
                     <p>Confidence Score: {confidenceScore}%</p>
                   </TooltipContent>
                 </Tooltip>
-
-                <ArrowRight
-                  className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200"
-                  strokeWidth={1.5}
-                />
               </div>
             </div>
           </CardContent>
