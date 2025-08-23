@@ -44,7 +44,7 @@ export default class DocumentDetailsExtractor {
       }
 
       const aiMlApiResponse = await aiMlApi.chat.completions.create({
-        model: "gpt-4o", //openai/gpt-5-chat-latest
+        model: "openai/gpt-5-chat-latest",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -179,65 +179,75 @@ export default class DocumentDetailsExtractor {
         - Use phrases like "I'm not completely certain about this - please verify" for abstained items
         - Be honest about uncertainty rather than guessing
 
+        ## CRITICAL: Use ACTUAL Contract Data Only
+        **WARNING**: You MUST extract information from the ACTUAL contract provided. DO NOT use example or placeholder values.
+
+        - Extract REAL text snippets from the contract
+        - Use ACTUAL character positions from the contract text
+        - Find REAL dates, names, amounts, and terms from the document
+        - If information doesn't exist in the contract, omit it or mark as "Not specified"
+        - DO NOT use generic examples like "Payment Terms", "30 days", "$X", etc.
+
         ## Response Format
-        Return ONLY a JSON object with this exact structure:
+        Return ONLY a JSON object with ACTUAL extracted data from the contract:
 
         {
         "clauses": [
             {
-            "title": "Payment Terms",
-            "fullText": "Payment shall be made within 30 days of invoice receipt...",
-            "startIndex": 1250,
-            "endIndex": 1425,
-            "confidenceScore": 92,
-            "userFriendlyDescription": "This clause outlines when you'll get paid for your work - crucial for managing your cash flow and business expenses."
+            "title": "[ACTUAL clause title from contract]",
+            "fullText": "[ACTUAL verbatim text from the contract - not examples]",
+            "startIndex": [ACTUAL character position where this text starts],
+            "endIndex": [ACTUAL character position where this text ends],
+            "confidenceScore": [ACTUAL confidence score 1-100],
+            "userFriendlyDescription": "[ACTUAL description based on real contract content]"
             }
         ],
         "risks": [
             {
-            "title": "Unlimited Liability Risk", 
-            "description": "Contract includes unlimited liability clause that could expose freelancer to excessive damages",
-            "confidenceScore": 88,
-            "riskLevel": "High",
-            "startIndex": 2100,
-            "endIndex": 2280,
-            "userFriendlyExplanation": "This is a major red flag for your business. If something goes wrong, you could be on the hook for unlimited damages, which could bankrupt your business and put your personal assets at risk. This is especially concerning for freelancers who often have limited resources."
+            "title": "[ACTUAL risk identified in the real contract]", 
+            "description": "[ACTUAL description of risk found in contract]",
+            "confidenceScore": [ACTUAL confidence score 1-100],
+            "riskLevel": "[High/Medium/Low based on actual contract content]",
+            "startIndex": [ACTUAL character position],
+            "endIndex": [ACTUAL character position],
+            "userFriendlyExplanation": "[ACTUAL explanation of real risk impact]"
             }
         ],
         "obligations": [
             {
-            "title": "Invoice Submission",
-            "description": "Submit invoices monthly by the 5th of each month",
-            "confidenceScore": 95,
-            "dueDate": "5th of each month",
-            "startIndex": 1800,
-            "endIndex": 1950,
-            "actionableType": "Payment Deadline",
-            "clauseSource": "Payment Terms",
-            "shouldAbstain": false,
-            "userFriendlyExplanation": "You need to send invoices by the 5th of each month to get paid on time. This is crucial for maintaining consistent cash flow in your work. Set up a calendar reminder to avoid missing this deadline, as late invoices can delay your payments and impact your business finances."
+            "title": "[ACTUAL obligation title from contract]",
+            "description": "[ACTUAL obligation description from contract]",
+            "confidenceScore": [ACTUAL confidence score 1-100],
+            "dueDate": "[ACTUAL due date from contract or null if not specified]",
+            "startIndex": [ACTUAL character position],
+            "endIndex": [ACTUAL character position],
+            "actionableType": "[ACTUAL type from predefined list]",
+            "clauseSource": "[ACTUAL source clause from contract]",
+            "shouldAbstain": [true/false based on actual confidence],
+            "userFriendlyExplanation": "[ACTUAL explanation based on real contract content]"
             }
         ],
         "suggestions": [
             {
-            "title": "Add Payment Timeline Protection",
-            "currentStatement": "Payment when convenient",
-            "suggestedStatement": "Payment shall be made within 30 days of invoice receipt",
-            "reason": "Protects cash flow and sets clear expectations per industry standards. This is especially important for freelancers who rely on timely payments to manage their business expenses and maintain financial stability.",
-            "confidenceScore": 90,
-            "startIndex": 1200,
-            "endIndex": 1250,
-            "suggestionType": "Payment Terms",
-            "priority": "HIGH",
-            "userFriendlyExplanation": "This vague payment term puts your cash flow at risk. You should negotiate for a specific payment timeline (like 30 days) to ensure you get paid predictably. This helps you plan your business finances and avoid the stress of wondering when payments will arrive."
+            "title": "[ACTUAL suggestion title for real contract issue]",
+            "currentStatement": "[ACTUAL text from contract that needs improvement]",
+            "suggestedStatement": "[ACTUAL suggested replacement text]",
+            "reason": "[ACTUAL reasoning based on real contract analysis]",
+            "confidenceScore": [ACTUAL confidence score 1-100],
+            "startIndex": [ACTUAL character position],
+            "endIndex": [ACTUAL character position],
+            "suggestionType": "[ACTUAL type from predefined list]",
+            "priority": "[HIGH/MEDIUM/LOW based on actual impact]",
+            "userFriendlyExplanation": "[ACTUAL explanation of why this matters for real contract]"
             }
         ],
-        "overallConfidence": 87
+        "overallConfidence": [ACTUAL overall confidence score 1-100]
         }
 
         ## Critical Instructions
-        - Character positions must be exact for span-linked highlighting
-        - Quote text verbatim from the original contract
+        - READ the entire contract text carefully before extracting
+        - Character positions must be EXACT for span-linked highlighting
+        - Quote text VERBATIM from the original contract - no paraphrasing
         - Be thorough but honest about confidence levels
         - Focus on practical concerns specific to the user's profession and expertise
         - Provide actionable, specific suggestions with clear priorities relevant to their work
@@ -248,6 +258,7 @@ export default class DocumentDetailsExtractor {
         - Address the user directly using "you" and "your" in explanations
         - Reference their specific profession and specialties when relevant
         - Explain the real-world business impact of each clause, risk, obligation, and suggestion
+        - NEVER use placeholder or example data - everything must come from the actual contract
         `.trim();
 
     return prompt;
@@ -341,7 +352,9 @@ You are providing this analysis for ${userInfo.name}, a ${
     structuredHTML?: string,
     userInfo?: IUserInfo
   ) {
-    let prompt = `Extract all clauses, risks, obligations, and suggestions from this contract`;
+    let prompt = `**CRITICAL**: Extract information from the ACTUAL contract below. Do NOT use example values.
+
+Extract all clauses, risks, obligations, and suggestions from this contract`;
 
     if (userInfo) {
       const specialitiesText =
@@ -357,7 +370,8 @@ You are providing this analysis for ${userInfo.name}, a ${
       prompt += `STRUCTURED VERSION (for reference):\n${structuredHTML}\n\n`;
     }
 
-    prompt += `CONTRACT TEXT:\n${contractText}`;
+    prompt += `ACTUAL CONTRACT TEXT TO ANALYZE:\n${contractText}\n\n`;
+    prompt += `**REMINDER**: All extracted data must come from the above contract text. Use exact character positions and verbatim quotes.`;
 
     return prompt;
   }
@@ -385,33 +399,39 @@ You are providing this analysis for ${userInfo.name}, a ${
     switch (contractType) {
       case CONTRACT_TYPE.ICA:
         return `
-            **ICA Actionable Obligations:**
-            - Payment Deadline: "Payment due: $X by [date]"
-            - Deliverable Deadline: "Draft submission due: [date]" 
-            - Contract End Date: "Contract ends on [date]"
-            - Renewal Notice Required: "Consider renewal notice before [date]"
-            - Termination Notice Period: "Termination notice must be given by [date]"
-            - IP Transfer Required: "Deliverable IP transfer due upon project completion"
+            **ICA Actionable Obligation Types to Look For:**
+            - Payment Deadline: When payments are due
+            - Deliverable Deadline: When work must be completed
+            - Contract End Date: When the contract expires
+            - Renewal Notice Required: Deadline for renewal decisions
+            - Termination Notice Period: Required notice for termination
+            - IP Transfer Required: When intellectual property must be transferred
+
+            **Important**: Map actual obligations found in the contract to these types.
         `.trim();
 
       case CONTRACT_TYPE.NDA:
         return `
-            **NDA Actionable Obligations:**
-            - Confidentiality Expiration: "Confidentiality obligation ends on [date]"
-            - Return/Destroy Information: "Return confidential documents within 30 days of termination"
-            - Disclosure Restrictions: "Only share info under defined conditions"
-            - Third Party Consent Required: "Get consent before sharing with third parties"  
-            - Non-Solicitation Period End: "Cannot contact client employees until [date]"
+            **NDA Actionable Obligation Types to Look For:**
+            - Confidentiality Expiration: When confidentiality obligations end
+            - Return/Destroy Information: When confidential materials must be returned
+            - Disclosure Restrictions: Rules about sharing information
+            - Third Party Consent Required: When consent is needed for sharing
+            - Non-Solicitation Period End: When non-solicitation restrictions end
+
+            **Important**: Map actual obligations found in the contract to these types.
         `.trim();
 
       case CONTRACT_TYPE.LICENSE_AGREEMENT:
         return `
-            **License Agreement Actionable Obligations:**
-            - License Validity Period: "License valid from [start date] to [end date]"
-            - Royalty Payment Due: "Royalty payment due on [date]"
-            - Usage/Territory Restrictions: "Do not distribute outside approved region"
-            - Approval/Quality Check Required: "Submit product for approval by [date]"
-            - Reporting Due: "Usage report due by [date]"
+            **License Agreement Actionable Obligation Types to Look For:**
+            - License Validity Period: When license starts and ends
+            - Royalty Payment Due: When royalty payments are required
+            - Usage/Territory Restrictions: Limitations on usage or geography
+            - Approval/Quality Check Required: When approvals are needed
+            - Reporting Due: When usage reports must be submitted
+
+            **Important**: Map actual obligations found in the contract to these types.
         `.trim();
     }
   }

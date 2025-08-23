@@ -18,12 +18,12 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Axios } from "@/app/config/axios";
 import { Button } from "@/components/ui/button";
 import { DashboardSkeleton } from "./components/loading-skeleton";
-import { 
-  StatsCard, 
-  ContractCard, 
+import {
+  StatsCard,
+  ContractCard,
   FloatingActionButton,
   EmptyContractsState,
-  EmptyDashboardState 
+  EmptyDashboardState,
 } from "./components";
 
 dayjs.extend(relativeTime);
@@ -57,8 +57,8 @@ const fetchDashboardStats = async (): Promise<DashboardStats> => {
       "/metrics/overview"
     );
     return response.data.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    // Handle 404 responses for empty data
     if (error.response?.status === 404) {
       return {
         totalContracts: 0,
@@ -77,8 +77,8 @@ const fetchRecentContracts = async (): Promise<RecentContract[]> => {
       "/metrics/recent-contracts"
     );
     return response.data.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    // Handle 404 responses for empty data
     if (error.response?.status === 404) {
       return [];
     }
@@ -153,9 +153,11 @@ export default function Dashboard() {
       <div className="min-h-screen w-full flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
-          <p className="text-muted-foreground mb-4">Failed to load dashboard data</p>
-          <Button 
-            onClick={() => window.location.reload()} 
+          <p className="text-muted-foreground mb-4">
+            Failed to load dashboard data
+          </p>
+          <Button
+            onClick={() => window.location.reload()}
             variant="outline"
             className="gap-2"
           >
@@ -167,15 +169,14 @@ export default function Dashboard() {
     );
   }
 
-  // Check if this is a completely empty dashboard (no contracts at all)
   const hasNoContracts = !recentContracts || recentContracts.length === 0;
-  const hasNoStats = !dashboardStats || 
-    (dashboardStats.totalContracts === 0 && 
-     dashboardStats.needsAttention === 0 && 
-     dashboardStats.inProcessing === 0 && 
-     dashboardStats.contractsPassed === 0);
+  const hasNoStats =
+    !dashboardStats ||
+    (dashboardStats.totalContracts === 0 &&
+      dashboardStats.needsAttention === 0 &&
+      dashboardStats.inProcessing === 0 &&
+      dashboardStats.contractsPassed === 0);
 
-  // If completely empty, show welcome state
   if (hasNoContracts && hasNoStats) {
     return (
       <div className="min-h-screen w-full">
@@ -239,30 +240,37 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Welcome message for users with some data */}
-        {dashboardStats && dashboardStats.totalContracts > 0 && dashboardStats.totalContracts <= 3 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4"
-          >
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        {dashboardStats &&
+          dashboardStats.totalContracts > 0 &&
+          dashboardStats.totalContracts <= 3 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+            >
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                  <FileText
+                    className="h-5 w-5 text-gray-600 dark:text-gray-400"
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                    Great start! 🎉
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    You&apos;ve uploaded {dashboardStats.totalContracts}{" "}
+                    contract
+                    {dashboardStats.totalContracts !== 1 ? "s" : ""}. Keep
+                    uploading more contracts to get better insights and track
+                    your legal document portfolio.
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                  Great start! 🎉
-                </h3>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  You've uploaded {dashboardStats.totalContracts} contract{dashboardStats.totalContracts !== 1 ? 's' : ''}. 
-                  Keep uploading more contracts to get better insights and track your legal document portfolio.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
 
         <br />
 

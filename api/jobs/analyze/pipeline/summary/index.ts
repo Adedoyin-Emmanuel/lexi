@@ -67,19 +67,16 @@ export default class DocumentSummarizer {
           "Not specified",
         overviewSummary:
           summaryData.overviewSummary || summaryData.overview_summary || "",
-        overallRiskScore: this.validateScore(
+        overallRiskScore:
           summaryData.overallRiskScore || summaryData.overall_risk_score,
-          50
-        ),
         totalPartiesInvolved:
           summaryData.totalPartiesInvolved ||
           summaryData.total_parties_involved ||
           2,
-        overallConfidenceScore: this.validateScore(
+        overallConfidenceScore:
           summaryData.overallConfidenceScore ||
-            summaryData.overall_confidence_score,
-          80
-        ),
+          summaryData.overall_confidence_score,
+
         terminationClasePresent:
           summaryData.terminationClasePresent ||
           summaryData.termination_clause_present ||
@@ -186,22 +183,59 @@ You are providing this analysis for ${userInfo.name}, a ${
             - Format as clean, readable HTML with proper structure
 
             ## Response Format
-            Return ONLY a JSON object with this exact structure:
+            **CRITICAL**: You MUST analyze the ACTUAL contract provided and extract REAL values. Do NOT use placeholder or example values.
+
+            Return ONLY a JSON object with this exact structure using ACTUAL values from the contract:
 
             {
-            "duration": "5 years",
-            "rawSummary": "Technical summary with legal terminology and precise contract terms...",
-            "plainEnglishSummary": "<div class='space-y-3'><div class='mb-4'><h3 class='text-xl font-bold text-gray-900 mb-3'>What This Contract Means for You</h3><p class='text-gray-700 mb-4'>Here's what this contract means for you as a [profession] specializing in [specialties]:</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Key Terms for Your Work</h4><ul class='space-y-2 list-disc list-inside text-gray-700'><li><span class='font-medium'>What you're agreeing to:</span> [Explanation with industry-specific examples]</li><li><span class='font-medium'>What they're agreeing to:</span> [Explanation with industry-specific examples]</li></ul></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>How This Affects Your [Specialty] Work</h4><p class='text-gray-700'>[Detailed explanation using field-specific language and examples]</p></div><div class='mb-6'><h4 class='text-lg font-semibold text-gray-800 mb-3'>Red Flags for [Profession]s</h4><div class='bg-red-50 border-red-400 p-4'><p class='text-red-600'>[Concerning clauses explained with profession-specific risks]</p></div></div><div><h4 class='text-lg font-semibold text-gray-800 mb-3'>Bottom Line for You</h4><p class='text-gray-700 font-medium'>[Personalized summary of practical implications]</p></div></div>",
-            "jurisdiction": "New York, USA", 
-            "effectiveDate": "January 1, 2024",
-            "overviewSummary": "Brief 3-5 sentence executive summary highlighting the core purpose and key terms relevant to the user's work.",
-            "overallRiskScore": 65,
-            "totalPartiesInvolved": 2,
-            "overallConfidenceScore": 87,
-            "terminationClasePresent": true
+              "duration": "[Extract the ACTUAL duration from the contract - could be specific dates, number of years, 'ongoing', 'indefinite', 'upon completion', etc.]",
+              "rawSummary": "[Write an ACTUAL technical summary based on the real contract content with legal terminology and precise contract terms]",
+              "plainEnglishSummary": "[Create ACTUAL personalized HTML content based on the real contract, formatted as shown in the template but with real content specific to this user and contract]",
+              "jurisdiction": "[Extract the ACTUAL governing law/jurisdiction from the contract]", 
+              "effectiveDate": "[Extract the ACTUAL effective date from the contract]",
+              "overviewSummary": "[Write an ACTUAL brief executive summary highlighting the real contract's core purpose and key terms relevant to the user's work]",
+              "overallRiskScore": [Assign an ACTUAL numeric score 1-100 based on your analysis of the real contract],
+              "totalPartiesInvolved": [Count the ACTUAL number of parties in the real contract],
+              "overallConfidenceScore": [Assign an ACTUAL confidence score 1-100 based on contract clarity and your analysis certainty],
+              "terminationClasePresent": [true/false - based on whether termination clauses actually exist in this contract]
             }
 
-            ## Important Notes
+            ## Plain English Summary Template Structure
+            Use this HTML structure but fill with ACTUAL content from the contract:
+
+            <div class='space-y-3'>
+              <div class='mb-4'>
+                <h3 class='text-xl font-bold text-gray-900 mb-3'>What This Contract Means for You</h3>
+                <p class='text-gray-700 mb-4'>[Actual personalized introduction based on user's profession and the real contract]</p>
+              </div>
+              <div class='mb-6'>
+                <h4 class='text-lg font-semibold text-gray-800 mb-3'>Key Terms for Your Work</h4>
+                <ul class='space-y-2 list-disc list-inside text-gray-700'>
+                  <li><span class='font-medium'>What you're agreeing to:</span> [Real obligations from the contract]</li>
+                  <li><span class='font-medium'>What they're agreeing to:</span> [Real obligations from the contract]</li>
+                </ul>
+              </div>
+              <div class='mb-6'>
+                <h4 class='text-lg font-semibold text-gray-800 mb-3'>How This Affects Your [User's Specialty] Work</h4>
+                <p class='text-gray-700'>[Real analysis of contract impact on user's specific work]</p>
+              </div>
+              <div class='mb-6'>
+                <h4 class='text-lg font-semibold text-gray-800 mb-3'>Red Flags for [User's Profession]s</h4>
+                <div class='bg-red-50 border-red-400 p-4'>
+                  <p class='text-red-600'>[Real concerning clauses from the actual contract]</p>
+                </div>
+              </div>
+              <div>
+                <h4 class='text-lg font-semibold text-gray-800 mb-3'>Bottom Line for You</h4>
+                <p class='text-gray-700 font-medium'>[Real personalized summary of actual contract implications]</p>
+              </div>
+            </div>
+
+            ## Important Reminders
+            - READ and ANALYZE the actual contract document provided
+            - Extract REAL values, dates, terms, and conditions from the contract text
+            - DO NOT use example values like "5 years", "New York, USA", "January 1, 2024"
+            - If information is not present in the contract, use "Not specified" or "Not found"
             - Tailor all explanations to the user's specific profession and expertise areas
             - Use industry terminology they would understand while keeping explanations clear
             - Highlight risks and benefits most relevant to their type of work
@@ -279,13 +313,6 @@ You are providing this analysis for ${userInfo.name}, a ${
     prompt += `CONTRACT TEXT:\n${contractText}`;
 
     return prompt;
-  }
-
-  private validateScore(score: any, defaultValue: number): number {
-    const numScore = typeof score === "number" ? score : parseInt(score);
-    return isNaN(numScore) || numScore < 1 || numScore > 100
-      ? defaultValue
-      : numScore;
   }
 
   private validateSummary(summary: ISummary): boolean {
