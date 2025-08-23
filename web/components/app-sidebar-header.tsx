@@ -48,10 +48,28 @@ export const AppSidebarHeader = () => {
     },
   });
 
-  const currentPage = pageConfig[pathname as keyof typeof pageConfig] || {
-    title: "Page",
-    description: "Page description",
+  const getCurrentPage = () => {
+    // Check for exact matches first
+    if (pageConfig[pathname as keyof typeof pageConfig]) {
+      return pageConfig[pathname as keyof typeof pageConfig];
+    }
+
+    // Check for dynamic contract detail pages
+    if (pathname.startsWith("/contracts/") && pathname !== "/contracts/") {
+      return {
+        title: "Contract Details",
+        description: "View contract details and analysis",
+      };
+    }
+
+    // Default fallback
+    return {
+      title: "Page",
+      description: "Page description",
+    };
   };
+
+  const currentPage = getCurrentPage();
 
   return (
     <header className="flex items-center justify-between py-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
