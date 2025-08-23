@@ -108,3 +108,6 @@ It should start the web app on `http://localhost:3000` successfully.
 Considering the fact that this project was built within a very short period of time (5 days to be precise), the app might contain some bugs. I will be working on refactoring, fixing or adding more features in the future **(if time permits)**.
 
 Also, response from production instance might be slow, considering it was hosted on a cheap sever Railway Hobby Plan($5 of monthly usage).
+
+
+[**First Commit**](https://github.com/Adedoyin-Emmanuel/lexi/commit/49f50796793f754e3aa31eb9324ffeb300dfb3e0)
