@@ -49,12 +49,10 @@ export const AppSidebarHeader = () => {
   });
 
   const getCurrentPage = () => {
-    // Check for exact matches first
     if (pageConfig[pathname as keyof typeof pageConfig]) {
       return pageConfig[pathname as keyof typeof pageConfig];
     }
 
-    // Check for dynamic contract detail pages
     if (pathname.startsWith("/contracts/") && pathname !== "/contracts/") {
       return {
         title: "Contract Details",
@@ -62,7 +60,6 @@ export const AppSidebarHeader = () => {
       };
     }
 
-    // Default fallback
     return {
       title: "Page",
       description: "Page description",

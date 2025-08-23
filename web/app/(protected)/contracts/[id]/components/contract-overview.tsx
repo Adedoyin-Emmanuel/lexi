@@ -19,7 +19,7 @@ export const ContractOverview = ({ contract }: ContractOverviewProps) => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5" />
+          <FileText className="h-5 w-5" strokeWidth={1.5} />
           Contract Overview
         </CardTitle>
       </CardHeader>

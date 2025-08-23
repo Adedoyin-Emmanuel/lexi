@@ -74,7 +74,11 @@ export const AppSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu className="space-y-3 mt-4">
               {items.map((item) => {
-                const isActive = pathname === item.url;
+                const isActive =
+                  item.url === "/contracts"
+                    ? pathname === item.url ||
+                      pathname.startsWith("/contracts/")
+                    : pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive}>
