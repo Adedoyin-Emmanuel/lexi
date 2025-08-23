@@ -20,32 +20,54 @@ interface ChatMessage {
   type: "user" | "bot";
 }
 
+interface ApiChatMessage {
+  role: "assistant" | "user";
+  content: string;
+}
+
 interface ContractChatProps {
   contractId: string;
   contractName: string;
+  chats?: ApiChatMessage[];
 }
 
 export const ContractChat = ({
   contractName,
   contractId,
+  chats,
 }: ContractChatProps) => {
   const [chatMessage, setChatMessage] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
-    {
-      id: 1,
-      type: "bot",
-      message: `Hello! I'm here to help you understand the "${contractName}" contract. What would you like to know?`,
-    },
-  ]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { user } = useAuth();
   const socket = useSocket(user?.id as string);
+
+  // Initialize chat history from API data
+  useEffect(() => {
+    if (chats && chats.length > 0) {
+      const initialChatHistory: ChatMessage[] = chats.map((chat, index) => ({
+        id: index + 1,
+        type: chat.role === "assistant" ? "bot" : "user",
+        message: chat.content,
+      }));
+      setChatHistory(initialChatHistory);
+    } else {
+      // Default welcome message if no chats exist
+      setChatHistory([
+        {
+          id: 1,
+          type: "bot",
+          message: `Hello! I'm here to help you understand the "${contractName}" contract. What would you like to know?`,
+        },
+      ]);
+    }
+  }, [chats, contractName]);
 
   useEffect(() => {
     if (isChatOpen) {
@@ -134,16 +156,20 @@ export const ContractChat = ({
     };
   }, [lastScrollY, isChatOpen]);
 
+  // Auto-scroll to bottom when chat history changes or chat is opened
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector(
         "[data-radix-scroll-area-viewport]"
       );
       if (scrollElement) {
-        scrollElement.scrollTop = scrollElement.scrollHeight;
+        // Use setTimeout to ensure DOM is updated
+        setTimeout(() => {
+          scrollElement.scrollTop = scrollElement.scrollHeight;
+        }, 100);
       }
     }
-  }, [chatHistory]);
+  }, [chatHistory, isChatOpen]);
 
   const handleSendMessage = useCallback(() => {
     if (!chatMessage.trim() || isLoading || !socket) return;

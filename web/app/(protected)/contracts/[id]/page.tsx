@@ -22,6 +22,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ContractDetailSkeleton } from "@/components/loading-skeleton";
 
+interface ChatMessage {
+  role: "assistant" | "user";
+  content: string;
+}
+
 interface ContractData {
   id: string;
   title: string;
@@ -31,7 +36,7 @@ interface ContractData {
   hasAbstainWarnings: boolean;
   summary: Record<string, unknown>;
   risks: Record<string, unknown>[];
-  chats: Record<string, unknown>[];
+  chats: ChatMessage[];
   clauses: Record<string, unknown>[];
   obligations: Record<string, unknown>[];
   suggestions: Record<string, unknown>[];
@@ -144,6 +149,7 @@ const ContractDetail = () => {
           <ContractChatFab
             contractName={contract.title}
             contractId={contractId}
+            chats={contract.chats}
           />
         </div>
       </div>
@@ -175,7 +181,11 @@ const ContractDetail = () => {
         </ResizablePanelGroup>
       </div>
 
-      <ContractChatFab contractName={contract.title} contractId={contractId} />
+      <ContractChatFab 
+        contractName={contract.title} 
+        contractId={contractId} 
+        chats={contract.chats}
+      />
     </div>
   );
 };

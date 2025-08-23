@@ -13,6 +13,11 @@ import { ObligationCard } from "../../../analyze/components/obligation-card";
 import { NegotiationCard } from "../../../analyze/components/negotiation-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+interface ChatMessage {
+  role: "assistant" | "user";
+  content: string;
+}
+
 interface ContractData {
   id: string;
   title: string;
@@ -22,7 +27,7 @@ interface ContractData {
   hasAbstainWarnings: boolean;
   summary: Record<string, unknown>;
   risks: Record<string, unknown>[];
-  chats: Record<string, unknown>[];
+  chats: ChatMessage[];
   clauses: Record<string, unknown>[];
   suggestions: Record<string, unknown>[];
   obligations: Record<string, unknown>[];
