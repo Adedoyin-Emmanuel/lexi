@@ -37,7 +37,7 @@ const items = [
 const footerItems = [
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
   {

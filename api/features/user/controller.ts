@@ -82,12 +82,15 @@ export default class UserController {
       id: user._id,
       name: user.name,
       avatar: user.avatar,
+      userType: user.userType,
       displayName: user.displayName,
       hasOnboarded: user.isOnboarded,
+      specialities: user.specialities,
     };
 
     await redisService.set(`user:${user._id}`, userDetails, 60 * 60 * 5);
 
     return response(res, 200, "User details fetched successfully", userDetails);
   }
+
 }

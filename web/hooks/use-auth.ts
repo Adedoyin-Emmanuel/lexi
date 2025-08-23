@@ -8,6 +8,8 @@ interface User {
   avatar: string;
   displayName: string;
   hasOnboarded: boolean;
+  specialities: string[];
+  userType: "freelancer" | "creator";
 }
 
 interface UserResponse {
