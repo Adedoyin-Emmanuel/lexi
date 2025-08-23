@@ -15,8 +15,8 @@ import {
 import { ContractStats } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularConfidence } from "../../components/circular-confidence";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SummaryCardProps {
   summary: string;
@@ -154,26 +154,28 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
 
   return (
     <Card className="border border-gray-200 shadow-none">
-      <CardHeader className={`pb-6 ${isMobile ? "px-4 py-4" : ""}`}>
+      <CardHeader className={`pb-6 ${isMobile ? "px-3 py-3" : ""}`}>
         <div className="flex items-center justify-between">
           <CardTitle
             className={`font-semibold flex items-center gap-3 text-foreground ${
-              isMobile ? "text-base" : "text-lg"
+              isMobile ? "text-sm" : "text-lg"
             }`}
           >
             Contract Summary
           </CardTitle>
           <CircularConfidence
             score={confidenceScore}
-            size={isMobile ? 40 : 48}
+            size={isMobile ? 36 : 48}
             strokeWidth={4}
           />
         </div>
       </CardHeader>
 
-      <CardContent className={`space-y-6 ${isMobile ? "px-4 pb-4" : ""}`}>
+      <CardContent
+        className={`space-y-4 ${isMobile ? "px-3 pb-3" : "space-y-6"}`}
+      >
         <div
-          className={`grid gap-4 ${
+          className={`grid gap-3 ${
             isMobile
               ? "grid-cols-1"
               : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
@@ -182,9 +184,15 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
           {statItems.map((item, index) => (
             <div
               key={index}
-              className={`p-4 rounded-lg border border-gray-200 bg-card flex items-start gap-3`}
+              className={`${
+                isMobile ? "p-3" : "p-4"
+              } rounded-lg border border-gray-200 bg-card flex items-start gap-3`}
             >
-              <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+              <div
+                className={`flex-shrink-0 ${
+                  isMobile ? "w-6 h-6" : "w-8 h-8"
+                } flex items-center justify-center`}
+              >
                 <span className="text-muted-foreground">{item.icon}</span>
               </div>
               <div className="flex-1 min-w-0">
@@ -205,13 +213,17 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
                   </p>
                   {item.status === "success" && (
                     <CheckCircle
-                      className="w-4 h-4 text-green-600 flex-shrink-0"
+                      className={`${
+                        isMobile ? "w-3 h-3" : "w-4 h-4"
+                      } text-green-600 flex-shrink-0`}
                       strokeWidth={1.5}
                     />
                   )}
                   {item.status === "warning" && (
                     <XCircle
-                      className="w-4 h-4 text-amber-600 flex-shrink-0"
+                      className={`${
+                        isMobile ? "w-3 h-3" : "w-4 h-4"
+                      } text-amber-600 flex-shrink-0`}
                       strokeWidth={1.5}
                     />
                   )}
@@ -222,15 +234,19 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
         </div>
 
         <div
-          className={`p-4 rounded-lg border border-gray-200 ${
-            isMobile ? "p-3" : ""
-          }`}
+          className={`${
+            isMobile ? "p-3" : "p-4"
+          } rounded-lg border border-gray-200`}
         >
-          <div className="flex items-center justify-between">
+          <div
+            className={`flex ${
+              isMobile ? "flex-col gap-3" : "items-center justify-between"
+            }`}
+          >
             <div className="flex items-center gap-3">
               <div
                 className={`flex items-center justify-center ${
-                  isMobile ? "w-8 h-8" : "w-10 h-10"
+                  isMobile ? "w-6 h-6" : "w-10 h-10"
                 }`}
               >
                 {getRiskLevelIcon(stats.riskLevel)}
@@ -254,9 +270,9 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
             </div>
             <Badge
               variant="outline"
-              className={`font-regular px-3 py-1 ${getRiskLevelColor(
-                stats.riskLevel
-              )} ${isMobile ? "text-xs" : "text-xs"}`}
+              className={`font-regular ${
+                isMobile ? "px-2 py-1 text-xs self-start" : "px-3 py-1"
+              } ${getRiskLevelColor(stats.riskLevel)}`}
             >
               {stats.riskLevel.charAt(0).toUpperCase() +
                 stats.riskLevel.slice(1)}{" "}
@@ -266,20 +282,34 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
         </div>
 
         <div
-          className={`p-4 rounded-lg border border-gray-200 bg-gray-50/50 ${
-            isMobile ? "p-3" : ""
-          }`}
+          className={`${
+            isMobile ? "p-3" : "p-4"
+          } rounded-lg border border-gray-200 bg-gray-50/50`}
         >
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 mt-0.5">{recommendation.icon}</div>
+            <div className={`flex-shrink-0 ${isMobile ? "mt-0" : "mt-0.5"}`}>
+              {recommendation.icon}
+            </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <h4 className="font-semibold text-foreground">
+              <div
+                className={`flex ${
+                  isMobile ? "flex-col gap-2" : "items-center gap-2"
+                } mb-2`}
+              >
+                <h4
+                  className={`font-semibold text-foreground ${
+                    isMobile ? "text-sm" : ""
+                  }`}
+                >
                   Recommendation
                 </h4>
                 <Badge
                   variant="outline"
-                  className={`font-medium px-2 py-0.5 text-xs ${
+                  className={`font-medium ${
+                    isMobile
+                      ? "px-2 py-0.5 text-xs self-start"
+                      : "px-2 py-0.5 text-xs"
+                  } ${
                     recommendation.action === "PROCEED"
                       ? "bg-green-50 text-green-700 border-green-200"
                       : recommendation.action === "PROCEED WITH CAUTION"
@@ -290,7 +320,11 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
                   {recommendation.action}
                 </Badge>
               </div>
-              <p className="leading-relaxed text-muted-foreground text-sm">
+              <p
+                className={`leading-relaxed text-muted-foreground ${
+                  isMobile ? "text-xs" : "text-sm"
+                }`}
+              >
                 {recommendation.message}
               </p>
             </div>
@@ -304,7 +338,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
         >
           <p
             className={`leading-relaxed text-foreground ${
-              isMobile ? "text-sm" : "text-sm"
+              isMobile ? "text-xs" : "text-sm"
             }`}
           >
             {summary}
