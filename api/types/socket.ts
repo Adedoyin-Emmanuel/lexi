@@ -3,9 +3,15 @@ import { IExtractionResult } from "./../jobs/analyze/pipeline/extraction/types";
 import { IStructuredContract } from "./../jobs/analyze/pipeline/structuring/types";
 
 export enum SOCKET_EVENTS {
+  CHAT_MESSAGE_JOIN_ROOM = "chat-message-join-room",
+
   DOCUMENT_ANALYSIS_FAILED = "document-analysis-failed",
 
+  CHAT_MESSAGE_AI_RESPONSE = "chat-message-ai-response",
+
   DOCUMENT_ANALYSIS_STARTED = "document-analysis-started",
+
+  CHAT_MESSAGE_USER_MESSAGE = "chat-message-user-message",
 
   DOCUMENT_ANALYSIS_COMPLETED = "document-analysis-completed",
 
@@ -18,8 +24,6 @@ export enum SOCKET_EVENTS {
   DOCUMENT_ANALYSIS_STRUCTURED = "document-analysis-structured",
 
   DOCUMENT_ANALYSIS_DETAILS_EXTRACTED = "document-analysis-details-extracted",
-
-  CHAT_MESSAGE_AI_RESPONSE = "chat-message-ai-response",
 }
 
 export interface IDocumentAnalysisStartedPayload {
