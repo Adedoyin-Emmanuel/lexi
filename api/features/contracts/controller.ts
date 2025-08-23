@@ -54,12 +54,45 @@ export default class ContractController {
       return response(res, 404, "Contract not found", {});
     }
 
+    let dataToSend = {
+      title: "",
+      risks: [],
+      chats: [],
+      status: "",
+      summary: {},
+      clauses: [],
+      isFlagged: false,
+      suggestions: [],
+      obligations: [],
+      failureReason: "",
+      structuredContract: {},
+      validationMetadata: {},
+      extractionMetadata: {},
+      hasAbstainWarnings: false,
+    };
+
+    dataToSend.title = contract.title;
+    dataToSend.risks = contract.risks;
+    dataToSend.chats = contract.chats;
+    dataToSend.status = contract.status;
+    dataToSend.summary = contract.summary;
+    dataToSend.clauses = contract.clauses;
+    dataToSend.isFlagged = contract.isFlagged;
+
+    dataToSend.suggestions = contract.suggestions;
+    dataToSend.obligations = contract.obligations;
+    dataToSend.failureReason = contract.failureReason;
+    dataToSend.structuredContract = contract.structuredContract;
+    dataToSend.validationMetadata = contract.validationMetadata;
+    dataToSend.extractionMetadata = contract.extractionMetadata;
+    dataToSend.hasAbstainWarnings = contract.hasAbstainWarnings;
+
     await redisService.set(
       `contract:${contractId}`,
-      JSON.stringify(contract),
+      JSON.stringify(dataToSend),
       60 * 5
     );
 
-    return response(res, 200, "Contract fetched successfully", contract);
+    return response(res, 200, "Contract fetched successfully", dataToSend);
   }
 }
