@@ -8,6 +8,8 @@ import {
   FileText,
   CheckCircle,
   AlertTriangle,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 
 import { ContractStats } from "../types";
@@ -74,6 +76,36 @@ const formatDate = (date: string) => {
   });
 };
 
+const getRecommendation = (riskScore: number) => {
+  if (riskScore <= 30) {
+    return {
+      action: "PROCEED",
+      message:
+        "This contract appears to have low risk factors. Consider proceeding with standard due diligence.",
+      icon: <ThumbsUp className="w-5 h-5 text-green-600" strokeWidth={1.5} />,
+      color: "bg-green-50 border-green-200 text-green-800",
+    };
+  } else if (riskScore <= 60) {
+    return {
+      action: "PROCEED WITH CAUTION",
+      message:
+        "This contract has moderate risk factors. Review carefully and consider seeking legal counsel.",
+      icon: (
+        <AlertTriangle className="w-5 h-5 text-yellow-600" strokeWidth={1.5} />
+      ),
+      color: "bg-yellow-50 border-yellow-200 text-yellow-800",
+    };
+  } else {
+    return {
+      action: "ABSTAIN",
+      message:
+        "This contract has high risk factors. Strongly consider abstaining or seeking extensive legal review.",
+      icon: <ThumbsDown className="w-5 h-5 text-red-600" strokeWidth={1.5} />,
+      color: "bg-red-50 border-red-200 text-red-800",
+    };
+  }
+};
+
 export const SummaryCard: React.FC<SummaryCardProps> = ({
   summary,
   confidence,
@@ -81,6 +113,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const confidenceScore = confidence;
+  const recommendation = getRecommendation(stats.overallRiskScore);
 
   const statItems = [
     {
@@ -229,6 +262,38 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
                 stats.riskLevel.slice(1)}{" "}
               Risk
             </Badge>
+          </div>
+        </div>
+
+        <div
+          className={`p-4 rounded-lg border border-gray-200 bg-gray-50/50 ${
+            isMobile ? "p-3" : ""
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 mt-0.5">{recommendation.icon}</div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h4 className="font-semibold text-foreground">
+                  Recommendation
+                </h4>
+                <Badge
+                  variant="outline"
+                  className={`font-medium px-2 py-0.5 text-xs ${
+                    recommendation.action === "PROCEED"
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : recommendation.action === "PROCEED WITH CAUTION"
+                      ? "bg-amber-50 text-amber-700 border-amber-200"
+                      : "bg-red-50 text-red-700 border-red-200"
+                  }`}
+                >
+                  {recommendation.action}
+                </Badge>
+              </div>
+              <p className="leading-relaxed text-muted-foreground text-sm">
+                {recommendation.message}
+              </p>
+            </div>
           </div>
         </div>
 

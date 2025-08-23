@@ -9,6 +9,16 @@ class DocumentRepository
   constructor() {
     super(DocumentModel);
   }
+  findAllDocumentsByUserId(userId: string): Promise<Document[]> {
+    return DocumentModel.find({ userId }).exec();
+  }
+
+  getRecentContractsByUserId(userId: string): Promise<Document[]> {
+    return DocumentModel.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .exec();
+  }
 }
 
 const documentRepository = new DocumentRepository();

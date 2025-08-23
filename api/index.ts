@@ -19,6 +19,7 @@ import authRouter from "./features/auth/route";
 import userRouter from "./features/user/route";
 import JobsConfig from "./jobs/config/init-jobs";
 import analyzeRouter from "./features/analyze/route";
+import metricsRouter from "./features/metrics/route";
 
 import {
   logger,
@@ -92,6 +93,7 @@ class ApiServer {
     this.app.use(`${apiPath}/auth`, authRouter);
     this.app.use(`${apiPath}/user`, userRouter);
     this.app.use(`${apiPath}/analyze`, analyzeRouter);
+    this.app.use(`${apiPath}/metrics`, metricsRouter);
   }
 
   private setupErrorHandlers(): void {

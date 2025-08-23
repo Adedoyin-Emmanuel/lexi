@@ -5,6 +5,7 @@ export interface ContractStats {
   jurisdiction: string;
   effectiveDate: string;
   partiesInvolved: number;
+  overallRiskScore: number;
   hasTerminationClause: boolean;
   riskLevel: "low" | "medium" | "high";
 }

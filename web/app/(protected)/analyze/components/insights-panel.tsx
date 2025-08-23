@@ -127,9 +127,10 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
       effectiveDate: summary.effectiveDate,
       partiesInvolved: summary.totalPartiesInvolved,
       hasTerminationClause: summary.terminationClasePresent,
-      riskLevel: (summary.overallRiskScore > 0.7
+      overallRiskScore: summary.overallRiskScore,
+      riskLevel: (summary.overallRiskScore > 65
         ? "high"
-        : summary.overallRiskScore > 0.4
+        : summary.overallRiskScore > 50
         ? "medium"
         : "low") as "low" | "medium" | "high",
     },
