@@ -71,20 +71,15 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
   };
 
   return (
-    <Card className="h-[500px] max-w-md mx-auto">
-      <CardHeader className="pb-3">
+    <Card className="h-[500px] max-w-md mx-auto flex flex-col">
+      <CardHeader className="pb-3 flex-shrink-0">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <MessageCircle className="h-5 w-5" />
+          <MessageCircle className="h-5 w-5" strokeWidth={1.5} />
           Contract Assistant
         </CardTitle>
       </CardHeader>
-      <CardContent className="h-full flex flex-col p-4">
-        {/* Chat Messages */}
-        <ScrollArea
-          ref={scrollAreaRef}
-          className="flex-1 mb-4 pr-2"
-          style={{ maxHeight: "350px" }}
-        >
+      <CardContent className="flex-1 flex flex-col p-4 min-h-0">
+        <ScrollArea ref={scrollAreaRef} className="flex-1 mb-4 pr-2 min-h-0">
           <div className="space-y-3">
             {chatHistory.map((message) => (
               <div
@@ -101,11 +96,6 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
                   }`}
                 >
                   <div className="flex items-start gap-2">
-                    {message.type === "bot" && (
-                      <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <MessageCircle className="h-3 w-3 text-primary" />
-                      </div>
-                    )}
                     <div className="flex-1">
                       <p className="leading-relaxed">{message.message}</p>
                     </div>
@@ -116,22 +106,21 @@ export const ContractChat = ({ contractName }: ContractChatProps) => {
           </div>
         </ScrollArea>
 
-        {/* Input Area */}
-        <div className="flex gap-2 pt-2 border-t">
+        <div className="flex gap-2 pt-2 border-t border-gray-200 flex-shrink-0">
           <Input
             placeholder="Ask about this contract..."
             value={chatMessage}
             onChange={(e) => setChatMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="flex-1 text-sm"
+            className="flex-1 text-sm min-w-0"
           />
           <Button
             onClick={handleSendMessage}
             size="sm"
-            className="px-3"
+            className="px-3 flex-shrink-0"
             disabled={!chatMessage.trim()}
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-4 w-4" strokeWidth={1.5} />
           </Button>
         </div>
       </CardContent>
