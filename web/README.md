@@ -1,3 +1,3 @@
 # Lexi Frontend
 
-I will update this later
+Find detailed `README` here. [README.MD](./../README.md)
