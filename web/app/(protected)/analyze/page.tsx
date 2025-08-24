@@ -241,7 +241,26 @@ const Analyze = () => {
     };
   }, [socket]);
 
+  // Don't render until we know the screen size
+  if (isMobile === undefined) {
+    return (
+      <div className="w-full flex flex-col overflow-hidden min-h-screen">
+        <div className="w-full max-w-4xl mx-auto px-4 py-8">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleDocumentUpload = async (file: File) => {
+    console.log(
+      "handleDocumentUpload called with file:",
+      file.name,
+      file.type,
+      file.size
+    );
     try {
       const fileContent = await getTextFromFile(file);
 
@@ -345,8 +364,8 @@ const Analyze = () => {
 
   if (!document) {
     return (
-      <div className="w-full flex flex-col overflow-hidden">
-        <div className="w-full max-w-4xl mx-auto px-4">
+      <div className="w-full flex flex-col overflow-hidden min-h-screen">
+        <div className="w-full max-w-4xl mx-auto px-4 py-8">
           <UploadZone onUpload={handleDocumentUpload} />
         </div>
       </div>

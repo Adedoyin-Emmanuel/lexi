@@ -18,15 +18,21 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      console.log("UploadZone onDrop called:", {
+        acceptedFiles,
+        rejectedFiles,
+      });
       setError(null);
 
       if (rejectedFiles.length > 0) {
+        console.log("Files rejected:", rejectedFiles);
         setError("Please upload a valid PDF or text file.");
         return;
       }
 
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
+        console.log("File accepted:", file.name, file.type, file.size);
         const validTypes = [
           "text/plain",
           "application/pdf",
@@ -35,10 +41,12 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onUpload }) => {
         ];
 
         if (!validTypes.includes(file.type)) {
+          console.log("Invalid file type:", file.type);
           setError("Please upload a PDF, Word document, or text file.");
           return;
         }
 
+        console.log("Calling onUpload with file:", file.name);
         onUpload(file);
       }
     },
