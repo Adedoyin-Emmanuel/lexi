@@ -51,7 +51,7 @@ export default class MetricsController {
     const contractsPassed = documents.filter(
       (contract) =>
         contract.status === DOCUMENT_STATUS.COMPLETED &&
-        contract.summary.overallRiskScore > 65 // 65 is the threshold for a contract to be considered passed
+        contract.summary.overallRiskScore <= 40 // 40 is the threshold for a contract to be considered passed
     );
 
     dashboardStats.totalContracts = documents.length;
