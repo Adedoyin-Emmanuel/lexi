@@ -34,7 +34,8 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#how-it-works"
+                  target="_blank"
+                  href="https://adedoyin.hashnode.dev/my-experience-at-the-co-creating-with-gpt-5-hackathon-by-aimlapi"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   How it works
@@ -86,7 +87,7 @@ const Footer = () => {
               <Twitter className="w-5 h-5" strokeWidth={1.5} />
             </Link>
             <Link
-              href="https://youtube.com/@Adedoyin-Emma"
+              href="https://www.youtube.com/watch?v=SoHnV4Ikkjc"
               target="_blank"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
