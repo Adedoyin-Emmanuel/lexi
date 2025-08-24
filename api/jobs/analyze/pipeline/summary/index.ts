@@ -28,7 +28,7 @@ export default class DocumentSummarizer {
       );
 
       const response = await aiMlApi.chat.completions.create({
-        model: "gpt-4o",
+        model: "openai/gpt-5-chat-latest",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },

@@ -1,7 +1,9 @@
 /**
- * Encryption utilities using Web Crypto API
+ * Encryption utilities using Node.js crypto module
  * Provides functions to encrypt text and generate encryption keys
  */
+
+import * as crypto from "crypto";
 
 export interface EncryptionResult {
   encryptedData: string;
@@ -9,25 +11,16 @@ export interface EncryptionResult {
 }
 
 /**
- * Generates a new encryption key using AES-GCM
+ * Generates a new encryption key using AES-256-GCM
  * @returns Base64 encoded encryption key
  */
 export async function generateEncryptionKey(): Promise<string> {
-  const key = await crypto.subtle.generateKey(
-    {
-      name: "AES-GCM",
-      length: 256,
-    },
-    true,
-    ["encrypt", "decrypt"]
-  );
-
-  const exportedKey = await crypto.subtle.exportKey("raw", key);
-  return btoa(String.fromCharCode(...new Uint8Array(exportedKey)));
+  const key = crypto.randomBytes(32); // 256 bits = 32 bytes
+  return key.toString("base64");
 }
 
 /**
- * Encrypts text using AES-GCM with a new encryption key
+ * Encrypts text using AES-256-GCM with a new encryption key
  * @param text - The text to encrypt
  * @returns Object containing encrypted data and encryption key
  */
@@ -35,36 +28,10 @@ export async function encryptTextWithNewKey(
   text: string
 ): Promise<EncryptionResult> {
   const keyBase64 = await generateEncryptionKey();
-
-  const keyData = Uint8Array.from(atob(keyBase64), (c) => c.charCodeAt(0));
-  const key = await crypto.subtle.importKey(
-    "raw",
-    keyData,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["encrypt"]
-  );
-
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-
-  const textEncoder = new TextEncoder();
-  const textData = textEncoder.encode(text);
-
-  const encryptedData = await crypto.subtle.encrypt(
-    {
-      name: "AES-GCM",
-      iv: iv,
-    },
-    key,
-    textData
-  );
-
-  const combined = new Uint8Array(iv.length + encryptedData.byteLength);
-  combined.set(iv);
-  combined.set(new Uint8Array(encryptedData), iv.length);
+  const encryptedData = await encryptTextWithKey(text, keyBase64);
 
   return {
-    encryptedData: btoa(String.fromCharCode(...combined)),
+    encryptedData,
     keyBase64,
   };
 }
@@ -79,34 +46,23 @@ export async function encryptTextWithKey(
   text: string,
   keyBase64: string
 ): Promise<string> {
-  const keyData = Uint8Array.from(atob(keyBase64), (c) => c.charCodeAt(0));
-  const key = await crypto.subtle.importKey(
-    "raw",
-    keyData,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["encrypt"]
-  );
+  const key = Buffer.from(keyBase64, "base64");
+  const iv = crypto.randomBytes(12); // 96 bits for GCM
 
-  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
 
-  const textEncoder = new TextEncoder();
-  const textData = textEncoder.encode(text);
+  let encrypted = cipher.update(text, "utf8", "base64");
+  encrypted += cipher.final("base64");
 
-  const encryptedData = await crypto.subtle.encrypt(
-    {
-      name: "AES-GCM",
-      iv: iv,
-    },
-    key,
-    textData
-  );
+  const authTag = cipher.getAuthTag();
 
-  const combined = new Uint8Array(iv.length + encryptedData.byteLength);
-  combined.set(iv);
-  combined.set(new Uint8Array(encryptedData), iv.length);
-
-  return btoa(String.fromCharCode(...combined));
+  // Combine IV + encrypted data + auth tag
+  const combined = Buffer.concat([
+    iv,
+    Buffer.from(encrypted, "base64"),
+    authTag,
+  ]);
+  return combined.toString("base64");
 }
 
 /**
@@ -119,31 +75,19 @@ export async function decryptText(
   encryptedDataBase64: string,
   keyBase64: string
 ): Promise<string> {
-  const keyData = Uint8Array.from(atob(keyBase64), (c) => c.charCodeAt(0));
-  const key = await crypto.subtle.importKey(
-    "raw",
-    keyData,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["decrypt"]
-  );
+  const key = Buffer.from(keyBase64, "base64");
+  const combined = Buffer.from(encryptedDataBase64, "base64");
 
-  const combined = Uint8Array.from(atob(encryptedDataBase64), (c) =>
-    c.charCodeAt(0)
-  );
-
+  // Extract IV (first 12 bytes), auth tag (last 16 bytes), and encrypted data
   const iv = combined.slice(0, 12);
-  const encryptedData = combined.slice(12);
+  const authTag = combined.slice(-16);
+  const encryptedData = combined.slice(12, -16);
 
-  const decryptedData = await crypto.subtle.decrypt(
-    {
-      name: "AES-GCM",
-      iv: iv,
-    },
-    key,
-    encryptedData
-  );
+  const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+  decipher.setAuthTag(authTag);
 
-  const textDecoder = new TextDecoder();
-  return textDecoder.decode(decryptedData);
+  let decrypted = decipher.update(encryptedData, undefined, "utf8");
+  decrypted += decipher.final("utf8");
+
+  return decrypted;
 }

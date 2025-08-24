@@ -1,9 +1,9 @@
 "use client";
 
+import dayjs from "dayjs";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Calendar, FileText } from "lucide-react";
-import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import {
@@ -23,6 +23,7 @@ interface ContractCardProps {
   createdAt: string;
   riskScore: number;
   confidenceScore: number;
+  status?: string;
 }
 
 export const ContractCard = ({
@@ -32,6 +33,7 @@ export const ContractCard = ({
   createdAt,
   riskScore,
   confidenceScore,
+  status,
 }: ContractCardProps) => {
   const name = title;
   const uploadedAt = dayjs(createdAt).fromNow();
@@ -40,11 +42,12 @@ export const ContractCard = ({
     | "Safe"
     | "Risky"
     | "Processing"
-    | "Needs Review" => {
-    // If confidence score is 0, contract is still processing
+    | "Needs Review"
+    | "Failed" => {
+    if (status === "failed") return "Failed";
+
     if (confidenceScore === 0) return "Processing";
 
-    // If contract is completed (has confidence score), show risk assessment
     if (riskScore >= 65) return "Risky";
     if (riskScore >= 40) return "Needs Review";
     return "Safe";
@@ -62,6 +65,8 @@ export const ContractCard = ({
         return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
       case "Needs Review":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
+      case "Failed":
+        return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
     }

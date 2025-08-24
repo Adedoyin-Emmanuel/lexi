@@ -38,6 +38,7 @@ export default class ContractController {
       createdAt: (document as any).createdAt,
       riskScore: document.summary?.overallRiskScore || 0,
       confidenceScore: document.summary?.overallConfidenceScore || 0,
+      status: document.status,
     }));
   }
 

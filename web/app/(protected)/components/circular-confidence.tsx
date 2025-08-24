@@ -20,7 +20,7 @@ export const CircularConfidence = ({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 
-  const normalizedScore = score;
+  const normalizedScore = isNaN(score) ? 0 : score;
 
   const getColor = (score: number) => {
     if (score >= 80) return "#22c55e";

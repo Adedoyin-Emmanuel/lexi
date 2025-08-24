@@ -81,6 +81,10 @@ export default class MetricsController {
     );
 
     if (cachedRecentContracts) {
+      console.log(
+        "cachedRecentContracts",
+        MetricsController.formatRecentContracts(cachedRecentContracts as any)
+      );
       return response(
         res,
         200,
@@ -115,6 +119,7 @@ export default class MetricsController {
     return documents.map((document) => ({
       id: document._id,
       title: document?.title,
+      status: document?.status,
       createdAt: (document as any).createdAt,
       riskScore: document?.summary?.overallRiskScore,
       confidenceScore: document?.summary?.overallConfidenceScore,

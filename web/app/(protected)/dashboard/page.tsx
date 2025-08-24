@@ -38,6 +38,7 @@ interface DashboardStats {
 interface RecentContract {
   id: string;
   title: string;
+  status: string;
   createdAt: string;
   riskScore: number;
   confidenceScore: number;
@@ -91,8 +92,15 @@ const formatDate = (dateString: string): string => {
 };
 
 const getStatusFromRiskScore = (
-  riskScore: number
-): "Safe" | "Risky" | "Processing" | "Needs Review" => {
+  riskScore: number,
+  status: string | null
+): "Safe" | "Risky" | "Processing" | "Needs Review" | "Failed" => {
+  console.log(status);
+
+  if (status === "failed") return "Failed";
+
+  if (riskScore === 0 || riskScore === null || riskScore === undefined)
+    return "Processing";
   if (riskScore >= 65) return "Risky";
   if (riskScore >= 40) return "Needs Review";
   return "Safe";
@@ -306,7 +314,10 @@ export default function Dashboard() {
                   id={contract.id}
                   name={contract.title}
                   uploadedAt={formatDate(contract.createdAt)}
-                  status={getStatusFromRiskScore(contract.riskScore)}
+                  status={getStatusFromRiskScore(
+                    contract.riskScore,
+                    contract.status
+                  )}
                   confidenceScore={contract.confidenceScore}
                   delay={0.5 + index * 0.1}
                 />

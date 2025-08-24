@@ -23,6 +23,7 @@ interface Contract {
   createdAt: string;
   riskScore: number;
   confidenceScore: number;
+  status?: string;
 }
 
 interface ContractsResponse {
