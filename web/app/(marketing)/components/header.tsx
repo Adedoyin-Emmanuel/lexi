@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -67,6 +68,14 @@ const Header = () => {
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Github
+              </Link>
+
+              <Link
+                target="_blank"
+                href="https://adedoyin.hashnode.dev/my-experience-at-the-co-creating-with-gpt-5-hackathon-by-aimlapi"
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+              >
+                How it works
               </Link>
 
               <div className="pt-4">
