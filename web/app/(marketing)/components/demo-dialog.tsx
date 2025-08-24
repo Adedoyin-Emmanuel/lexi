@@ -1,6 +1,5 @@
 "use client";
 
-import { Play } from "lucide-react";
 import {
   Dialog,
   DialogTitle,
@@ -22,16 +21,18 @@ const DemoDialog = ({ isOpen, onOpenChange }: DemoDialogProps) => {
             <span>Watch Lexi Demo</span>
           </DialogTitle>
         </DialogHeader>
-        <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-          <div className="text-center">
-            <Play className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">
-              My demo video will be embedded here
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              I will be back soon with a demo video
-            </p>
-          </div>
+        <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/SoHnV4Ikkjc?si=5oguHxT0ztPSS4Zk"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            className="w-full h-full"
+          />
         </div>
       </DialogContent>
     </Dialog>
