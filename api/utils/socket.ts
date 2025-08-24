@@ -12,7 +12,9 @@ let io: IOServer;
 export const initSocket = (server: HttpServer): IOServer => {
   io = new IOServer(server, {
     cors: {
-      origin: IS_PRODUCTION ? "https://uselexi.xyz" : "http://localhost:3000",
+      origin: IS_PRODUCTION
+        ? ["https://uselexi.xyz", "https://www.uselexi.xyz"]
+        : ["http://localhost:3000"],
       methods: ["GET", "POST"],
       credentials: true,
     },
